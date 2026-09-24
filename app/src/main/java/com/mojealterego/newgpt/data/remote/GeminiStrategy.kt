@@ -4,13 +4,13 @@ import com.mojealterego.newgpt.domain.model.Message
 import com.mojealterego.newgpt.domain.model.ProviderConfig
 import com.mojealterego.newgpt.domain.strategy.AiInferenceStrategy
 import io.ktor.client.HttpClient
-import io.ktor.client.request.contentType
 import io.ktor.client.request.header
 import io.ktor.client.request.preparePost
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.utils.io.readUTF8Line
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -42,7 +42,7 @@ class GeminiStrategy @Inject constructor(private val client: HttpClient) : AiInf
             "https://generativelanguage.googleapis.com/v1beta/models/" +
                 config.geminiModel + ":streamGenerateContent?alt=sse"
         ) {
-            contentType(ContentType.Application.Json)
+            header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             header("x-goog-api-key", config.geminiKey)
             setBody(request)
         }.execute { response ->
