@@ -2,10 +2,12 @@ package com.mojealterego.newgpt.di
 
 import android.content.Context
 import androidx.room.Room
+import com.mojealterego.newgpt.data.local.AgentStore
 import com.mojealterego.newgpt.data.local.ChatDatabase
 import com.mojealterego.newgpt.data.local.MessageDao
 import com.mojealterego.newgpt.data.local.SecureSettings
 import com.mojealterego.newgpt.data.repository.ChatRepositoryImpl
+import com.mojealterego.newgpt.domain.agent.AgentRepository
 import com.mojealterego.newgpt.domain.repository.ChatRepository
 import dagger.Module
 import dagger.Provides
@@ -36,5 +38,6 @@ object AppModule {
     @Provides @Singleton
     fun provideRepository(impl: ChatRepositoryImpl): ChatRepository = impl
 
-    @Provides fun provideSettings(settings: SecureSettings): SecureSettings = settings
+    @Provides @Singleton
+    fun provideAgentRepository(store: AgentStore): AgentRepository = store
 }
