@@ -1,6 +1,7 @@
 #include "llama.h"
 #include <jni.h>
 #include <algorithm>
+#include <atomic>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -10,13 +11,17 @@ static std::once_flag g_backendInit;
 struct NativeContext {
     llama_model* model = nullptr;
     llama_context* context = nullptr;
+    std::atomic<bool> stopRequested{false};
 };
 
 static void notifyToken(JNIEnv* env, jobject callback, const std::string& token) {
     if (token.empty()) return;
     jclass clazz = env->GetObjectClass(callback);
     jmethodID method = env->GetMethodID(clazz, "onToken", "(Ljava/lang/String;)V");
-    if (!method) return;
+    if (!method) {
+        env->DeleteLocalRef(clazz);
+        return;
+    }
     jstring value = env->NewStringUTF(token.c_str());
     env->CallVoidMethod(callback, method, value);
     env->DeleteLocalRef(value);
@@ -119,7 +124,8 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_formatChatNative(
         tmpl, messages.data(), messages.size(), true, buffer.data(), required + 1);
     if (written < 0) return nullptr;
 
-    return env->NewStringUTF(std::string(buffer.data(), static_cast<size_t>(written)).c_str());
+    return env->NewStringUTF(
+        std::string(buffer.data(), static_cast<size_t>(written)).c_str());
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -129,6 +135,8 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_generateNative(
 
     auto* native = reinterpret_cast<NativeContext*>(contextPtr);
     if (!native->model) return;
+
+    native->stopRequested.store(false, std::memory_order_release);
 
     const char* promptChars = env->GetStringUTFChars(prompt, nullptr);
     if (!promptChars) return;
@@ -157,7 +165,8 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_generateNative(
 
     llama_context_params contextParams = llama_context_default_params();
     contextParams.n_ctx = 4096;
-    contextParams.n_batch = static_cast<uint32_t>(std::min<size_t>(promptTokens.size(), 4096));
+    contextParams.n_batch =
+        static_cast<uint32_t>(std::min<size_t>(promptTokens.size(), 4096));
 
     if (native->context) {
         llama_free(native->context);
@@ -179,14 +188,20 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_generateNative(
     llama_batch batch = llama_batch_get_one(promptTokens.data(), promptTokens.size());
     const int maxTokens = 512;
 
-    for (int generated = 0; generated < maxTokens; ++generated) {
+    for (int generated = 0;
+         generated < maxTokens &&
+         !native->stopRequested.load(std::memory_order_acquire);
+         ++generated) {
         if (llama_decode(native->context, batch) != 0) break;
+
+        if (native->stopRequested.load(std::memory_order_acquire)) break;
 
         llama_token token = llama_sampler_sample(sampler, native->context, -1);
         if (llama_vocab_is_eog(vocab, token)) break;
 
         char buffer[512];
-        const int written = llama_token_to_piece(vocab, token, buffer, sizeof(buffer), 0, true);
+        const int written =
+            llama_token_to_piece(vocab, token, buffer, sizeof(buffer), 0, true);
         if (written > 0) notifyToken(env, callback, std::string(buffer, written));
 
         batch = llama_batch_get_one(&token, 1);
@@ -197,10 +212,19 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_generateNative(
 }
 
 extern "C" JNIEXPORT void JNICALL
+Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_stopGenerationNative(
+        JNIEnv*, jobject, jlong contextPtr) {
+    if (!contextPtr) return;
+    auto* native = reinterpret_cast<NativeContext*>(contextPtr);
+    native->stopRequested.store(true, std::memory_order_release);
+}
+
+extern "C" JNIEXPORT void JNICALL
 Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_freeModelNative(
         JNIEnv*, jobject, jlong contextPtr) {
     if (!contextPtr) return;
     auto* native = reinterpret_cast<NativeContext*>(contextPtr);
+    native->stopRequested.store(true, std::memory_order_release);
     if (native->context) llama_free(native->context);
     if (native->model) llama_model_free(native->model);
     delete native;
