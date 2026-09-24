@@ -13,6 +13,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -58,6 +59,7 @@ class StudioViewModel @Inject constructor(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudioScreen(onBack: () -> Unit, viewModel: StudioViewModel = hiltViewModel()) {
     var text by remember { mutableStateOf("") }
@@ -75,21 +77,12 @@ fun StudioScreen(onBack: () -> Unit, viewModel: StudioViewModel = hiltViewModel(
         ) {
             Text("ElevenLabs · Voice · Music · xAI Video", style = MaterialTheme.typography.headlineSmall)
             Text("Klucze API ustaw w Ustawieniach.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 5,
-                label = { Text("Prompt / tekst") }
-            )
+            OutlinedTextField(value = text, onValueChange = { text = it }, modifier = Modifier.fillMaxWidth(), minLines = 5, label = { Text("Prompt / tekst") })
             Button(onClick = { viewModel.speech("JBFqnCBsd6RMkjVDRZzb", text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ GŁOS") }
             Button(onClick = { viewModel.music(text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ MUZYKĘ") }
             Button(onClick = { viewModel.video(text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ WIDEO") }
             Text(viewModel.status, color = MaterialTheme.colorScheme.primary)
-            Text(
-                "Canva i zewnętrzne App Buildery są przygotowane jako warstwa integracji API/webhook. Nie są oznaczane jako natywne integracje bez udokumentowanego API.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Text("Canva i zewnętrzne App Buildery są przygotowane jako warstwa integracji API/webhook. Nie są oznaczane jako natywne integracje bez udokumentowanego API.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
