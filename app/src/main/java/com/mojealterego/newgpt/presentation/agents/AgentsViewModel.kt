@@ -38,6 +38,7 @@ class AgentsViewModel @Inject constructor(
 ) : ViewModel() {
     private val selected = MutableStateFlow("coordinator")
     private val sending = MutableStateFlow(false)
+    private var runningJob: kotlinx.coroutines.Job? = null
 
     private val messages = selected.flatMapLatest { id ->
         if (id.isBlank()) flowOf(emptyList()) else chatRepository.observeMessages("agent:$id")
@@ -56,11 +57,11 @@ class AgentsViewModel @Inject constructor(
         if (text.isBlank() || sending.value) return
         val agentId = state.value.selectedAgentId
         if (agentId.isBlank()) return
-        viewModelScope.launch {
+        runningJob = viewModelScope.launch {
             sending.value = true
             try {
                 agentRuntime.run(agentId, "agent:$agentId", text.trim(), settings.config.value)
-            } finally { sending.value = false }
+            } finally { sending.value = false; runningJob = null }
         }
     }
 
@@ -70,13 +71,15 @@ class AgentsViewModel @Inject constructor(
         val pipeline = (listOf(root.id) + root.handoffs).distinct()
             .filter { id -> state.value.agents.any { it.id == id && it.enabled } }
         if (pipeline.isEmpty()) return
-        viewModelScope.launch {
+        runningJob = viewModelScope.launch {
             sending.value = true
             try {
                 agentRuntime.runPipeline(pipeline, "agent:${root.id}", text.trim(), settings.config.value)
-            } finally { sending.value = false }
+            } finally { sending.value = false; runningJob = null }
         }
     }
+
+    fun stop() { runningJob?.cancel() }
 
     fun clear() {
         val id = state.value.selectedAgentId
