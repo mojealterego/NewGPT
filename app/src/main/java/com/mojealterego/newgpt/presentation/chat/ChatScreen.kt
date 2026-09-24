@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -36,12 +38,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mojealterego.newgpt.R
 import com.mojealterego.newgpt.domain.model.Message
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,11 +63,38 @@ fun ChatScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("NewGPT") },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_newgpt),
+                            contentDescription = "Logo Andrzej Mikulski — MojeAlterego",
+                            modifier = Modifier.size(38.dp),
+                            tint = androidx.compose.ui.graphics.Color.Unspecified
+                        )
+                        Column(Modifier.padding(start = 10.dp)) {
+                            Text(
+                                "NewGPT",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                "ANDRZEJ MIKULSKI · MOJEALTEREGO",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                },
                 actions = {
-                    IconButton(onClick = viewModel::clear, enabled = state.inputEnabled) { Icon(Icons.Default.Delete, "Wyczyść") }
-                    IconButton(onClick = onAgents) { Icon(Icons.Default.AutoAwesome, "Agenci") }
-                    IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Ustawienia") }
+                    IconButton(onClick = viewModel::clear, enabled = state.inputEnabled) {
+                        Icon(Icons.Default.Delete, "Wyczyść")
+                    }
+                    IconButton(onClick = onAgents) {
+                        Icon(Icons.Default.AutoAwesome, "Agenci")
+                    }
+                    IconButton(onClick = onSettings) {
+                        Icon(Icons.Default.Settings, "Ustawienia")
+                    }
                 }
             )
         },
@@ -72,34 +104,82 @@ fun ChatScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
-                    value = text, onValueChange = { text = it }, modifier = Modifier.weight(1f),
-                    enabled = state.inputEnabled, placeholder = { Text("Napisz wiadomość…") },
+                    value = text,
+                    onValueChange = { text = it },
+                    modifier = Modifier.weight(1f),
+                    enabled = state.inputEnabled,
+                    placeholder = { Text("Napisz wiadomość…") },
                     shape = RoundedCornerShape(24.dp),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(onSend = {
-                        if (text.isNotBlank()) { viewModel.send(text); text = "" }
+                        if (text.isNotBlank()) {
+                            viewModel.send(text)
+                            text = ""
+                        }
                     })
                 )
-                IconButton(onClick = { viewModel.send(text); text = "" }, enabled = state.inputEnabled && text.isNotBlank()) {
+                IconButton(
+                    onClick = { viewModel.send(text); text = "" },
+                    enabled = state.inputEnabled && text.isNotBlank()
+                ) {
                     Icon(Icons.Default.Send, "Wyślij")
                 }
             }
         }
     ) { padding ->
         if (state.messages.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Nowa rozmowa", style = MaterialTheme.typography.headlineSmall)
-                    Text("Skonfiguruj dostawcę w Ustawieniach i zacznij pisać.")
+            Box(
+                Modifier.fillMaxSize().padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(horizontal = 28.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_newgpt),
+                        contentDescription = "Logo MojeAlterego",
+                        modifier = Modifier.size(132.dp),
+                        tint = androidx.compose.ui.graphics.Color.Unspecified
+                    )
+                    Text(
+                        "NewGPT",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        "ANDRZEJ MIKULSKI",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        "MOJEALTEREGO",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Box(Modifier.height(18.dp))
+                    Text(
+                        "Nowa rozmowa",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Text(
+                        "Skonfiguruj dostawcę w Ustawieniach i zacznij pisać.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         } else {
             LaunchedEffect(state.messages.size) {
-                if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.lastIndex)
+                if (state.messages.isNotEmpty()) {
+                    listState.animateScrollToItem(state.messages.lastIndex)
+                }
             }
             LazyColumn(
-                state = listState, modifier = Modifier.fillMaxSize().padding(padding).imePadding(),
-                contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
+                state = listState,
+                modifier = Modifier.fillMaxSize().padding(padding).imePadding(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(state.messages, key = { it.id }) { MessageBubble(it) }
             }
@@ -115,11 +195,16 @@ private fun MessageBubble(message: Message) {
     ) {
         Text(
             text = message.content.ifBlank { "Generowanie…" },
-            modifier = Modifier.alpha(if (message.isPending) 0.65f else 1f)
+            modifier = Modifier
+                .alpha(if (message.isPending) 0.65f else 1f)
                 .fillMaxWidth(if (message.isUser) 0.82f else 0.92f)
                 .padding(12.dp),
             style = MaterialTheme.typography.bodyLarge,
-            color = if (message.isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+            color = if (message.isUser) {
+                MaterialTheme.colorScheme.onPrimaryContainer
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
         )
     }
 }
