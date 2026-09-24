@@ -24,9 +24,7 @@ di/ → dependency injection
 Compose UI → MVI ViewModel → UseCase → ChatRepository → AiInferenceStrategy → OpenAI | Anthropic | Gemini | OpenAI-compatible | Local GGUF
 
 ## Local GGUF status
-The repository contains the Android JNI boundary and model-file import flow. The current native implementation is a safe bridge stub; it does not embed the full llama.cpp source tree yet. The bridge is isolated so the llama.cpp backend can be linked without changing the Kotlin/domain architecture.
-
-Upstream llama.cpp currently publishes Android arm64 builds. The next native milestone is to pin a tested llama.cpp revision and wire its C API into newgpt_jni.cpp.
+The repository now pins llama.cpp v0.4.1 through CMake FetchContent and links it into the Android JNI library. The Kotlin layer imports a GGUF file into app-private storage; the native layer loads the model, tokenizes the prompt, runs llama.cpp decoding and streams generated pieces back through JNI callbacks. The CMake configuration follows the upstream Android guidance: arm64-v8a uses KleidiAI when available, while GGML_NATIVE/OpenMP/OpenSSL/llamafile are disabled for the Android build.
 
 ## Security
 API keys are never committed to source. They are stored locally through an encrypted preferences container backed by Android Keystore. Provider configuration stays on-device.
