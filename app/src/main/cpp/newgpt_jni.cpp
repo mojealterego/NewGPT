@@ -38,7 +38,10 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_loadModelNative(
     const char* path = env->GetStringUTFChars(modelPath, nullptr);
     if (!path) return 0;
 
-    std::call_once(g_backendInit, []() {\n        llama_backend_init();\n        ggml_backend_load_all();\n    });
+    std::call_once(g_backendInit, []() {
+        llama_backend_init();
+        ggml_backend_load_all();
+    });
 
     llama_model_params modelParams = llama_model_default_params();
     modelParams.n_gpu_layers = 0;
