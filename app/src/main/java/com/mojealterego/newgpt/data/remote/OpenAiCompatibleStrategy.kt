@@ -31,6 +31,7 @@ class OpenAiCompatibleStrategy @Inject constructor(private val client: HttpClien
             if (config.compatibleKey.isNotBlank()) header("Authorization", "Bearer " + config.compatibleKey)
             setBody(request)
         }.execute { response ->
+            check(response.status.value in 200..299) { "HTTP ${response.status.value}" }
             val channel = response.bodyAsChannel()
             while (!channel.isClosedForRead) {
                 val line = channel.readUTF8Line() ?: continue
