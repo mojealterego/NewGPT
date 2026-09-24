@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(newgpt_native)
+add_library(newgpt_native SHARED newgpt_jni.cpp)
+target_compile_features(newgpt_native PRIVATE cxx_std_17)
+find_library(log_lib log)
+target_link_libraries(newgpt_native ${log_lib})
