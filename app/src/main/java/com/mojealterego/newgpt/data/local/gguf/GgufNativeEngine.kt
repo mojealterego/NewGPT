@@ -17,11 +17,15 @@ class GgufNativeEngine @Inject constructor() {
     private external fun freeModelNative(contextPtr: Long)
 
     private var contextPtr = 0L
+    private var loadedPath: String? = null
 
-    suspend fun loadModel(path: String) {
+    @Synchronized
+    fun loadModel(path: String) {
+        if (contextPtr != 0L && loadedPath == path) return
         if (contextPtr != 0L) freeModelNative(contextPtr)
         contextPtr = loadModelNative(path)
         check(contextPtr != 0L) { "Nie można załadować modelu GGUF." }
+        loadedPath = path
     }
 
     fun generate(prompt: String): Flow<String> = callbackFlow {
