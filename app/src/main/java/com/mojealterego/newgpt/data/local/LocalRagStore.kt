@@ -51,7 +51,7 @@ class LocalRagStore @Inject constructor(private val context: Context) {
 
     suspend fun retrieve(query: String, topK: Int): List<RagDocument> = withContext(Dispatchers.IO) {
         val terms = query.lowercase(Locale.ROOT)
-            .split(Regex("[^\p{L}\p{Nd}]+"))
+            .split(Regex("""[^p{L}p{Nd}]+"""))
             .filter { it.length >= 3 }
             .distinct()
         if (terms.isEmpty()) return@withContext emptyList()
