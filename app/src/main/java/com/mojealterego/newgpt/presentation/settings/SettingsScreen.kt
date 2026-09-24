@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mojealterego.newgpt.domain.model.ProviderConfig
@@ -121,7 +122,7 @@ private fun ProviderFields(config: ProviderConfig, onChange: (ProviderConfig) ->
 }
 
 @Composable private fun KeyField(label: String, value: String, onValueChange: (String) -> Unit) =
-    OutlinedTextField(value, onValueChange, modifier = Modifier.fillMaxWidth(), label = { Text(label) }, singleLine = true)
+    OutlinedTextField(value, onValueChange, modifier = Modifier.fillMaxWidth(), label = { Text(label) }, singleLine = true, visualTransformation = PasswordVisualTransformation())
 
 @Composable private fun TextField(label: String, value: String, onValueChange: (String) -> Unit) =
     OutlinedTextField(value, onValueChange, modifier = Modifier.fillMaxWidth(), label = { Text(label) }, singleLine = true)
