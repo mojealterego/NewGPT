@@ -6,6 +6,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
     fun observeMessages(conversationId: String): Flow<List<Message>>
-    suspend fun sendMessage(conversationId: String, prompt: String, config: ProviderConfig)
+    suspend fun sendMessage(conversationId: String, prompt: String, config: ProviderConfig): String
+    suspend fun sendAgentMessage(
+        conversationId: String,
+        prompt: String,
+        config: ProviderConfig,
+        systemPrompt: String
+    ): String
     suspend fun clearHistory(conversationId: String)
 }
