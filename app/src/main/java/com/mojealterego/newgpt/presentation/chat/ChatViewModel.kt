@@ -12,12 +12,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 @Immutable
@@ -36,21 +40,35 @@ class ChatViewModel @Inject constructor(
 ) : ViewModel() {
     companion object { const val CONVERSATION_ID = "default" }
 
-    val state: StateFlow<ChatUiState> = observeMessages(CONVERSATION_ID)
-        .map { ChatUiState(messages = it.toImmutableList()) }
-        .catch { emit(ChatUiState(error = it.message)) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ChatUiState())
+    private val sending = MutableStateFlow(false)
+    private val sendMutex = Mutex()
+
+    private val messages = observeMessages(CONVERSATION_ID)
+        .catch { emit(emptyList()) }
+
+    val state: StateFlow<ChatUiState> = combine(messages, sending) { items, isSending ->
+        ChatUiState(
+            messages = items.toImmutableList(),
+            inputEnabled = !isSending
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ChatUiState())
 
     fun send(text: String) {
-        if (text.isBlank()) return
+        if (text.isBlank() || sending.value) return
         viewModelScope.launch {
-            sendMessage(
-                CONVERSATION_ID,
-                text.trim(),
-                settings.config.value
-            )
+            sendMutex.withLock {
+                sending.value = true
+                try {
+                    sendMessage(CONVERSATION_ID, text.trim(), settings.config.value)
+                } finally {
+                    sending.value = false
+                }
+            }
         }
     }
 
-    fun clear() = viewModelScope.launch { clearHistory(CONVERSATION_ID) }
+    fun clear() {
+        if (sending.value) return
+        viewModelScope.launch { clearHistory(CONVERSATION_ID) }
+    }
 }
