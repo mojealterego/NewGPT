@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.data.remote
 
+import com.mojealterego.newgpt.domain.model.Message
 import com.mojealterego.newgpt.domain.model.ProviderConfig
 import com.mojealterego.newgpt.domain.strategy.AiInferenceStrategy
 import io.ktor.client.HttpClient
@@ -20,11 +21,11 @@ import javax.inject.Inject
 class OpenAiCompatibleStrategy @Inject constructor(private val client: HttpClient) : AiInferenceStrategy {
     private val json = Json { ignoreUnknownKeys = true }
 
-    override fun generateStream(prompt: String, config: ProviderConfig): Flow<String> = flow {
+    override fun generateStream(messages: List<Message>, config: ProviderConfig): Flow<String> = flow {
         require(config.compatibleBaseUrl.isNotBlank()) { "Brak adresu OpenAI-compatible." }
         require(config.compatibleModel.isNotBlank()) { "Brak modelu OpenAI-compatible." }
         val base = config.compatibleBaseUrl.trimEnd('/')
-        val request = OpenAiRequest(config.compatibleModel, listOf(ChatMessageDto("user", prompt)))
+        val request = OpenAiRequest(config.compatibleModel, messages.map { ChatMessageDto(if (it.isUser) "user" else "assistant", it.content) })
         client.preparePost(base + "/chat/completions") {
             contentType(ContentType.Application.Json)
             if (config.compatibleKey.isNotBlank()) header("Authorization", "Bearer " + config.compatibleKey)
