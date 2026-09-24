@@ -20,17 +20,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mojealterego.newgpt.data.local.AppPreferences
 import com.mojealterego.newgpt.domain.model.ProviderCatalog
 import com.mojealterego.newgpt.domain.model.ProviderConfig
 import com.mojealterego.newgpt.domain.model.ProviderType
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
     val config by viewModel.config.collectAsStateWithLifecycle()
@@ -48,9 +49,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
     var hfStatus by remember { mutableStateOf("") }
 
     val ggufPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) {
-            draft = draft.copy(localModelPath = uri.toString(), activeProvider = ProviderType.LOCAL_GGUF)
-        }
+        if (uri != null) draft = draft.copy(localModelPath = uri.toString(), activeProvider = ProviderType.LOCAL_GGUF)
     }
     val ragPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) viewModel.importRag(uri) { ragStatus = it }
@@ -73,17 +72,12 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
 
             Section("JĘZYK / LANGUAGE") {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = { languageExpanded = true }) {
-                        Text(languageName(prefDraft.language))
-                    }
+                    Button(onClick = { languageExpanded = true }) { Text(languageName(prefDraft.language)) }
                     DropdownMenu(expanded = languageExpanded, onDismissRequest = { languageExpanded = false }) {
                         listOf("pl","en","de","fr","es","it","uk").forEach { code ->
                             DropdownMenuItem(
                                 text = { Text(languageName(code)) },
-                                onClick = {
-                                    prefDraft = prefDraft.copy(language = code)
-                                    languageExpanded = false
-                                }
+                                onClick = { prefDraft = prefDraft.copy(language = code); languageExpanded = false }
                             )
                         }
                     }
@@ -91,39 +85,30 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             }
 
             Section("DOSTAWCY AI") {
-                Button(onClick = { providerExpanded = true }, modifier = Modifier.fillMaxWidth()) {
-                    Text(draft.activeProvider.name)
-                }
+                Button(onClick = { providerExpanded = true }, modifier = Modifier.fillMaxWidth()) { Text(draft.activeProvider.name) }
                 DropdownMenu(expanded = providerExpanded, onDismissRequest = { providerExpanded = false }) {
                     ProviderType.entries.forEach { provider ->
-                        DropdownMenuItem(
-                            text = { Text(provider.name) },
-                            onClick = {
-                                draft = draft.copy(activeProvider = provider)
-                                providerExpanded = false
-                            }
-                        )
+                        DropdownMenuItem(text = { Text(provider.name) }, onClick = {
+                            draft = draft.copy(activeProvider = provider)
+                            providerExpanded = false
+                        })
                     }
                 }
-
                 if (draft.activeProvider == ProviderType.OPENAI_COMPATIBLE) {
                     Button(onClick = { presetExpanded = true }, modifier = Modifier.fillMaxWidth()) {
                         Text(ProviderCatalog.find(draft.compatiblePresetId)?.name ?: "Wybierz preset providera")
                     }
                     DropdownMenu(expanded = presetExpanded, onDismissRequest = { presetExpanded = false }) {
                         ProviderCatalog.presets.forEach { preset ->
-                            DropdownMenuItem(
-                                text = { Text(preset.name + " · " + preset.note) },
-                                onClick = {
-                                    draft = draft.copy(
-                                        activeProvider = ProviderType.OPENAI_COMPATIBLE,
-                                        compatiblePresetId = preset.id,
-                                        compatibleBaseUrl = preset.baseUrl,
-                                        compatibleModel = preset.defaultModel
-                                    )
-                                    presetExpanded = false
-                                }
-                            )
+                            DropdownMenuItem(text = { Text(preset.name + " · " + preset.note) }, onClick = {
+                                draft = draft.copy(
+                                    activeProvider = ProviderType.OPENAI_COMPATIBLE,
+                                    compatiblePresetId = preset.id,
+                                    compatibleBaseUrl = preset.baseUrl,
+                                    compatibleModel = preset.defaultModel
+                                )
+                                presetExpanded = false
+                            })
                         }
                     }
                 }
@@ -138,19 +123,11 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                     }
                     Switch(checked = prefDraft.ragEnabled, onCheckedChange = { prefDraft = prefDraft.copy(ragEnabled = it) })
                 }
-                OutlinedTextField(
-                    value = prefDraft.ragTopK.toString(),
-                    onValueChange = { prefDraft = prefDraft.copy(ragTopK = it.toIntOrNull()?.coerceIn(1,12) ?: prefDraft.ragTopK) },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Liczba wyników RAG") },
-                    singleLine = true
-                )
-                Button(onClick = { ragPicker.launch(arrayOf("text/*", "application/json")) }, modifier = Modifier.fillMaxWidth()) {
-                    Text("DODAJ DOKUMENT DO RAG")
-                }
-                Button(onClick = { viewModel.clearRag { ragStatus = it } }, modifier = Modifier.fillMaxWidth()) {
-                    Text("WYCZYŚĆ BAZĘ RAG")
-                }
+                OutlinedTextField(value = prefDraft.ragTopK.toString(), onValueChange = {
+                    prefDraft = prefDraft.copy(ragTopK = it.toIntOrNull()?.coerceIn(1,12) ?: prefDraft.ragTopK)
+                }, modifier = Modifier.fillMaxWidth(), label = { Text("Liczba wyników RAG") }, singleLine = true)
+                Button(onClick = { ragPicker.launch(arrayOf("text/*", "application/json")) }, modifier = Modifier.fillMaxWidth()) { Text("DODAJ DOKUMENT DO RAG") }
+                Button(onClick = { viewModel.clearRag { ragStatus = it } }, modifier = Modifier.fillMaxWidth()) { Text("WYCZYŚĆ BAZĘ RAG") }
                 if (ragStatus.isNotBlank()) Text(ragStatus, color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
             }
 
@@ -164,44 +141,28 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
 
             Section("GGUF · LOCAL INFERENCE") {
                 Text("Model: " + (draft.localModelPath.ifBlank { "nie wybrano" }))
-                Button(onClick = { ggufPicker.launch(arrayOf("*/*")) }, modifier = Modifier.fillMaxWidth()) {
-                    Text("WYBIERZ GGUF Z TELEFONU")
-                }
-                OutlinedTextField(
-                    value = prefDraft.contextSize.toString(),
-                    onValueChange = { prefDraft = prefDraft.copy(contextSize = it.toIntOrNull()?.coerceIn(1024,32768) ?: prefDraft.contextSize) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("Context size") }, singleLine = true
-                )
-                OutlinedTextField(
-                    value = prefDraft.maxTokens.toString(),
-                    onValueChange = { prefDraft = prefDraft.copy(maxTokens = it.toIntOrNull()?.coerceIn(64,8192) ?: prefDraft.maxTokens) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("Max tokens") }, singleLine = true
-                )
-                OutlinedTextField(
-                    value = prefDraft.temperature.toString(),
-                    onValueChange = { prefDraft = prefDraft.copy(temperature = it.toFloatOrNull()?.coerceIn(0f,2f) ?: prefDraft.temperature) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("Temperature") }, singleLine = true
-                )
-                OutlinedTextField(
-                    value = prefDraft.topP.toString(),
-                    onValueChange = { prefDraft = prefDraft.copy(topP = it.toFloatOrNull()?.coerceIn(0.05f,1f) ?: prefDraft.topP) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("Top-P") }, singleLine = true
-                )
-                OutlinedTextField(
-                    value = prefDraft.threads.toString(),
-                    onValueChange = { prefDraft = prefDraft.copy(threads = it.toIntOrNull()?.coerceIn(1,32) ?: prefDraft.threads) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("CPU threads") }, singleLine = true
-                )
-                OutlinedTextField(
-                    value = prefDraft.gpuLayers.toString(),
-                    onValueChange = { prefDraft = prefDraft.copy(gpuLayers = it.toIntOrNull()?.coerceIn(0,128) ?: prefDraft.gpuLayers) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("GPU layers") }, singleLine = true
-                )
-                OutlinedTextField(
-                    value = prefDraft.repeatPenalty.toString(),
-                    onValueChange = { prefDraft = prefDraft.copy(repeatPenalty = it.toFloatOrNull()?.coerceIn(0.8f,2f) ?: prefDraft.repeatPenalty) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("Repeat penalty") }, singleLine = true
-                )
+                Button(onClick = { ggufPicker.launch(arrayOf("*/*")) }, modifier = Modifier.fillMaxWidth()) { Text("WYBIERZ GGUF Z TELEFONU") }
+                OutlinedTextField(value = prefDraft.contextSize.toString(), onValueChange = {
+                    prefDraft = prefDraft.copy(contextSize = it.toIntOrNull()?.coerceIn(1024,32768) ?: prefDraft.contextSize)
+                }, modifier = Modifier.fillMaxWidth(), label = { Text("Context size") }, singleLine = true)
+                OutlinedTextField(value = prefDraft.maxTokens.toString(), onValueChange = {
+                    prefDraft = prefDraft.copy(maxTokens = it.toIntOrNull()?.coerceIn(64,8192) ?: prefDraft.maxTokens)
+                }, modifier = Modifier.fillMaxWidth(), label = { Text("Max tokens") }, singleLine = true)
+                OutlinedTextField(value = prefDraft.temperature.toString(), onValueChange = {
+                    prefDraft = prefDraft.copy(temperature = it.toFloatOrNull()?.coerceIn(0f,2f) ?: prefDraft.temperature)
+                }, modifier = Modifier.fillMaxWidth(), label = { Text("Temperature") }, singleLine = true)
+                OutlinedTextField(value = prefDraft.topP.toString(), onValueChange = {
+                    prefDraft = prefDraft.copy(topP = it.toFloatOrNull()?.coerceIn(0.05f,1f) ?: prefDraft.topP)
+                }, modifier = Modifier.fillMaxWidth(), label = { Text("Top-P") }, singleLine = true)
+                OutlinedTextField(value = prefDraft.threads.toString(), onValueChange = {
+                    prefDraft = prefDraft.copy(threads = it.toIntOrNull()?.coerceIn(1,32) ?: prefDraft.threads)
+                }, modifier = Modifier.fillMaxWidth(), label = { Text("CPU threads") }, singleLine = true)
+                OutlinedTextField(value = prefDraft.gpuLayers.toString(), onValueChange = {
+                    prefDraft = prefDraft.copy(gpuLayers = it.toIntOrNull()?.coerceIn(0,128) ?: prefDraft.gpuLayers)
+                }, modifier = Modifier.fillMaxWidth(), label = { Text("GPU layers") }, singleLine = true)
+                OutlinedTextField(value = prefDraft.repeatPenalty.toString(), onValueChange = {
+                    prefDraft = prefDraft.copy(repeatPenalty = it.toFloatOrNull()?.coerceIn(0.8f,2f) ?: prefDraft.repeatPenalty)
+                }, modifier = Modifier.fillMaxWidth(), label = { Text("Repeat penalty") }, singleLine = true)
             }
 
             Section("HUGGING FACE · GGUF DOWNLOADER") {
@@ -210,43 +171,20 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 OutlinedTextField(hfFile, { hfFile = it }, Modifier.fillMaxWidth(), label = { Text("Nazwa pliku .gguf") }, singleLine = true)
                 OutlinedTextField(hfRevision, { hfRevision = it }, Modifier.fillMaxWidth(), label = { Text("Revision") }, singleLine = true)
                 OutlinedTextField(hfToken, { hfToken = it }, Modifier.fillMaxWidth(), label = { Text("HF token (opcjonalny)") }, singleLine = true, visualTransformation = PasswordVisualTransformation())
-                Button(
-                    onClick = {
-                        viewModel.downloadHf(hfRepo, hfFile, hfRevision, hfToken) { hfStatus = it }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = hfRepo.isNotBlank() && hfFile.isNotBlank()
-                ) { Text("POBIERZ GGUF") }
+                Button(onClick = { viewModel.downloadHf(hfRepo, hfFile, hfRevision, hfToken) { hfStatus = it } }, modifier = Modifier.fillMaxWidth(), enabled = hfRepo.isNotBlank() && hfFile.isNotBlank()) { Text("POBIERZ GGUF") }
                 if (hfStatus.isNotBlank()) Text(hfStatus, color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
             }
 
             Section("CREATIVE API") {
-                OutlinedTextField(
-                    value = prefDraft.elevenLabsKey,
-                    onValueChange = { prefDraft = prefDraft.copy(elevenLabsKey = it) },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("ElevenLabs API key") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = prefDraft.xaiKey,
-                    onValueChange = { prefDraft = prefDraft.copy(xaiKey = it) },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("xAI API key") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    singleLine = true
-                )
+                OutlinedTextField(value = prefDraft.elevenLabsKey, onValueChange = { prefDraft = prefDraft.copy(elevenLabsKey = it) }, modifier = Modifier.fillMaxWidth(), label = { Text("ElevenLabs API key") }, visualTransformation = PasswordVisualTransformation(), singleLine = true)
+                OutlinedTextField(value = prefDraft.xaiKey, onValueChange = { prefDraft = prefDraft.copy(xaiKey = it) }, modifier = Modifier.fillMaxWidth(), label = { Text("xAI API key") }, visualTransformation = PasswordVisualTransformation(), singleLine = true)
             }
 
-            Button(
-                onClick = {
-                    viewModel.update(draft)
-                    viewModel.updatePreferences(prefDraft)
-                    onBack()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) { Text("ZAPISZ WSZYSTKO") }
+            Button(onClick = {
+                viewModel.update(draft)
+                viewModel.updatePreferences(prefDraft)
+                onBack()
+            }, modifier = Modifier.fillMaxWidth()) { Text("ZAPISZ WSZYSTKO") }
         }
     }
 }
@@ -254,10 +192,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
 @Composable
 private fun Section(title: String, content: @Composable () -> Unit) {
     Card(Modifier.fillMaxWidth()) {
-        Column(
-            Modifier.fillMaxWidth().padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(title, style = androidx.compose.material3.MaterialTheme.typography.titleLarge)
             HorizontalDivider()
             content()
