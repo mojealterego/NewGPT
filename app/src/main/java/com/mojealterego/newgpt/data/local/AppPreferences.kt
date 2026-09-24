@@ -2,6 +2,7 @@ package com.mojealterego.newgpt.data.local
 
 import android.content.Context
 import androidx.compose.runtime.Immutable
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +27,7 @@ data class AppPreferences(
 )
 
 @Singleton
-class AppPreferencesStore @Inject constructor(context: Context) {
+class AppPreferencesStore @Inject constructor(@ApplicationContext context: Context) {
     private val prefs = context.getSharedPreferences("newgpt_ui_preferences", Context.MODE_PRIVATE)
     private val state = MutableStateFlow(load())
     val preferences: StateFlow<AppPreferences> = state.asStateFlow()
