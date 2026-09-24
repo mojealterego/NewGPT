@@ -1,8 +1,11 @@
 #include "llama.h"
 #include <jni.h>
 #include <algorithm>
+#include <mutex>
 #include <string>
 #include <vector>
+
+static std::once_flag g_backendInit;
 
 struct NativeContext {
     llama_model* model = nullptr;
@@ -35,7 +38,7 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_loadModelNative(
     const char* path = env->GetStringUTFChars(modelPath, nullptr);
     if (!path) return 0;
 
-    ggml_backend_load_all();
+    std::call_once(g_backendInit, []() {\n        llama_backend_init();\n        ggml_backend_load_all();\n    });
 
     llama_model_params modelParams = llama_model_default_params();
     modelParams.n_gpu_layers = 0;
