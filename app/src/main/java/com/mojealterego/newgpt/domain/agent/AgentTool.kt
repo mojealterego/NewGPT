@@ -34,7 +34,7 @@ object AgentToolCatalog {
         AgentTool("compiler", "Compiler", "Weryfikacja kodu przez narzędzia budowania.", AgentTool.Capability.CODE_EXECUTION),
         AgentTool("python", "Python", "Obliczenia i automatyzacja przez środowisko Python.", AgentTool.Capability.CODE_EXECUTION),
         AgentTool("shell", "Shell", "Wykonywanie poleceń systemowych.", AgentTool.Capability.CODE_EXECUTION),
-        AgentTool("calculator", "Calculator", "Precyzyjne obliczenia.", AgentTool.Capability.CODE_EXECUTION, false),
+        AgentTool("calculator", "Calculator", "Precyzyjne obliczenia.", AgentTool.Capability.CODE_EXECUTION),
         AgentTool("vision", "Vision", "Analiza wejścia obrazowego.", AgentTool.Capability.NETWORK),
         AgentTool("ocr", "OCR", "Ekstrakcja tekstu z obrazu.", AgentTool.Capability.READ_ONLY),
         AgentTool("image-generation", "Image Generation", "Generowanie i edycja obrazów.", AgentTool.Capability.NETWORK),
