@@ -54,3 +54,21 @@ Agent Definition nie jest mechanizmem autoryzacji. Uprzywilejowane operacje powi
 
 ## Materiały referencyjne
 Wykorzystano koncepcje z dostarczonych materiałów: Planner → Grounding → Executor → Supervisor, bezpieczna granica runtime, workflow/DAG, policy-as-code, agent registry i agent chat.
+
+
+## Tool Catalog
+NewGPT contains a declarative AgentToolCatalog with explicit capability classes:
+- READ_ONLY
+- NETWORK
+- FILE_SYSTEM
+- ANDROID_UI
+- NOTIFICATIONS
+- CODE_EXECUTION
+
+Tool declarations are validated by AgentGraphValidator. Built-in tools are not equivalent to runtime permissions; actual integrations require explicit adapters and their own approval boundary.
+
+## Runtime controls
+Agent generation can be cancelled from the agent chat. Coroutine cancellation propagates through the repository to the provider/native generation boundary.
+
+## CI artifacts
+Every successful main/PR build now assembles the debug APK, builds the debug AAB, runs unit tests, and uploads the resulting Android artifacts to the GitHub Actions run.

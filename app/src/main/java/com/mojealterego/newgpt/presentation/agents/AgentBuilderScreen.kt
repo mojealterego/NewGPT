@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.AssistChip
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -111,6 +113,23 @@ private fun AgentEditor(
         TextField(value = agent.systemPrompt, onValueChange = { onChange(agent.copy(systemPrompt = it)) }, modifier = Modifier.fillMaxWidth(), minLines = 5, label = { Text("System prompt") })
         TextField(value = agent.skills.joinToString(", "), onValueChange = { onChange(agent.copy(skills = csv(it))) }, modifier = Modifier.fillMaxWidth(), label = { Text("Skills — po przecinku") })
         TextField(value = agent.tools.joinToString(", "), onValueChange = { onChange(agent.copy(tools = csv(it))) }, modifier = Modifier.fillMaxWidth(), label = { Text("Tools — po przecinku") })
+        Text("Katalog narzędzi", style = MaterialTheme.typography.titleSmall)
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            items(com.mojealterego.newgpt.domain.agent.AgentToolCatalog.builtIns.size) { index ->
+                val tool = com.mojealterego.newgpt.domain.agent.AgentToolCatalog.builtIns[index]
+                AssistChip(
+                    onClick = {
+                        val next = if (tool.id in agent.tools) agent.tools - tool.id else agent.tools + tool.id
+                        onChange(agent.copy(tools = next))
+                    },
+                    label = { Text(tool.name) }
+                )
+            }
+        }
+        Text(
+            "Handoffs: " + if (agent.handoffs.isEmpty()) "brak" else agent.handoffs.joinToString(" → "),
+            style = MaterialTheme.typography.bodySmall
+        )
         TextField(value = agent.handoffs.joinToString(", "), onValueChange = { onChange(agent.copy(handoffs = csv(it))) }, modifier = Modifier.fillMaxWidth(), label = { Text("Handoffs — ID agentów") })
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Agent aktywny")

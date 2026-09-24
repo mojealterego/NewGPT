@@ -9,6 +9,8 @@ object AgentGraphValidator {
             if (agent.name.isBlank()) add("Nazwa agenta nie może być pusta.")
             if (agent.systemPrompt.isBlank()) add("System prompt nie może być pusty.")
             if (agent.handoffs.any { it == agent.id }) add("Agent nie może przekazywać zadania sam do siebie.")
+            if (agent.tools.distinct().size != agent.tools.size) add("Lista tools zawiera duplikaty.")
+            agent.tools.filter { AgentToolCatalog.find(it) == null }.forEach { add("Nieznane tool: $it") }
             val ids = all.map { it.id }.toSet()
             agent.handoffs.filterNot { it in ids }.forEach { add("Nieznany handoff: $it") }
             if (all.count { it.id == agent.id } > 1) add("ID agenta musi być unikalne.")

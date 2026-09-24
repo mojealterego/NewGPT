@@ -24,7 +24,17 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
-      - name: Assemble debug
+      - name: Assemble debug APK
         run: gradle --no-daemon assembleDebug
+      - name: Build debug AAB
+        run: gradle --no-daemon bundleDebug
       - name: Unit tests
         run: gradle --no-daemon testDebugUnitTest
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: newgpt-android-debug
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/bundle/debug/*.aab
+          if-no-files-found: error
