@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.data.remote
 
+import com.mojealterego.newgpt.domain.model.Message
 import com.mojealterego.newgpt.domain.model.ProviderConfig
 import com.mojealterego.newgpt.domain.strategy.AiInferenceStrategy
 import io.ktor.client.HttpClient
@@ -15,14 +16,14 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class GeminiStrategy @Inject constructor(private val client: HttpClient) : AiInferenceStrategy {
-    override fun generateStream(prompt: String, config: ProviderConfig): Flow<String> = flow {
+    override fun generateStream(messages: List<Message>, config: ProviderConfig): Flow<String> = flow {
         require(config.geminiKey.isNotBlank()) { "Brak klucza Gemini." }
         val response: GeminiResponse = client.post(
             "https://generativelanguage.googleapis.com/v1beta/models/" + config.geminiModel + ":generateContent"
         ) {
             parameter("key", config.geminiKey)
             contentType(ContentType.Application.Json)
-            setBody(GeminiRequest(listOf(GeminiContent(listOf(GeminiPart(prompt)), "user"))))
+            setBody(GeminiRequest(messages.map { GeminiContent(listOf(GeminiPart(it.content)), if (it.isUser) "user" else "model") }))
         }.body()
         response.candidates.firstOrNull()?.content?.parts?.forEach { emit(it.text) }
     }
