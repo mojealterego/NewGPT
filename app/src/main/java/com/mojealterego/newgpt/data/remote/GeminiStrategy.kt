@@ -21,14 +21,21 @@ import javax.inject.Inject
 class GeminiStrategy @Inject constructor(private val client: HttpClient) : AiInferenceStrategy {
     private val json = Json { ignoreUnknownKeys = true }
 
-    override fun generateStream(messages: List<Message>, config: ProviderConfig): Flow<String> = flow {
+    override fun generateStream(
+        messages: List<Message>,
+        config: ProviderConfig,
+        systemPrompt: String?
+    ): Flow<String> = flow {
         require(config.geminiKey.isNotBlank()) { "Brak klucza Gemini." }
         val request = GeminiRequest(
-            messages.map {
+            contents = messages.map {
                 GeminiContent(
                     parts = listOf(GeminiPart(it.content)),
                     role = if (it.isUser) "user" else "model"
                 )
+            },
+            systemInstruction = systemPrompt?.takeIf { it.isNotBlank() }?.let {
+                GeminiSystemInstruction(parts = listOf(GeminiPart(it)))
             }
         )
         client.preparePost(
