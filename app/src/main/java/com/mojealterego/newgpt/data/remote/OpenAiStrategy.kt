@@ -33,7 +33,7 @@ class OpenAiStrategy @Inject constructor(private val client: HttpClient) : AiInf
         }
         val request = OpenAiRequest(config.openAiModel, history)
         client.preparePost("https://api.openai.com/v1/chat/completions") {
-            header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            header(HttpHeaders.ContentType, "application/json")
             header("Authorization", "Bearer " + config.openAiKey)
             setBody(request)
         }.execute { response ->
