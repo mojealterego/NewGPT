@@ -37,7 +37,7 @@ static void notifyComplete(JNIEnv* env, jobject callback) {
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_loadModelNative(
-        JNIEnv* env, jobject, jstring modelPath) {
+        JNIEnv* env, jobject, jstring modelPath, jint gpuLayers) {
     if (!modelPath) return 0;
 
     const char* path = env->GetStringUTFChars(modelPath, nullptr);
@@ -49,7 +49,7 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_loadModelNative(
     });
 
     llama_model_params modelParams = llama_model_default_params();
-    modelParams.n_gpu_layers = 0;
+    modelParams.n_gpu_layers = std::max(0, static_cast<int>(gpuLayers));
 
     llama_model* model = llama_model_load_from_file(path, modelParams);
     env->ReleaseStringUTFChars(modelPath, path);
@@ -130,7 +130,8 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_formatChatNative(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_generateNative(
-        JNIEnv* env, jobject, jlong contextPtr, jstring prompt, jobject callback) {
+        JNIEnv* env, jobject, jlong contextPtr, jstring prompt, jobject callback,
+        jint contextSize, jint maxTokens, jfloat temperature, jfloat topP, jint threads) {
     if (!contextPtr || !prompt || !callback) return;
 
     auto* native = reinterpret_cast<NativeContext*>(contextPtr);
@@ -164,9 +165,11 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_generateNative(
     promptTokens.resize(static_cast<size_t>(tokenCount));
 
     llama_context_params contextParams = llama_context_default_params();
-    contextParams.n_ctx = 4096;
+    contextParams.n_ctx = std::max(1024, static_cast<int>(contextSize));
     contextParams.n_batch =
-        static_cast<uint32_t>(std::min<size_t>(promptTokens.size(), 4096));
+        static_cast<uint32_t>(std::min<size_t>(promptTokens.size(), static_cast<size_t>(contextParams.n_ctx)));
+    contextParams.n_threads = std::max(1, static_cast<int>(threads));
+    contextParams.n_threads_batch = std::max(1, static_cast<int>(threads));
 
     if (native->context) {
         llama_free(native->context);
@@ -181,15 +184,15 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_generateNative(
 
     llama_sampler_chain_params samplerParams = llama_sampler_chain_default_params();
     llama_sampler* sampler = llama_sampler_chain_init(samplerParams);
-    llama_sampler_chain_add(sampler, llama_sampler_init_temp(0.7f));
-    llama_sampler_chain_add(sampler, llama_sampler_init_top_p(0.9f, 1));
+    llama_sampler_chain_add(sampler, llama_sampler_init_temp(std::max(0.0f, static_cast<float>(temperature))));
+    llama_sampler_chain_add(sampler, llama_sampler_init_top_p(std::clamp(static_cast<float>(topP), 0.05f, 1.0f), 1));
     llama_sampler_chain_add(sampler, llama_sampler_init_dist(1234));
 
     llama_batch batch = llama_batch_get_one(promptTokens.data(), promptTokens.size());
-    const int maxTokens = 512;
+    const int generationLimit = std::max(64, std::min(8192, static_cast<int>(maxTokens)));
 
     for (int generated = 0;
-         generated < maxTokens &&
+         generated < generationLimit &&
          !native->stopRequested.load(std::memory_order_acquire);
          ++generated) {
         if (llama_decode(native->context, batch) != 0) break;

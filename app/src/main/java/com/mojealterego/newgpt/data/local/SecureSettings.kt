@@ -42,6 +42,7 @@ class SecureSettings @Inject constructor(@ApplicationContext context: Context) {
         compatibleBaseUrl = prefs.getString("compatible_url", "") ?: "",
         compatibleKey = prefs.getString("compatible_key", "") ?: "",
         compatibleModel = prefs.getString("compatible_model", "") ?: "",
+        compatiblePresetId = prefs.getString("compatible_preset", "") ?: "",
         localModelPath = prefs.getString("local_model", "") ?: ""
     )
 
@@ -57,6 +58,7 @@ class SecureSettings @Inject constructor(@ApplicationContext context: Context) {
             .putString("compatible_url", value.compatibleBaseUrl)
             .putString("compatible_key", value.compatibleKey)
             .putString("compatible_model", value.compatibleModel)
+            .putString("compatible_preset", value.compatiblePresetId)
             .putString("local_model", value.localModelPath)
             .apply()
         state.value = value

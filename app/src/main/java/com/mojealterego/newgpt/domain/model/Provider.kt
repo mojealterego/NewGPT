@@ -13,6 +13,7 @@ data class ProviderConfig(
     val compatibleBaseUrl: String = "",
     val compatibleKey: String = "",
     val compatibleModel: String = "",
+    val compatiblePresetId: String = "",
     val localModelPath: String = ""
 )
 
