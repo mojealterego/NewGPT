@@ -28,7 +28,7 @@ class WebAccessService @Inject constructor(private val client: HttpClient) {
             .replace(Regex("(?is)<[^>]+>"), " ")
             .replace(Regex("&nbsp;"), " ")
             .replace(Regex("&amp;"), "&")
-            .replace(Regex("\s+"), " ")
+            .replace(Regex("""s+"""), " ")
             .trim()
             .take(12000)
     }
