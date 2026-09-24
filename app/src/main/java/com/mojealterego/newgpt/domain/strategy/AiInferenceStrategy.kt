@@ -5,5 +5,9 @@ import com.mojealterego.newgpt.domain.model.ProviderConfig
 import kotlinx.coroutines.flow.Flow
 
 interface AiInferenceStrategy {
-    fun generateStream(messages: List<Message>, config: ProviderConfig): Flow<String>
+    fun generateStream(
+        messages: List<Message>,
+        config: ProviderConfig,
+        systemPrompt: String? = null
+    ): Flow<String>
 }

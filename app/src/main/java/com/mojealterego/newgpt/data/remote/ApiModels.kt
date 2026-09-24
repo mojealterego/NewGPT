@@ -17,6 +17,7 @@ import kotlinx.serialization.Serializable
 @Serializable data class AnthropicRequest(
     val model: String,
     val max_tokens: Int = 4096,
+    val system: String? = null,
     val messages: List<ChatMessageDto>,
     val stream: Boolean = true
 )
@@ -29,6 +30,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable data class GeminiPart(val text: String)
 @Serializable data class GeminiContent(val parts: List<GeminiPart>, val role: String? = null)
-@Serializable data class GeminiRequest(val contents: List<GeminiContent>)
+@Serializable data class GeminiSystemInstruction(val parts: List<GeminiPart>)
+@Serializable data class GeminiRequest(
+    val contents: List<GeminiContent>,
+    val systemInstruction: GeminiSystemInstruction? = null
+)
 @Serializable data class GeminiCandidate(val content: GeminiContent)
 @Serializable data class GeminiResponse(val candidates: List<GeminiCandidate> = emptyList())

@@ -21,11 +21,19 @@ import javax.inject.Inject
 class OpenAiCompatibleStrategy @Inject constructor(private val client: HttpClient) : AiInferenceStrategy {
     private val json = Json { ignoreUnknownKeys = true }
 
-    override fun generateStream(messages: List<Message>, config: ProviderConfig): Flow<String> = flow {
+    override fun generateStream(
+        messages: List<Message>,
+        config: ProviderConfig,
+        systemPrompt: String?
+    ): Flow<String> = flow {
         require(config.compatibleBaseUrl.isNotBlank()) { "Brak adresu OpenAI-compatible." }
         require(config.compatibleModel.isNotBlank()) { "Brak modelu OpenAI-compatible." }
         val base = config.compatibleBaseUrl.trimEnd('/')
-        val request = OpenAiRequest(config.compatibleModel, messages.map { ChatMessageDto(if (it.isUser) "user" else "assistant", it.content) })
+        val history = buildList {
+            if (!systemPrompt.isNullOrBlank()) add(ChatMessageDto("system", systemPrompt))
+            addAll(messages.map { ChatMessageDto(if (it.isUser) "user" else "assistant", it.content) })
+        }
+        val request = OpenAiRequest(config.compatibleModel, history)
         client.preparePost(base + "/chat/completions") {
             contentType(ContentType.Application.Json)
             if (config.compatibleKey.isNotBlank()) header("Authorization", "Bearer " + config.compatibleKey)
