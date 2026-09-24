@@ -21,9 +21,17 @@ import javax.inject.Inject
 class OpenAiStrategy @Inject constructor(private val client: HttpClient) : AiInferenceStrategy {
     private val json = Json { ignoreUnknownKeys = true }
 
-    override fun generateStream(messages: List<Message>, config: ProviderConfig): Flow<String> = flow {
+    override fun generateStream(
+        messages: List<Message>,
+        config: ProviderConfig,
+        systemPrompt: String?
+    ): Flow<String> = flow {
         require(config.openAiKey.isNotBlank()) { "Brak klucza OpenAI." }
-        val request = OpenAiRequest(config.openAiModel, messages.map { ChatMessageDto(if (it.isUser) "user" else "assistant", it.content) })
+        val history = buildList {
+            if (!systemPrompt.isNullOrBlank()) add(ChatMessageDto("system", systemPrompt))
+            addAll(messages.map { ChatMessageDto(if (it.isUser) "user" else "assistant", it.content) })
+        }
+        val request = OpenAiRequest(config.openAiModel, history)
         client.preparePost("https://api.openai.com/v1/chat/completions") {
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer " + config.openAiKey)
