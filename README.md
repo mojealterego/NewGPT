@@ -30,7 +30,7 @@ The repository now pins llama.cpp v0.4.1 through CMake FetchContent and links it
 API keys are never committed to source. They are stored locally through an encrypted preferences container backed by Android Keystore. Provider configuration stays on-device.
 
 ## Build
-Requirements: JDK 17, Android SDK API 35/36, NDK 27, Gradle 8.13.
+Requirements: JDK 17, Android SDK API 36, NDK 29.0.13113456, CMake 3.31.6 and Gradle 8.13.
 
 Run: gradle assembleDebug
 Run tests: gradle testDebugUnitTest
@@ -38,4 +38,4 @@ Run tests: gradle testDebugUnitTest
 ## Source basis
 The supplied specification calls for Clean Architecture, MVI, Compose, Room, Ktor streaming, encrypted API keys, provider strategies, offline-first history and a GGUF/JNI local inference layer. Pages 20–27 define the multi-provider/GGUF strategy and encrypted settings; pages 35–47 define the native engine, Room repository, use cases, MVI and Compose UI.
 
-This repository now contains the initial Android codebase instead of an empty placeholder.
+The implementation is merged to `main`. Local APK compilation still needs to be executed in an Android/Gradle environment because the ChatGPT execution environment cannot resolve GitHub DNS for dependency downloads.
