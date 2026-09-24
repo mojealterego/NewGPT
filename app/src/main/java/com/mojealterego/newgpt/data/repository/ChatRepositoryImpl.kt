@@ -12,6 +12,7 @@ import com.mojealterego.newgpt.domain.model.ProviderConfig
 import com.mojealterego.newgpt.domain.model.ProviderType
 import com.mojealterego.newgpt.domain.repository.ChatRepository
 import com.mojealterego.newgpt.domain.strategy.AiInferenceStrategy
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -68,18 +69,22 @@ class ChatRepositoryImpl @Inject constructor(
             ProviderType.LOCAL_GGUF -> gguf
         }
 
-        var response = ""
+        val response = StringBuilder()
         try {
             strategy.generateStream(
                 previousMessages + Message(userId, conversationId, prompt, true, now),
                 config,
                 systemPrompt
             ).collect { token ->
-                response += token
-                dao.update(aiId, response, true)
+                response.append(token)
+                dao.update(aiId, response.toString(), true)
             }
-            dao.update(aiId, response, false)
-            response
+            val finalResponse = response.toString()
+            dao.update(aiId, finalResponse, false)
+            finalResponse
+        } catch (error: CancellationException) {
+            dao.update(aiId, response.toString(), false)
+            throw error
         } catch (error: Throwable) {
             val failure = "Błąd inferencji: " + (error.message ?: "nieznany błąd")
             dao.update(aiId, failure, false)
