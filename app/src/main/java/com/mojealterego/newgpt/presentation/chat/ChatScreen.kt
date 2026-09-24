@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Send
@@ -45,7 +46,11 @@ import com.mojealterego.newgpt.domain.model.Message
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(onSettings: () -> Unit, viewModel: ChatViewModel = hiltViewModel()) {
+fun ChatScreen(
+    onAgents: () -> Unit,
+    onSettings: () -> Unit,
+    viewModel: ChatViewModel = hiltViewModel()
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
@@ -56,6 +61,7 @@ fun ChatScreen(onSettings: () -> Unit, viewModel: ChatViewModel = hiltViewModel(
                 title = { Text("NewGPT") },
                 actions = {
                     IconButton(onClick = viewModel::clear, enabled = state.inputEnabled) { Icon(Icons.Default.Delete, "Wyczyść") }
+                    IconButton(onClick = onAgents) { Icon(Icons.Default.AutoAwesome, "Agenci") }
                     IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Ustawienia") }
                 }
             )
@@ -66,21 +72,17 @@ fun ChatScreen(onSettings: () -> Unit, viewModel: ChatViewModel = hiltViewModel(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    modifier = Modifier.weight(1f),
-                    enabled = state.inputEnabled,
-                    placeholder = { Text("Napisz wiadomość…") },
+                    value = text, onValueChange = { text = it }, modifier = Modifier.weight(1f),
+                    enabled = state.inputEnabled, placeholder = { Text("Napisz wiadomość…") },
                     shape = RoundedCornerShape(24.dp),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(onSend = {
                         if (text.isNotBlank()) { viewModel.send(text); text = "" }
                     })
                 )
-                IconButton(
-                    onClick = { viewModel.send(text); text = "" },
-                    enabled = state.inputEnabled && text.isNotBlank()
-                ) { Icon(Icons.Default.Send, "Wyślij") }
+                IconButton(onClick = { viewModel.send(text); text = "" }, enabled = state.inputEnabled && text.isNotBlank()) {
+                    Icon(Icons.Default.Send, "Wyślij")
+                }
             }
         }
     ) { padding ->
@@ -96,10 +98,8 @@ fun ChatScreen(onSettings: () -> Unit, viewModel: ChatViewModel = hiltViewModel(
                 if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.lastIndex)
             }
             LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize().padding(padding).imePadding(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                state = listState, modifier = Modifier.fillMaxSize().padding(padding).imePadding(),
+                contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(state.messages, key = { it.id }) { MessageBubble(it) }
             }
@@ -115,8 +115,7 @@ private fun MessageBubble(message: Message) {
     ) {
         Text(
             text = message.content.ifBlank { "Generowanie…" },
-            modifier = Modifier
-                .alpha(if (message.isPending) 0.65f else 1f)
+            modifier = Modifier.alpha(if (message.isPending) 0.65f else 1f)
                 .fillMaxWidth(if (message.isUser) 0.82f else 0.92f)
                 .padding(12.dp),
             style = MaterialTheme.typography.bodyLarge,
