@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,7 +55,7 @@ fun ChatScreen(onSettings: () -> Unit, viewModel: ChatViewModel = hiltViewModel(
             TopAppBar(
                 title = { Text("NewGPT") },
                 actions = {
-                    IconButton(onClick = viewModel::clear) { Icon(Icons.Default.Delete, "Wyczyść") }
+                    IconButton(onClick = viewModel::clear, enabled = state.inputEnabled) { Icon(Icons.Default.Delete, "Wyczyść") }
                     IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Ustawienia") }
                 }
             )
@@ -91,6 +92,9 @@ fun ChatScreen(onSettings: () -> Unit, viewModel: ChatViewModel = hiltViewModel(
                 }
             }
         } else {
+            LaunchedEffect(state.messages.size) {
+                if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.lastIndex)
+            }
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize().padding(padding).imePadding(),
