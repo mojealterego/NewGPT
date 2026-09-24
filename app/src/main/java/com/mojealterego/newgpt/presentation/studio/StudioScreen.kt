@@ -36,14 +36,14 @@ class StudioViewModel @Inject constructor(
 
     fun speech(voice: String, text: String) = run("TTS") {
         val bytes = service.textToSpeech(prefs.preferences.value.elevenLabsKey, voice, text)
-        File.createTempFile("newgpt-voice-", ".mp3").apply { writeBytes(bytes) }
-        "Wygenerowano audio: " + absolutePath
+        File.createTempFile("newgpt-voice-", ".mp3").apply { writeBytes(bytes) }.absolutePath
+            .let { "Wygenerowano audio: " + it }
     }
 
     fun music(prompt: String) = run("Music") {
         val bytes = service.music(prefs.preferences.value.elevenLabsKey, prompt)
-        File.createTempFile("newgpt-music-", ".mp3").apply { writeBytes(bytes) }
-        "Wygenerowano muzykę: " + absolutePath
+        File.createTempFile("newgpt-music-", ".mp3").apply { writeBytes(bytes) }.absolutePath
+            .let { "Wygenerowano muzykę: " + it }
     }
 
     fun video(prompt: String) = run("Video") {
@@ -82,21 +82,9 @@ fun StudioScreen(onBack: () -> Unit, viewModel: StudioViewModel = hiltViewModel(
                 minLines = 5,
                 label = { Text("Prompt / tekst") }
             )
-            Button(
-                onClick = { viewModel.speech("JBFqnCBsd6RMkjVDRZzb", text) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = text.isNotBlank()
-            ) { Text("GENERUJ GŁOS") }
-            Button(
-                onClick = { viewModel.music(text) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = text.isNotBlank()
-            ) { Text("GENERUJ MUZYKĘ") }
-            Button(
-                onClick = { viewModel.video(text) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = text.isNotBlank()
-            ) { Text("GENERUJ WIDEO") }
+            Button(onClick = { viewModel.speech("JBFqnCBsd6RMkjVDRZzb", text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ GŁOS") }
+            Button(onClick = { viewModel.music(text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ MUZYKĘ") }
+            Button(onClick = { viewModel.video(text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ WIDEO") }
             Text(viewModel.status, color = MaterialTheme.colorScheme.primary)
             Text(
                 "Canva i zewnętrzne App Buildery są przygotowane jako warstwa integracji API/webhook. Nie są oznaczane jako natywne integracje bez udokumentowanego API.",
