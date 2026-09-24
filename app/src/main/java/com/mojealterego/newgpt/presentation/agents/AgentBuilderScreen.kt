@@ -56,12 +56,19 @@ fun AgentBuilderScreen(onBack: () -> Unit, viewModel: AgentBuilderViewModel = hi
         }
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).imePadding()) {
-            LazyColumn(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth().weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
                 items(state.agents, key = { it.id }) { agent ->
                     ListItem(
                         headlineContent = { Text(agent.name) },
                         supportingContent = { Text(agent.description) },
-                        trailingContent = { IconButton(onClick = { viewModel.delete(agent.id) }) { Icon(Icons.Default.Delete, "Usuń") } },
+                        trailingContent = {
+                            IconButton(onClick = { viewModel.delete(agent.id) }) {
+                                Icon(Icons.Default.Delete, "Usuń")
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Button(
@@ -83,7 +90,12 @@ fun AgentBuilderScreen(onBack: () -> Unit, viewModel: AgentBuilderViewModel = hi
 }
 
 @Composable
-private fun AgentEditor(agent: AgentDefinition, onChange: (AgentDefinition) -> Unit, onSave: () -> Unit, onDelete: () -> Unit) {
+private fun AgentEditor(
+    agent: AgentDefinition,
+    onChange: (AgentDefinition) -> Unit,
+    onSave: () -> Unit,
+    onDelete: () -> Unit
+) {
     Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         TextField(value = agent.name, onValueChange = { onChange(agent.copy(name = it)) }, modifier = Modifier.fillMaxWidth(), label = { Text("Nazwa") })
         TextField(value = agent.description, onValueChange = { onChange(agent.copy(description = it)) }, modifier = Modifier.fillMaxWidth(), label = { Text("Opis") })
