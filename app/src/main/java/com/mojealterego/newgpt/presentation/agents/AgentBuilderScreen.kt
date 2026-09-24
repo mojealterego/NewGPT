@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -75,6 +76,14 @@ fun AgentBuilderScreen(onBack: () -> Unit, viewModel: AgentBuilderViewModel = hi
                         onClick = { viewModel.select(agent.id) },
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                     ) { Text(if (agent.id == state.selectedId) "Edytowany" else "Edytuj") }
+                }
+            }
+            if (state.validationErrors.isNotEmpty()) {
+                Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
+                    Text("Nie można zapisać agenta:", color = MaterialTheme.colorScheme.error)
+                    state.validationErrors.forEach { error ->
+                        Text("• $error", color = MaterialTheme.colorScheme.error)
+                    }
                 }
             }
             draft?.let { current ->
