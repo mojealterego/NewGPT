@@ -14,20 +14,32 @@ class GgufStrategy @Inject constructor(private val engine: GgufNativeEngine) : A
         systemPrompt: String?
     ): Flow<String> {
         require(config.localModelPath.isNotBlank()) { "Nie wybrano modelu GGUF." }
-        val prompt = buildString {
-            if (!systemPrompt.isNullOrBlank()) {
-                append("System: ").append(systemPrompt.trim()).append("\n\n")
-            }
-            messages.forEach {
-                append(if (it.isUser) "User: " else "Assistant: ")
-                append(it.content)
-                append("\n")
-            }
-            append("Assistant:")
-        }
+
         return flow {
             engine.loadModel(config.localModelPath)
+
+            val chatMessages = buildList {
+                if (!systemPrompt.isNullOrBlank()) {
+                    add("system" to systemPrompt.trim())
+                }
+                messages.forEach {
+                    add((if (it.isUser) "user" else "assistant") to it.content)
+                }
+            }
+
+            val prompt = engine.formatChat(chatMessages) ?: buildFallbackPrompt(chatMessages)
             engine.generate(prompt).collect { emit(it) }
         }
     }
+
+    private fun buildFallbackPrompt(messages: List<Pair<String, String>>): String =
+        buildString {
+            messages.forEach { (role, content) ->
+                append(role.replaceFirstChar { it.uppercase() })
+                    .append(": ")
+                    .append(content)
+                    .append("\n")
+            }
+            append("Assistant:")
+        }
 }
