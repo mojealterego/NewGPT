@@ -1,8 +1,12 @@
 package com.mojealterego.newgpt.data.local.gguf
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,15 +23,20 @@ class GgufNativeEngine @Inject constructor() {
         contents: Array<String>
     ): String?
     private external fun generateNative(contextPtr: Long, prompt: String, callback: TokenCallback)
+    private external fun stopGenerationNative(contextPtr: Long)
     private external fun freeModelNative(contextPtr: Long)
 
+    @Volatile
     private var contextPtr = 0L
     private var loadedPath: String? = null
 
     @Synchronized
     fun loadModel(path: String) {
         if (contextPtr != 0L && loadedPath == path) return
-        if (contextPtr != 0L) freeModelNative(contextPtr)
+        if (contextPtr != 0L) {
+            stopGenerationNative(contextPtr)
+            freeModelNative(contextPtr)
+        }
         contextPtr = loadModelNative(path)
         check(contextPtr != 0L) { "Nie można załadować modelu GGUF." }
         loadedPath = path
@@ -45,13 +54,27 @@ class GgufNativeEngine @Inject constructor() {
     }
 
     fun generate(prompt: String): Flow<String> = callbackFlow {
-        check(contextPtr != 0L) { "Model GGUF nie został załadowany." }
+        val context = contextPtr
+        check(context != 0L) { "Model GGUF nie został załadowany." }
+
         val callback = object : TokenCallback {
-            override fun onToken(token: String) { trySend(token) }
-            override fun onComplete() { close() }
+            override fun onToken(token: String) {
+                trySend(token)
+            }
+
+            override fun onComplete() {
+                close()
+            }
         }
-        generateNative(contextPtr, prompt, callback)
-        awaitClose { }
+
+        val generation: Job = launch(Dispatchers.IO) {
+            generateNative(context, prompt, callback)
+        }
+
+        awaitClose {
+            stopGenerationNative(context)
+            generation.cancel()
+        }
     }
 
     private interface TokenCallback {
