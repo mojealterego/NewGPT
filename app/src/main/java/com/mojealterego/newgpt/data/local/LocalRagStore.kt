@@ -2,6 +2,7 @@ package com.mojealterego.newgpt.data.local
 
 import android.content.Context
 import android.net.Uri
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -20,7 +21,7 @@ data class RagDocument(
 )
 
 @Singleton
-class LocalRagStore @Inject constructor(private val context: Context) {
+class LocalRagStore @Inject constructor(@ApplicationContext private val context: Context) {
     private val file get() = File(context.filesDir, "rag/documents.json")
     private val json = Json { ignoreUnknownKeys = true; prettyPrint = false }
 
@@ -57,9 +58,7 @@ class LocalRagStore @Inject constructor(private val context: Context) {
         if (terms.isEmpty()) return@withContext emptyList()
         load().map { doc ->
             val haystack = doc.text.lowercase(Locale.ROOT)
-            val score = terms.sumOf { term ->
-                minOf(Regex(Regex.escape(term)).findAll(haystack).count(), 8)
-            }
+            val score = terms.sumOf { term -> minOf(Regex(Regex.escape(term)).findAll(haystack).count(), 8) }
             doc to score
         }.filter { it.second > 0 }
             .sortedByDescending { it.second }
