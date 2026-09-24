@@ -39,7 +39,7 @@ class AgentStore @Inject constructor(@ApplicationContext private val context: Co
     override suspend fun delete(id: String) {
         context.agentDataStore.edit { prefs ->
             val current = decode(prefs[key]).ifEmpty { defaultAgents() }
-            prefs[key] = encode(current.filterNot { it.id == agent.id } + agent)
+            prefs[key] = encode(current.filterNot { it.id == id })
         }
     }
 
