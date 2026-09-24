@@ -13,6 +13,11 @@ class GgufNativeEngine @Inject constructor() {
     }
 
     private external fun loadModelNative(modelPath: String): Long
+    private external fun formatChatNative(
+        contextPtr: Long,
+        roles: Array<String>,
+        contents: Array<String>
+    ): String?
     private external fun generateNative(contextPtr: Long, prompt: String, callback: TokenCallback)
     private external fun freeModelNative(contextPtr: Long)
 
@@ -26,6 +31,17 @@ class GgufNativeEngine @Inject constructor() {
         contextPtr = loadModelNative(path)
         check(contextPtr != 0L) { "Nie można załadować modelu GGUF." }
         loadedPath = path
+    }
+
+    @Synchronized
+    fun formatChat(messages: List<Pair<String, String>>): String? {
+        check(contextPtr != 0L) { "Model GGUF nie został załadowany." }
+        if (messages.isEmpty()) return null
+        return formatChatNative(
+            contextPtr,
+            messages.map { it.first }.toTypedArray(),
+            messages.map { it.second }.toTypedArray()
+        )
     }
 
     fun generate(prompt: String): Flow<String> = callbackFlow {
