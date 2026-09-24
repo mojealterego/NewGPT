@@ -56,6 +56,72 @@ Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_loadModelNative(
     return reinterpret_cast<jlong>(native);
 }
 
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_formatChatNative(
+        JNIEnv* env, jobject, jlong contextPtr, jobjectArray roles, jobjectArray contents) {
+    if (!contextPtr || !roles || !contents) return nullptr;
+
+    auto* native = reinterpret_cast<NativeContext*>(contextPtr);
+    if (!native->model) return nullptr;
+
+    const jsize roleCount = env->GetArrayLength(roles);
+    const jsize contentCount = env->GetArrayLength(contents);
+    if (roleCount <= 0 || roleCount != contentCount) return nullptr;
+
+    const char* tmpl = llama_model_chat_template(native->model, nullptr);
+    if (!tmpl || !*tmpl) return nullptr;
+
+    std::vector<std::string> roleStorage;
+    std::vector<std::string> contentStorage;
+    std::vector<llama_chat_message> messages;
+    roleStorage.reserve(static_cast<size_t>(roleCount));
+    contentStorage.reserve(static_cast<size_t>(contentCount));
+    messages.reserve(static_cast<size_t>(roleCount));
+
+    for (jsize i = 0; i < roleCount; ++i) {
+        auto roleObj = static_cast<jstring>(env->GetObjectArrayElement(roles, i));
+        auto contentObj = static_cast<jstring>(env->GetObjectArrayElement(contents, i));
+        if (!roleObj || !contentObj) {
+            if (roleObj) env->DeleteLocalRef(roleObj);
+            if (contentObj) env->DeleteLocalRef(contentObj);
+            return nullptr;
+        }
+
+        const char* roleChars = env->GetStringUTFChars(roleObj, nullptr);
+        const char* contentChars = env->GetStringUTFChars(contentObj, nullptr);
+        if (!roleChars || !contentChars) {
+            if (roleChars) env->ReleaseStringUTFChars(roleObj, roleChars);
+            if (contentChars) env->ReleaseStringUTFChars(contentObj, contentChars);
+            env->DeleteLocalRef(roleObj);
+            env->DeleteLocalRef(contentObj);
+            return nullptr;
+        }
+
+        roleStorage.emplace_back(roleChars);
+        contentStorage.emplace_back(contentChars);
+        env->ReleaseStringUTFChars(roleObj, roleChars);
+        env->ReleaseStringUTFChars(contentObj, contentChars);
+        env->DeleteLocalRef(roleObj);
+        env->DeleteLocalRef(contentObj);
+
+        messages.push_back({
+            roleStorage.back().c_str(),
+            contentStorage.back().c_str()
+        });
+    }
+
+    int32_t required = llama_chat_apply_template(
+        tmpl, messages.data(), messages.size(), true, nullptr, 0);
+    if (required < 0) return nullptr;
+
+    std::vector<char> buffer(static_cast<size_t>(required) + 1);
+    int32_t written = llama_chat_apply_template(
+        tmpl, messages.data(), messages.size(), true, buffer.data(), required + 1);
+    if (written < 0) return nullptr;
+
+    return env->NewStringUTF(std::string(buffer.data(), static_cast<size_t>(written)).c_str());
+}
+
 extern "C" JNIEXPORT void JNICALL
 Java_com_mojealterego_newgpt_data_local_gguf_GgufNativeEngine_generateNative(
         JNIEnv* env, jobject, jlong contextPtr, jstring prompt, jobject callback) {
