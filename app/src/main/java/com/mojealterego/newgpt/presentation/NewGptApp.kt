@@ -8,6 +8,7 @@ import com.mojealterego.newgpt.presentation.agents.AgentBuilderScreen
 import com.mojealterego.newgpt.presentation.agents.AgentsScreen
 import com.mojealterego.newgpt.presentation.chat.ChatScreen
 import com.mojealterego.newgpt.presentation.settings.SettingsScreen
+import com.mojealterego.newgpt.presentation.studio.StudioScreen
 import com.mojealterego.newgpt.presentation.theme.NewGptTheme
 
 @Composable
@@ -18,7 +19,8 @@ fun NewGptApp() {
             composable("chat") {
                 ChatScreen(
                     onAgents = { nav.navigate("agents") },
-                    onSettings = { nav.navigate("settings") }
+                    onSettings = { nav.navigate("settings") },
+                    onStudio = { nav.navigate("studio") }
                 )
             }
             composable("agents") {
@@ -31,6 +33,7 @@ fun NewGptApp() {
                 AgentBuilderScreen(onBack = { nav.popBackStack() })
             }
             composable("settings") { SettingsScreen(onBack = { nav.popBackStack() }) }
+            composable("studio") { StudioScreen(onBack = { nav.popBackStack() }) }
         }
     }
 }
