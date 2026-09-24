@@ -13,6 +13,7 @@ import com.mojealterego.newgpt.domain.model.ProviderType
 import com.mojealterego.newgpt.domain.repository.ChatRepository
 import com.mojealterego.newgpt.domain.strategy.AiInferenceStrategy
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +36,7 @@ class ChatRepositoryImpl @Inject constructor(
 
     override suspend fun sendMessage(conversationId: String, prompt: String, config: ProviderConfig) =
         withContext(Dispatchers.IO) {
+            val previousMessages = dao.observe(conversationId).first().map { Message(it.id, it.conversationId, it.content, it.isUser, it.timestamp, it.isPending) }
             val userId = UUID.randomUUID().toString()
             dao.insert(MessageEntity(userId, conversationId, prompt, true, System.currentTimeMillis(), false))
 
@@ -51,7 +53,7 @@ class ChatRepositoryImpl @Inject constructor(
 
             var response = ""
             try {
-                strategy.generateStream(prompt, config).collect { token ->
+                strategy.generateStream(previousMessages + Message(userId, conversationId, prompt, true, System.currentTimeMillis()), config).collect { token ->
                     response += token
                     dao.update(aiId, response, true)
                 }
