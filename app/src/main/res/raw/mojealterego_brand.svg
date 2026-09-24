@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 832">
+<rect width="1536" height="832" fill="#050506"/>
+<g fill="none" stroke="#D4AF37" stroke-width="12" stroke-linecap="round">
+<path d="M515 530 C400 470 385 310 470 205 C425 340 455 430 570 500"/>
+<path d="M1021 530 C1136 470 1151 310 1066 205 C1111 340 1081 430 966 500"/>
+</g>
+<g fill="#D4AF37">
+<path d="M768 20 l24 50 54 9 -39 38 9 54 -48 -26 -48 26 9 -54 -39 -38 54 -9z"/>
+</g>
+<text x="768" y="420" text-anchor="middle" fill="#D4AF37" font-family="Georgia,serif" font-size="260" letter-spacing="8">AM</text>
+<text x="768" y="590" text-anchor="middle" fill="#F4F0E6" font-family="Georgia,serif" font-size="52" letter-spacing="14">ANDRZEJ MIKULSKI</text>
+<path d="M520 640 H1016" stroke="#D4AF37" stroke-width="4"/>
+<text x="768" y="755" text-anchor="middle" fill="#D4AF37" font-family="cursive" font-size="88" font-style="italic">MojeAlterego</text>
+</svg>
