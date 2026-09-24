@@ -2,7 +2,6 @@ package com.mojealterego.newgpt.data.local.gguf
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -12,34 +11,38 @@ import javax.inject.Singleton
 
 @Singleton
 class GgufNativeEngine @Inject constructor() {
-    init {
-        System.loadLibrary("newgpt_native")
-    }
+    init { System.loadLibrary("newgpt_native") }
 
-    private external fun loadModelNative(modelPath: String): Long
-    private external fun formatChatNative(
+    private external fun loadModelNative(modelPath: String, gpuLayers: Int): Long
+    private external fun formatChatNative(contextPtr: Long, roles: Array<String>, contents: Array<String>): String?
+    private external fun generateNative(
         contextPtr: Long,
-        roles: Array<String>,
-        contents: Array<String>
-    ): String?
-    private external fun generateNative(contextPtr: Long, prompt: String, callback: TokenCallback)
+        prompt: String,
+        callback: TokenCallback,
+        contextSize: Int,
+        maxTokens: Int,
+        temperature: Float,
+        topP: Float,
+        threads: Int
+    )
     private external fun stopGenerationNative(contextPtr: Long)
     private external fun freeModelNative(contextPtr: Long)
 
-    @Volatile
-    private var contextPtr = 0L
+    @Volatile private var contextPtr = 0L
     private var loadedPath: String? = null
+    private var loadedGpuLayers = Int.MIN_VALUE
 
     @Synchronized
-    fun loadModel(path: String) {
-        if (contextPtr != 0L && loadedPath == path) return
+    fun loadModel(path: String, gpuLayers: Int) {
+        if (contextPtr != 0L && loadedPath == path && loadedGpuLayers == gpuLayers) return
         if (contextPtr != 0L) {
             stopGenerationNative(contextPtr)
             freeModelNative(contextPtr)
         }
-        contextPtr = loadModelNative(path)
+        contextPtr = loadModelNative(path, gpuLayers.coerceIn(0, 128))
         check(contextPtr != 0L) { "Nie można załadować modelu GGUF." }
         loadedPath = path
+        loadedGpuLayers = gpuLayers
     }
 
     @Synchronized
@@ -53,24 +56,30 @@ class GgufNativeEngine @Inject constructor() {
         )
     }
 
-    fun generate(prompt: String): Flow<String> = callbackFlow {
+    fun generate(
+        prompt: String,
+        contextSize: Int,
+        maxTokens: Int,
+        temperature: Float,
+        topP: Float,
+        threads: Int
+    ): Flow<String> = callbackFlow {
         val context = contextPtr
         check(context != 0L) { "Model GGUF nie został załadowany." }
-
         val callback = object : TokenCallback {
-            override fun onToken(token: String) {
-                trySend(token)
-            }
-
-            override fun onComplete() {
-                close()
-            }
+            override fun onToken(token: String) { trySend(token) }
+            override fun onComplete() { close() }
         }
-
         val generation: Job = launch(Dispatchers.IO) {
-            generateNative(context, prompt, callback)
+            generateNative(
+                context, prompt, callback,
+                contextSize.coerceIn(1024, 32768),
+                maxTokens.coerceIn(64, 8192),
+                temperature.coerceIn(0f, 2f),
+                topP.coerceIn(0.05f, 1f),
+                threads.coerceIn(1, 32)
+            )
         }
-
         awaitClose {
             stopGenerationNative(context)
             generation.cancel()
