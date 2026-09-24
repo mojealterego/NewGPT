@@ -21,9 +21,17 @@ import javax.inject.Inject
 class AnthropicStrategy @Inject constructor(private val client: HttpClient) : AiInferenceStrategy {
     private val json = Json { ignoreUnknownKeys = true }
 
-    override fun generateStream(messages: List<Message>, config: ProviderConfig): Flow<String> = flow {
+    override fun generateStream(
+        messages: List<Message>,
+        config: ProviderConfig,
+        systemPrompt: String?
+    ): Flow<String> = flow {
         require(config.anthropicKey.isNotBlank()) { "Brak klucza Anthropic." }
-        val request = AnthropicRequest(config.anthropicModel, messages = messages.map { ChatMessageDto(if (it.isUser) "user" else "assistant", it.content) })
+        val request = AnthropicRequest(
+            model = config.anthropicModel,
+            system = systemPrompt?.takeIf { it.isNotBlank() },
+            messages = messages.map { ChatMessageDto(if (it.isUser) "user" else "assistant", it.content) }
+        )
         client.preparePost("https://api.anthropic.com/v1/messages") {
             contentType(ContentType.Application.Json)
             header("x-api-key", config.anthropicKey)
