@@ -4,12 +4,12 @@ import com.mojealterego.newgpt.domain.model.Message
 import com.mojealterego.newgpt.domain.model.ProviderConfig
 import com.mojealterego.newgpt.domain.strategy.AiInferenceStrategy
 import io.ktor.client.HttpClient
-import io.ktor.client.request.contentType
 import io.ktor.client.request.header
 import io.ktor.client.request.preparePost
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +33,7 @@ class OpenAiStrategy @Inject constructor(private val client: HttpClient) : AiInf
         }
         val request = OpenAiRequest(config.openAiModel, history)
         client.preparePost("https://api.openai.com/v1/chat/completions") {
-            contentType(ContentType.Application.Json)
+            header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             header("Authorization", "Bearer " + config.openAiKey)
             setBody(request)
         }.execute { response ->
