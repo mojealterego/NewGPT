@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Timeline
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -77,6 +78,7 @@ class CognitiveCoreViewModel @Inject constructor(
 @Composable
 fun CognitiveCoreScreen(
     onBack: () -> Unit,
+    onNexusCore: () -> Unit,
     viewModel: CognitiveCoreViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
@@ -113,6 +115,11 @@ fun CognitiveCoreScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
+                }
+            }
+            item {
+                Button(onClick = onNexusCore, modifier = Modifier.fillMaxWidth()) {
+                    Text("OTWÓRZ DIGITAL NEXUS CORE")
                 }
             }
             item { MetricCard(Icons.Default.Memory, "RAG chunks", state.ragChunks.toString(), "Lokalny hybrid retrieval") }
