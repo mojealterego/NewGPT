@@ -245,14 +245,31 @@ class KnowledgeGraphExtractor {
             .findAll(text).map{KnowledgeRelation(it.groupValues[1],it.groupValues[2],it.groupValues[3])}.toList()
 }
 
-// 95–99: executable software-side governance only; impossible physical/quantum capabilities are not represented.
-data class GovernanceInvariant(val id:String,val description:String,val enabled:Boolean=true)
-data class MutationVerification(val mutationId:String,val preserved:List<String>,val passed:Boolean,val humanApprovalRequired:Boolean)
-class GovernanceInvariantGate(private val invariants:List<GovernanceInvariant>) {
-    fun verify(mutationId:String, candidateDigest:String):MutationVerification {
-        val preserved=invariants.filter{it.enabled}.map{it.id}
-        val passed=mutationId.isNotBlank() && candidateDigest.isNotBlank() && preserved.isNotEmpty()
-        return MutationVerification(mutationId,preserved,passed,true)
+// 95–99: only executable, locally verifiable governance is exposed.
+// No claim of physical fabrication, QPU access, or mathematical proof of human values.
+data class GovernancePolicy(
+    val id:String,
+    val description:String,
+    val requiresHumanApproval:Boolean = true,
+    val rollbackRequired:Boolean = true
+)
+data class MutationPolicyCheck(
+    val mutationId:String,
+    val policies:List<String>,
+    val humanApprovalRequired:Boolean,
+    val rollbackRequired:Boolean,
+    val inputValid:Boolean
+)
+class GovernancePolicyGate(private val policies:List<GovernancePolicy>) {
+    fun check(mutationId:String):MutationPolicyCheck {
+        val active = policies.filter { it.id.isNotBlank() }
+        return MutationPolicyCheck(
+            mutationId = mutationId,
+            policies = active.map { it.id },
+            humanApprovalRequired = active.any { it.requiresHumanApproval },
+            rollbackRequired = active.any { it.rollbackRequired },
+            inputValid = mutationId.isNotBlank() && active.isNotEmpty()
+        )
     }
 }
 data class EpistemicCheck(val confidence:Double,val contradictions:List<String>,val rollbackAvailable:Boolean)
@@ -301,10 +318,10 @@ class MetaArchitectRuntime {
     val zeroTrust=ZeroTrustGate(); val confidence=ConfidenceGate(); val loadShedder=LoadShedder()
     val clarifier=FuzzyClarifier(); val dag=DagPlanner(); val semanticRouter=SemanticRouter()
     val reasoning=ReasoningAuditor(); val knowledgeGraph=KnowledgeGraphExtractor()
-    val alignment=GovernanceInvariantGate(listOf(
-        GovernanceInvariant("human-approval","Self-modifying or consequential changes require human approval"),
-        GovernanceInvariant("rollback","Every evolution candidate must have a rollback path"),
-        GovernanceInvariant("least-privilege","Tools execute only within explicit permissions")
+    val governance=GovernancePolicyGate(listOf(
+        GovernancePolicy("human-approval","Self-modifying or consequential changes require human approval"),
+        GovernancePolicy("rollback","Every evolution candidate must have a rollback path"),
+        GovernancePolicy("least-privilege","Tools execute only within explicit permissions")
     ))
     val humility=EpistemicHumilityLoop()
     val snn=SnnTranspiler()
