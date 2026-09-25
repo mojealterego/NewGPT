@@ -50,58 +50,45 @@ fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltView
     var title by remember { mutableStateOf("") }
     var rationale by remember { mutableStateOf("") }
     var change by remember { mutableStateOf("") }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("DGM · RSI EVOLUTION LAB") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+    PremiumScaffold(
+        selected = "Narzędzia",
+        title = "DGM · RSI EVOLUTION LAB",
+        subtitle = "PROPOSE → EVALUATE → KEEP / REJECT",
+        onBack = onBack,
+        onPanel = {},
+        onAgents = {},
+        onMemory = {},
+        onTools = {},
+        onSettingsNav = {}
     ) { padding ->
         Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize().padding(padding).padding(14.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Propose → Evaluate → Keep / Reject", style = MaterialTheme.typography.headlineSmall)
-            Text(
-                "DGM/RSI działają tutaj jako kontrolowany harness: system może tworzyć propozycje usprawnień i je oceniać, ale nie zmienia samodzielnie kodu aplikacji ani nie publikuje zmian.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            ToggleRow("DGM proposal search", state.dgmEnabled) { value ->
-                viewModel.updateFlags(value, state.rsiEnabled, state.humanApprovalRequired, state.sandboxOnly)
+            GoldCard(title = "DGM / RSI Evolution Lab", icon = Icons.Default.Psychology) {
+                Text("Kontrolowany harness: system tworzy propozycje usprawnień i je ocenia, ale nie zmienia samodzielnie kodu aplikacji ani nie publikuje zmian.", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            ToggleRow("RSI recursive evaluation", state.rsiEnabled) { value ->
-                viewModel.updateFlags(state.dgmEnabled, value, state.humanApprovalRequired, state.sandboxOnly)
-            }
-            ToggleRow("Wymagaj akceptacji człowieka", state.humanApprovalRequired) { value ->
-                viewModel.updateFlags(state.dgmEnabled, state.rsiEnabled, value, state.sandboxOnly)
-            }
-            ToggleRow("Tylko sandbox / brak auto-deploy", state.sandboxOnly) { value ->
-                viewModel.updateFlags(state.dgmEnabled, state.rsiEnabled, state.humanApprovalRequired, value)
-            }
-            Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(title, { title = it }, Modifier.fillMaxWidth(), label = { Text("Propozycja") })
-                    OutlinedTextField(rationale, { rationale = it }, Modifier.fillMaxWidth(), minLines = 2, label = { Text("Uzasadnienie") })
-                    OutlinedTextField(change, { change = it }, Modifier.fillMaxWidth(), minLines = 3, label = { Text("Planowana zmiana") })
-                    Button(
-                        onClick = {
-                            viewModel.propose(title, rationale, change)
-                            title = ""; rationale = ""; change = ""
-                        },
-                        enabled = title.isNotBlank() && change.isNotBlank(),
-                        modifier = Modifier.fillMaxWidth()
-                    ) { Text("DODAJ DO ARCHIWUM EWOLUCJI") }
-                }
+            ToggleRow("DGM proposal search", state.dgmEnabled) { viewModel.updateFlags(it, state.rsiEnabled, state.humanApprovalRequired, state.sandboxOnly) }
+            ToggleRow("RSI recursive evaluation", state.rsiEnabled) { viewModel.updateFlags(state.dgmEnabled, it, state.humanApprovalRequired, state.sandboxOnly) }
+            ToggleRow("Wymagaj akceptacji człowieka", state.humanApprovalRequired) { viewModel.updateFlags(state.dgmEnabled, state.rsiEnabled, it, state.sandboxOnly) }
+            ToggleRow("Tylko sandbox / brak auto-deploy", state.sandboxOnly) { viewModel.updateFlags(state.dgmEnabled, state.rsiEnabled, state.humanApprovalRequired, it) }
+
+            GoldCard(title = "NOWA PROPOZYCJA", icon = Icons.Default.Science) {
+                OutlinedTextField(title, { title = it }, Modifier.fillMaxWidth(), label = { Text("Propozycja") })
+                OutlinedTextField(rationale, { rationale = it }, Modifier.fillMaxWidth(), minLines = 2, label = { Text("Uzasadnienie") })
+                OutlinedTextField(change, { change = it }, Modifier.fillMaxWidth(), minLines = 3, label = { Text("Planowana zmiana") })
+                GoldButton(
+                    "GENERUJ / ZAPISZ PROPOZYCJĘ",
+                    { viewModel.propose(title, rationale, change); title = ""; rationale = ""; change = "" },
+                    enabled = title.isNotBlank() && change.isNotBlank(),
+                    icon = Icons.Default.AutoAwesome
+                )
             }
             state.proposals.reversed().forEach { proposal ->
-                Card(Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                        Text(proposal.title, style = MaterialTheme.typography.titleMedium)
-                        Text(proposal.rationale)
-                        Text(proposal.change, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Status: " + proposal.status + " · score: " + (proposal.score?.toString() ?: "—"))
-                    }
+                GoldCard(title = proposal.title, icon = Icons.Default.Description) {
+                    Text(proposal.rationale)
+                    Text(proposal.change, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Status: ${proposal.status} · score: ${proposal.score?.toString() ?: "—"}", color = MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -110,8 +97,8 @@ fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltView
 
 @Composable
 private fun ToggleRow(label: String, checked: Boolean, onChecked: (Boolean) -> Unit) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(label)
-        Switch(checked = checked, onCheckedChange = onChecked)
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        Text(label, Modifier.weight(1f))
+        GoldSwitch(checked, onChecked)
     }
 }
