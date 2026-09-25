@@ -131,6 +131,31 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 if (ragStatus.isNotBlank()) Text(ragStatus, color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
             }
 
+            Section("MEMORY · WORKING / PERMANENT / GRAPH") {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Pamięć robocza")
+                        Text("Zapamiętuje bieżące doświadczenia i buduje graf skojarzeń.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(checked = prefDraft.workingMemoryEnabled, onCheckedChange = { prefDraft = prefDraft.copy(workingMemoryEnabled = it) })
+                }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Pamięć stała")
+                        Text("Przechowuje wybrane doświadczenia między sesjami.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(checked = prefDraft.permanentMemoryEnabled, onCheckedChange = { prefDraft = prefDraft.copy(permanentMemoryEnabled = it) })
+                }
+                OutlinedTextField(
+                    value = prefDraft.memoryTopK.toString(),
+                    onValueChange = { prefDraft = prefDraft.copy(memoryTopK = it.toIntOrNull()?.coerceIn(1, 12) ?: prefDraft.memoryTopK) },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Liczba wspomnień do retrieval") },
+                    singleLine = true
+                )
+                Text("Graf pamięci jest dostępny z Menu → Holographic Memory.", color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
+            }
+
             Section("INTERNET / WEB ACCESS") {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Pobieraj treść adresów HTTP(S) podanych w wiadomości.")
