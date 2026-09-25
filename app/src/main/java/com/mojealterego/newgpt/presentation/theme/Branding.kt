@@ -259,7 +259,7 @@ fun AgentPortrait(
             val icon = when (agentId) {
                 "coordinator" -> Icons.Default.AccountTree
                 "researcher" -> Icons.Default.Search
-                "architect" -> Icons.Default.Explore
+                "architect" -> Icons.Default.AccountTree
                 "coder" -> Icons.Default.Code
                 "writer" -> Icons.Default.AutoStories
                 "wda-photo" -> Icons.Default.PhotoCamera
