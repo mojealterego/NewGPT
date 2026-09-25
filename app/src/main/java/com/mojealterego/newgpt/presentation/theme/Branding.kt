@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -251,6 +253,70 @@ fun BrandGlobalHeader(
             }
         }
         GoldRule()
+    }
+}
+
+@Composable
+fun BrandBottomNav(
+    selected: String,
+    onPanel: () -> Unit,
+    onAgents: () -> Unit,
+    onMemory: () -> Unit,
+    onTools: () -> Unit,
+    onSettings: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val items = listOf(
+        Triple("Panel", Icons.Default.AutoStories, onPanel),
+        Triple("Agenci", Icons.Default.SmartToy, onAgents),
+        Triple("Wiedza", Icons.Default.Memory, onMemory),
+        Triple("Narzędzia", Icons.Default.Build, onTools),
+        Triple("Ustawienia", Icons.Default.Settings, onSettings)
+    )
+    Row(
+        modifier
+            .fillMaxWidth()
+            .height(72.dp)
+            .clip(RoundedCornerShape(22.dp))
+            .background(BrandPalette.Obsidian.copy(alpha = 0.96f))
+            .border(1.dp, BrandPalette.GoldDeep, RoundedCornerShape(22.dp)),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        items.forEach { (label, icon, action) ->
+            val active = label == selected
+            Column(
+                Modifier
+                    .weight(1f)
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(
+                        if (active) BrandPalette.Gold.copy(alpha = 0.22f)
+                        else Color.Transparent
+                    )
+                    .border(
+                        if (active) 1.dp else 0.dp,
+                        if (active) BrandPalette.Gold else Color.Transparent,
+                        RoundedCornerShape(18.dp)
+                    )
+                    .clickable(onClick = action)
+                    .padding(vertical = 7.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    icon,
+                    contentDescription = label,
+                    tint = if (active) BrandPalette.GoldBright else BrandPalette.Titanium,
+                    modifier = Modifier.size(25.dp)
+                )
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (active) BrandPalette.Ivory else BrandPalette.Titanium,
+                    fontWeight = if (active) FontWeight.Bold else FontWeight.Normal
+                )
+            }
+        }
     }
 }
 
