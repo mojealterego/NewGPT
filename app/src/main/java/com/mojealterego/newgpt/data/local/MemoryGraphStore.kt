@@ -110,6 +110,16 @@ class MemoryGraphStore @Inject constructor(@ApplicationContext context: Context)
 
     suspend fun graph(): MemoryGraph = withContext(Dispatchers.IO) { load().first }
 
+    suspend fun retrieveByEmbedding(query: String, limit: Int = 8): List<MemoryRecord> = withContext(Dispatchers.IO) {
+        val (_, records) = load()
+        val engine = HashEmbeddingEngine()
+        val queryVector = engine.embed(query)
+        records.map { it to HashEmbeddingEngine.cosine(queryVector, engine.embed(it.text)) }
+            .sortedByDescending { it.second + if (it.first.kind == "permanent") 0.05f else 0f }
+            .take(limit.coerceIn(1, 20))
+            .map { it.first }
+    }
+
     suspend fun clearWorking() = withContext(Dispatchers.IO) {
         val (graph, records) = load()
         val ids = records.filter { record -> record.kind == "working" }.map { record -> "memory:" + record.id }.toSet()
