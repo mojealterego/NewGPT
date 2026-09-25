@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.presentation.chat
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -123,7 +124,7 @@ fun ChatScreen(
                         }
                         LazyColumn(
                             state = listState,
-                            Modifier.weight(1f).fillMaxWidth(),
+                            modifier = Modifier.weight(1f).fillMaxWidth(),
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
@@ -160,7 +161,7 @@ fun ChatScreen(
                             Surface(
                                 shape = RoundedCornerShape(50),
                                 color = MaterialTheme.colorScheme.primary
-                            ) { Icon(Icons.Default.Send, "Wyślij", tint = Color(0xFF050506), Modifier.padding(14.dp)) }
+                            ) { Icon(Icons.Default.Send, "Wyślij", modifier = Modifier.padding(14.dp), tint = Color(0xFF050506)) }
                         }
                     }
                 }
