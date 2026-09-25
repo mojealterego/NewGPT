@@ -91,24 +91,27 @@ fun AgentsScreen(
                             }
                             GoldRule()
                             state.selectedAgent?.let { agent ->
-                                if (agent.id == "coordinator") {
+                                if (agent.id == "coordinator" || agent.id == "researcher") {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        AgentPortrait("coordinator", size = 104.dp)
+                                        AgentPortrait(agent.id, size = if (agent.id == "coordinator") 104.dp else 112.dp)
                                         Column(
                                             Modifier.padding(start = 16.dp),
                                             verticalArrangement = Arrangement.spacedBy(4.dp)
                                         ) {
-                                            BrandSectionLabel("AGENT 01")
+                                            BrandSectionLabel(if (agent.id == "coordinator") "AGENT 01" else "AGENT 02")
                                             Text(
-                                                "MASTER ORCHESTRATOR",
+                                                if (agent.id == "coordinator") "MASTER ORCHESTRATOR" else "DEEP RESEARCH AGENT",
                                                 style = MaterialTheme.typography.headlineSmall,
                                                 color = BrandPalette.GoldBright
                                             )
                                             Text(
-                                                "Central command · planning · delegation · verification",
+                                                if (agent.id == "coordinator")
+                                                    "Central command · planning · delegation · verification"
+                                                else
+                                                    "Information · analysis · sources · facts · insights · verification",
                                                 style = MaterialTheme.typography.labelMedium,
                                                 color = BrandPalette.Titanium
                                             )
