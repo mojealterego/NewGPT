@@ -91,7 +91,7 @@ fun AgentsScreen(
                             }
                             GoldRule()
                             state.selectedAgent?.let { agent ->
-                                if (agent.id in listOf("coordinator", "researcher", "architect")) {
+                                if (agent.id in listOf("coordinator", "researcher", "architect", "coder")) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
@@ -101,7 +101,8 @@ fun AgentsScreen(
                                             size = when (agent.id) {
                                                 "coordinator" -> 104.dp
                                                 "researcher" -> 112.dp
-                                                else -> 116.dp
+                                                "architect" -> 116.dp
+                                                else -> 120.dp
                                             }
                                         )
                                         Column(
@@ -112,14 +113,16 @@ fun AgentsScreen(
                                                 when (agent.id) {
                                                     "coordinator" -> "AGENT 01"
                                                     "researcher" -> "AGENT 02"
-                                                    else -> "AGENT 03"
+                                                    "architect" -> "AGENT 03"
+                                                    else -> "AGENT 04"
                                                 }
                                             )
                                             Text(
                                                 when (agent.id) {
                                                     "coordinator" -> "MASTER ORCHESTRATOR"
                                                     "researcher" -> "DEEP RESEARCH AGENT"
-                                                    else -> "SYSTEM ARCHITECT"
+                                                    "architect" -> "SYSTEM ARCHITECT"
+                                                    else -> "AI DEVELOPMENT AGENT"
                                                 },
                                                 style = MaterialTheme.typography.headlineSmall,
                                                 color = BrandPalette.GoldBright
@@ -128,7 +131,8 @@ fun AgentsScreen(
                                                 when (agent.id) {
                                                     "coordinator" -> "Central command · planning · delegation · verification"
                                                     "researcher" -> "Information · analysis · sources · facts · insights · verification"
-                                                    else -> "System design · architecture · data flow · infrastructure · scalability · integration · security"
+                                                    "architect" -> "System design · architecture · data flow · infrastructure · scalability · integration · security"
+                                                    else -> "Code · automate · debug · deploy · API · agents · tools · optimize · document"
                                                 },
                                                 style = MaterialTheme.typography.labelMedium,
                                                 color = BrandPalette.Titanium
