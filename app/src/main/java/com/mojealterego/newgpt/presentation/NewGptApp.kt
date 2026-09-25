@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mojealterego.newgpt.presentation.agents.AgentBuilderScreen
 import com.mojealterego.newgpt.presentation.agents.AgentsScreen
 import com.mojealterego.newgpt.presentation.chat.ChatScreen
+import com.mojealterego.newgpt.presentation.cognitive.CognitiveScreen
 import com.mojealterego.newgpt.presentation.builder.AppBuilderScreen
 import com.mojealterego.newgpt.presentation.evolution.EvolutionScreen
 import com.mojealterego.newgpt.presentation.memory.MemoryScreen
@@ -40,7 +41,7 @@ fun NewGptApp() {
             composable("studio") { StudioScreen(onBack = { nav.popBackStack() }) }
             composable("memory") { MemoryScreen(onBack = { nav.popBackStack() }) }
             composable("evolution") { EvolutionScreen(onBack = { nav.popBackStack() }) }
-            composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }
+            composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }\n            composable("cognitive") { CognitiveScreen(onBack = { nav.popBackStack() }) }
         }
     }
 }
