@@ -57,7 +57,7 @@ class ConflictResolver {
         if (positions.isEmpty()) return ConflictResolution(emptyList(), emptyList(), emptyList())
         val keys = positions.flatMap { it.goals.keys }.toSet()
         val shared = keys.filter { key -> positions.all { it.goals.containsKey(key) } }
-        return ConflictResolution(shared, keys - shared.toSet(),
+        return ConflictResolution(shared, keys.filterNot { it in shared },
             listOf("Use evidence and explicit constraints", "Separate trade-offs from personal disagreements", "Record decisions and revisit after measured results"))
     }
 }
