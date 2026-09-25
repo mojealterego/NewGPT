@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -307,7 +308,7 @@ private fun ModuleRow(name: String, enabled: Boolean) {
 }
 
 @Composable
-private fun StatPill(label: String, value: String) {
+private fun RowScope.StatPill(label: String, value: String) {
     Card(
         modifier = Modifier.weight(1f),
         shape = RoundedCornerShape(14.dp),
