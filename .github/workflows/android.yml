@@ -17,24 +17,26 @@ jobs:
           java-version: "17"
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
-        with:
-          packages: ""
+          # Intentionally keep SDK setup explicit for reproducible builds.
       - name: Install Android SDK components
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13113456" "cmake;3.31.6"
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
+      - name: Assemble installable release APK
+        run: gradle --no-daemon assembleRelease
+      - name: Build installable release AAB
+        run: gradle --no-daemon bundleRelease
       - name: Assemble debug APK
         run: gradle --no-daemon assembleDebug
-      - name: Build debug AAB
-        run: gradle --no-daemon bundleDebug
       - name: Unit tests
         run: gradle --no-daemon testDebugUnitTest
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: newgpt-android-debug
+          name: newgpt-android-1.0.1-installable
           path: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/bundle/release/*.aab
             app/build/outputs/apk/debug/*.apk
-            app/build/outputs/bundle/debug/*.aab
           if-no-files-found: error
