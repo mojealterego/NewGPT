@@ -1,5 +1,9 @@
 package com.mojealterego.newgpt.domain.agent
 
+import com.mojealterego.newgpt.data.local.BitemporalMemoryStore
+import com.mojealterego.newgpt.domain.cognitive.CognitiveRuntime
+import com.mojealterego.newgpt.domain.cognitive.DecisionKind
+import com.mojealterego.newgpt.domain.cognitive.MemoryKind
 import com.mojealterego.newgpt.domain.model.ProviderConfig
 import com.mojealterego.newgpt.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.first
@@ -9,7 +13,9 @@ data class AgentRunResult(val agentId: String, val response: String)
 
 class AgentRuntime @Inject constructor(
     private val agents: AgentRepository,
-    private val chat: ChatRepository
+    private val chat: ChatRepository,
+    private val memory: BitemporalMemoryStore,
+    private val cognition: CognitiveRuntime
 ) {
     suspend fun run(
         agentId: String,
@@ -19,7 +25,49 @@ class AgentRuntime @Inject constructor(
     ): AgentRunResult {
         val agent = agents.get(agentId) ?: error("Nie znaleziono agenta: $agentId")
         check(agent.enabled) { "Agent jest wyłączony: ${agent.name}" }
-        val response = chat.sendAgentMessage(conversationId, prompt, config, agent.systemPrompt)
+
+        val cycle = cognition.decisionCycle(prompt)
+        memory.remember(
+            content = "GOAL: $prompt",
+            kind = MemoryKind.WORKING,
+            source = "agent:$agentId",
+            confidence = 1f,
+            importance = 0.8f
+        )
+
+        val relevant = memory.query(prompt, limit = 6)
+        val grounding = relevant.joinToString("\n") {
+            "[${it.kind}] ${it.content}"
+        }.take(12000)
+
+        val enrichedPrompt = if (grounding.isBlank()) {
+            prompt
+        } else {
+            "$prompt\n\nCognitive context:\n$grounding"
+        }
+
+        val response = chat.sendAgentMessage(
+            conversationId,
+            enrichedPrompt,
+            config,
+            agent.systemPrompt
+        )
+
+        memory.remember(
+            content = response,
+            kind = MemoryKind.EPISODIC,
+            source = "agent:$agentId",
+            confidence = 0.65f,
+            importance = 0.6f
+        )
+
+        cognition.add(
+            cycle,
+            "Agent $agentId completed generation",
+            DecisionKind.RESULT,
+            confidence = 0.65f
+        )
+
         return AgentRunResult(agentId, response)
     }
 
@@ -54,7 +102,7 @@ class AgentRuntime @Inject constructor(
             val instruction = if (index == 0) {
                 current
             } else {
-                """Kontynuujesz pracę po poprzednim agencie.
+                """Kontynuujesz pracę po poprzednim agentcie.
 Twoje zadanie: $current
 
 Poprzedni rezultat:
