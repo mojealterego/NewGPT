@@ -7,6 +7,16 @@ on:
     branches: ["main"]
 
 jobs:
+  rust-core:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Rust unit tests
+        working-directory: rust-core
+        run: cargo test --all-targets --release
+
   build:
     runs-on: ubuntu-24.04
     steps:
@@ -17,7 +27,6 @@ jobs:
           java-version: "17"
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
-        with:
           packages: ""
       - name: Install Android SDK components
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13113456" "cmake;3.31.6"
