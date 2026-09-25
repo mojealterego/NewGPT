@@ -81,8 +81,8 @@ fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel(
 
 @Composable
 private fun MemoryGraphCanvas(graph: MemoryGraph, showPermanent: Boolean) {
-    val primary = primary
-    val background = background
+    val primary = MaterialTheme.colorScheme.primary
+    val background = MaterialTheme.colorScheme.background
     Canvas(Modifier.fillMaxWidth().height(420.dp).padding(8.dp)) {
         val visible = graph.nodes.filter { showPermanent || it.type != "permanent" }.take(80)
         if (visible.isEmpty()) return@Canvas
