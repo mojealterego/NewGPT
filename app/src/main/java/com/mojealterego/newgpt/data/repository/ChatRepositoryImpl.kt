@@ -98,7 +98,7 @@ class ChatRepositoryImpl @Inject constructor(
             }
         }
         if (pref.permanentMemoryEnabled) {
-            memory.retrieve(prompt, pref.memoryTopK).forEach { item ->
+            memory.retrieveByEmbedding(prompt, pref.memoryTopK).forEach { item ->
                 contextParts += "[MEMORY " + item.kind.uppercase() + "]\n" + item.text
             }
         }
