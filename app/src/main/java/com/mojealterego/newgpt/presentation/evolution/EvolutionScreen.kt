@@ -1,5 +1,8 @@
 package com.mojealterego.newgpt.presentation.evolution
 
+import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
+import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
+import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,17 +57,13 @@ fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltView
     var change by remember { mutableStateOf("") }
     Scaffold(
             containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(
-                title = { Text("DGM · RSI EVOLUTION LAB") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+        topBar = { BrandGlobalHeader(onMenu = onBack) }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            BrandPageHeader("DGM · RSI EVOLUTION LAB", "PROPOSE → EVALUATE → KEEP / REJECT", onBack)
             Text("Propose → Evaluate → Keep / Reject", style = MaterialTheme.typography.headlineSmall)
             Text(
                 "DGM/RSI działają tutaj jako kontrolowany harness: system może tworzyć propozycje usprawnień i je oceniać, ale nie zmienia samodzielnie kodu aplikacji ani nie publikuje zmian.",
@@ -82,7 +81,7 @@ fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltView
             ToggleRow("Tylko sandbox / brak auto-deploy", state.sandboxOnly) { value ->
                 viewModel.updateFlags(state.dgmEnabled, state.rsiEnabled, state.humanApprovalRequired, value)
             }
-            Card(Modifier.fillMaxWidth()) {
+            LuxuryCard(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(title, { title = it }, Modifier.fillMaxWidth(), label = { Text("Propozycja") })
                     OutlinedTextField(rationale, { rationale = it }, Modifier.fillMaxWidth(), minLines = 2, label = { Text("Uzasadnienie") })
