@@ -94,7 +94,7 @@ class ChatRepositoryImpl @Inject constructor(
         }
         if (pref.ragEnabled) {
             rag.retrieve(prompt, pref.ragTopK).forEach { doc ->
-                contextParts += "[RAG: " + doc.name + "]\n" + doc.text
+                contextParts += "[RAG: " + doc.name + " · chunk " + doc.chunkIndex + " · chars " + doc.sourceStart + "-" + doc.sourceEnd + "]\n" + doc.text
             }
         }
         if (pref.permanentMemoryEnabled) {
