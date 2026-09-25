@@ -105,9 +105,13 @@ private fun AgentEditor(agent: AgentDefinition, onChange: (AgentDefinition) -> U
                     "coder" -> 100.dp
                     "writer" -> 100.dp
                     "wda-photo" -> 108.dp
-                    "web-researcher" -> 112.dp
-                    "mobile-operator" -> 116.dp
-                    "rag-master" -> 120.dp
+                    "mobile-operator" -> 112.dp
+                    "rag-master" -> 116.dp
+                    "web-researcher" -> 120.dp
+                    "creative-director" -> 124.dp
+                    "gguf-engineer" -> 128.dp
+                    "memory-architect" -> 132.dp
+                    "evolution-engineer" -> 136.dp
                     else -> 64.dp
                 }
             )
@@ -119,15 +123,18 @@ private fun AgentEditor(agent: AgentDefinition, onChange: (AgentDefinition) -> U
                     "coder" -> BrandSectionLabel("AGENT 04 · AI DEVELOPMENT AGENT")
                     "writer" -> BrandSectionLabel("AGENT 05 · CREATIVE WRITING AGENT")
                     "wda-photo" -> BrandSectionLabel("AGENT 06 · VISUAL DIRECTOR AGENT")
-                    "web-researcher" -> BrandSectionLabel("AGENT 07 · INTELLIGENCE AGENT")
-                    "mobile-operator" -> BrandSectionLabel("AGENT 08 · ANDROID AUTOMATION AGENT")
-                    "rag-master" -> BrandSectionLabel("AGENT 09 · RESEARCH & DEVELOPMENT AGENT")
+                    "mobile-operator" -> BrandSectionLabel("AGENT 07 · ANDROID AUTOMATION AGENT")
+                    "rag-master" -> BrandSectionLabel("AGENT 08 · KNOWLEDGE INTELLIGENCE AGENT")
+                    "web-researcher" -> BrandSectionLabel("AGENT 09 · RESEARCH AUTOMATION AGENT")
+                    "creative-director" -> BrandSectionLabel("AGENT 10 · VISUAL STORYTELLING AGENT")
+                    "gguf-engineer" -> BrandSectionLabel("AGENT 11 · LOCAL AI OPTIMIZATION AGENT")
+                    "memory-architect" -> BrandSectionLabel("AGENT 12 · CONTEXT & KNOWLEDGE AGENT")
+                    "evolution-engineer" -> BrandSectionLabel("AGENT 13 · SELF-IMPROVING AI AGENT")
                     else -> BrandSectionLabel("AGENT PROFILE")
                 }
                 Text(agent.name, style = MaterialTheme.typography.headlineSmall, color = BrandPalette.Ivory)
                 Text(agent.id.uppercase(), style = MaterialTheme.typography.labelSmall, color = BrandPalette.GoldBright)
             }
-        }
         GoldRule()
         TextField(value = agent.name, onValueChange = { onChange(agent.copy(name = it)) }, modifier = Modifier.fillMaxWidth(), label = { Text("Nazwa") })
         TextField(value = agent.description, onValueChange = { onChange(agent.copy(description = it)) }, modifier = Modifier.fillMaxWidth(), label = { Text("Opis") })
