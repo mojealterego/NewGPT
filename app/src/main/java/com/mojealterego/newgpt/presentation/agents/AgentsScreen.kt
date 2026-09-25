@@ -1,47 +1,23 @@
 package com.mojealterego.newgpt.presentation.agents
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mojealterego.newgpt.domain.model.Message
+import com.mojealterego.newgpt.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,83 +29,99 @@ fun AgentsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }
     var menuOpen by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
 
-    LaunchedEffect(state.messages.size, state.selectedAgentId) {
-        if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.lastIndex)
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(state.selectedAgent?.name ?: "Agenci") },
-                navigationIcon = {
-                    Box {
-                        IconButton(onClick = { menuOpen = true }) { Icon(Icons.Default.ArrowDropDown, "Wybierz agenta") }
-                        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                            state.agents.filter { it.enabled }.forEach { agent ->
-                                DropdownMenuItem(
-                                    text = { Text(agent.name) },
-                                    onClick = { viewModel.selectAgent(agent.id); menuOpen = false }
-                                )
+    BrandBackground {
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Column {
+                            Text("AGENT COMMAND", style = MaterialTheme.typography.titleLarge)
+                            Text("MOJEALTEREGO · MULTI-AGENT SYSTEM", style = MaterialTheme.typography.labelSmall, color = BrandPalette.GoldBright)
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Ustawienia", tint = BrandPalette.Titanium) }
+                        IconButton(onClick = onBuilder) { Icon(Icons.Default.Settings, "Agent Builder", tint = BrandPalette.GoldBright) }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                )
+            },
+            bottomBar = {
+                Row(Modifier.fillMaxWidth().navigationBarsPadding().imePadding().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        modifier = Modifier.weight(1f),
+                        enabled = state.inputEnabled && state.selectedAgent != null,
+                        placeholder = { Text("Zleć zadanie wybranemu agentowi…") },
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    IconButton(onClick = { viewModel.send(text); text = "" }, enabled = state.inputEnabled && text.isNotBlank()) {
+                        Icon(Icons.Default.Send, "Wyślij", tint = BrandPalette.GoldBright)
+                    }
+                }
+            }
+        ) { padding ->
+            LazyColumn(
+                Modifier.fillMaxSize().padding(padding),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item {
+                    LuxuryCard(Modifier.fillMaxWidth()) {
+                        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            BrandSectionLabel("AGENT REGISTRY")
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                                AgentIdentity(state.selectedAgent?.id ?: "coordinator", state.selectedAgent?.name ?: "Coordinator")
+                                Box {
+                                    IconButton(onClick = { menuOpen = true }) {
+                                        Icon(Icons.Default.ArrowDropDown, "Wybierz agenta", tint = BrandPalette.GoldBright)
+                                    }
+                                    DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                                        state.agents.filter { it.enabled }.forEach { agent ->
+                                            DropdownMenuItem(
+                                                text = { Text(agent.name) },
+                                                onClick = { viewModel.selectAgent(agent.id); menuOpen = false }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            GoldRule()
+                            state.selectedAgent?.let { agent ->
+                                Text(agent.description, color = BrandPalette.Ivory)
+                                Text("SKILLS · ${agent.skills.joinToString(" · ")}", style = MaterialTheme.typography.labelSmall, color = BrandPalette.Titanium)
+                                if (agent.tools.isNotEmpty()) {
+                                    Text("TOOLS · ${agent.tools.joinToString(" · ")}", style = MaterialTheme.typography.labelSmall, color = BrandPalette.Titanium)
+                                }
+                                if (agent.handoffs.isNotEmpty()) {
+                                    OutlinedButton(
+                                        onClick = { viewModel.runHandoffPipeline(text) },
+                                        enabled = state.inputEnabled && text.isNotBlank(),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("PIPELINE  ${agent.handoffs.joinToString("  →  ")}")
+                                    }
+                                }
                             }
                         }
                     }
-                },
-                actions = {
-                    IconButton(onClick = viewModel::clear) { Icon(Icons.Default.Delete, "Wyczyść") }
-                    IconButton(onClick = onBuilder) { Icon(Icons.Default.Settings, "Agent Builder") }
                 }
-            )
-        },
-        bottomBar = {
-            Row(
-                Modifier.fillMaxWidth().navigationBarsPadding().imePadding().padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    value = text, onValueChange = { text = it }, modifier = Modifier.weight(1f),
-                    enabled = state.inputEnabled && state.selectedAgent != null,
-                    placeholder = { Text("Zleć zadanie agentowi…") }
-                )
-                IconButton(
-                    onClick = { viewModel.send(text); text = "" },
-                    enabled = state.inputEnabled && text.isNotBlank()
-                ) { Icon(Icons.Default.Send, "Wyślij") }
-            }
-        }
-    ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
-            state.selectedAgent?.let {
-                Text(
-                    "${it.description}  •  skills: ${it.skills.joinToString(", ")}",
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-                if (it.handoffs.isNotEmpty()) {
-                    Button(
-                        onClick = { viewModel.runHandoffPipeline(text) },
-                        enabled = state.inputEnabled && text.isNotBlank(),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                    ) { Text("Uruchom pipeline: ${it.handoffs.joinToString(" → ")}") }
-                }
-            }
-            if (state.messages.isEmpty()) {
-                Column(
-                    Modifier.fillMaxSize().padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("Agent gotowy", style = MaterialTheme.typography.headlineSmall)
-                    Text("Wybierz agenta i zleć mu zadanie.")
-                    Button(onClick = onBuilder, modifier = Modifier.padding(top = 12.dp)) { Text("Otwórz Agent Builder") }
-                }
-            } else {
-                LazyColumn(
-                    state = listState, modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
+
+                if (state.messages.isEmpty()) {
+                    item {
+                        LuxuryCard(Modifier.fillMaxWidth()) {
+                            Column(Modifier.fillMaxWidth().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                AgentIdentity(state.selectedAgent?.id ?: "coordinator", state.selectedAgent?.name ?: "Coordinator")
+                                Text("Agent gotowy", style = MaterialTheme.typography.headlineSmall, color = BrandPalette.GoldBright)
+                                Text("Każdy agent ma własną specjalizację, zestaw narzędzi i możliwe handoffy.", color = BrandPalette.Titanium)
+                                Button(onClick = onBuilder) { Text("OTWÓRZ AGENT BUILDER") }
+                            }
+                        }
+                    }
+                } else {
                     items(state.messages, key = { it.id }) { AgentMessage(it, state.selectedAgent?.name.orEmpty()) }
                 }
             }
@@ -139,8 +131,12 @@ fun AgentsScreen(
 
 @Composable
 private fun AgentMessage(message: Message, agentName: String) {
-    Column(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Text(if (message.isUser) "Ty" else agentName, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
-        Text(message.content.ifBlank { "Generowanie…" }, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(top = 3.dp))
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start) {
+        LuxuryCard(Modifier.fillMaxWidth(if (message.isUser) 0.84f else 0.94f)) {
+            Column(Modifier.padding(14.dp)) {
+                Text(if (message.isUser) "TY" else agentName.uppercase(), style = MaterialTheme.typography.labelMedium, color = BrandPalette.GoldBright)
+                Text(message.content.ifBlank { "Generowanie…" }, style = MaterialTheme.typography.bodyLarge, color = BrandPalette.Ivory, modifier = Modifier.padding(top = 5.dp))
+            }
+        }
     }
 }
