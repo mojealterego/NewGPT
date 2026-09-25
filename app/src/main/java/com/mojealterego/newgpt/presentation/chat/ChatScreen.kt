@@ -98,8 +98,7 @@ fun ChatScreen(
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     HorizontalDivider()
-                    Text("Wszystkie prawa zastrzeżone", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(top = 12.dp))
-                    Text("Mojealterego", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Text("Wszystkie prawa zastrzeżone Mojealterego", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(top = 12.dp))
                 }
             }
         }
