@@ -91,7 +91,7 @@ fun AgentsScreen(
                             }
                             GoldRule()
                             state.selectedAgent?.let { agent ->
-                                if (agent.id in listOf("coordinator", "researcher", "architect", "coder", "writer", "wda-photo", "web-researcher")) {
+                                if (agent.id in listOf("coordinator", "researcher", "architect", "coder", "writer", "wda-photo", "web-researcher", "mobile-operator")) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
@@ -105,7 +105,8 @@ fun AgentsScreen(
                                                 "coder" -> 120.dp
                                                 "writer" -> 124.dp
                                                 "wda-photo" -> 128.dp
-                                                else -> 132.dp
+                                                "web-researcher" -> 132.dp
+                                                else -> 136.dp
                                             }
                                         )
                                         Column(
@@ -120,7 +121,8 @@ fun AgentsScreen(
                                                     "coder" -> "AGENT 04"
                                                     "writer" -> "AGENT 05"
                                                     "wda-photo" -> "AGENT 06"
-                                                    else -> "AGENT 07"
+                                                    "web-researcher" -> "AGENT 07"
+                                                    else -> "AGENT 08"
                                                 }
                                             )
                                             Text(
@@ -131,7 +133,8 @@ fun AgentsScreen(
                                                     "coder" -> "AI DEVELOPMENT AGENT"
                                                     "writer" -> "CREATIVE WRITING AGENT"
                                                     "wda-photo" -> "VISUAL DIRECTOR AGENT"
-                                                    else -> "INTELLIGENCE AGENT"
+                                                    "web-researcher" -> "INTELLIGENCE AGENT"
+                                                    else -> "ANDROID AUTOMATION AGENT"
                                                 },
                                                 style = MaterialTheme.typography.headlineSmall,
                                                 color = BrandPalette.GoldBright
