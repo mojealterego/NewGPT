@@ -10,7 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mojealterego.newgpt.data.local.MemoryGraph
+import com.mojealterego.newgpt.presentation.theme.*
 import com.mojealterego.newgpt.data.local.MemoryGraphStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -47,34 +50,40 @@ class MemoryViewModel @Inject constructor(private val store: MemoryGraphStore) :
 fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel()) {
     val graph = viewModel.graph
     var showPermanent by remember { mutableStateOf(true) }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("HOLOGRAPHIC MEMORY") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+    PremiumScaffold(
+        selected = "Wiedza",
+        title = "HOLOGRAPHIC MEMORY",
+        subtitle = "WORKING · PERMANENT · GRAPH",
+        onBack = onBack,
+        onPanel = {},
+        onAgents = {},
+        onMemory = {},
+        onTools = {},
+        onSettingsNav = {}
     ) { padding ->
         Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize().padding(padding).padding(14.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Pamięć robocza + pamięć stała + graf skojarzeń", style = MaterialTheme.typography.headlineSmall)
-            Text(
-                "Widok holograficzny jest projekcją grafu: węzły reprezentują wspomnienia i pojęcia, a krawędzie ich relacje.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Pokaż pamięć stałą")
-                Switch(checked = showPermanent, onCheckedChange = { showPermanent = it })
+            GoldCard(title = "Pamięć robocza + pamięć stała + graf skojarzeń", icon = Icons.Default.Psychology) {
+                Text(
+                    "Widok holograficzny jest projekcją grafu: węzły reprezentują wspomnienia i pojęcia, a krawędzie ich relacje.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Text("Pokaż pamięć stałą")
+                    GoldSwitch(showPermanent, { showPermanent = it })
+                }
             }
-            Card(Modifier.fillMaxWidth()) { MemoryGraphCanvas(graph, showPermanent) }
-            Text("Węzły: " + graph.nodes.size + " · relacje: " + graph.edges.size)
+            GoldCard(title = "GRAF HOLOGRAFICZNY", icon = Icons.Default.Hub) {
+                MemoryGraphCanvas(graph, showPermanent)
+                Text("Węzły: ${graph.nodes.size} · relacje: ${graph.edges.size}", color = MaterialTheme.colorScheme.primary)
+            }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = viewModel::refresh, modifier = Modifier.weight(1f)) { Text("ODŚWIEŻ") }
-                Button(onClick = viewModel::clearWorking, modifier = Modifier.weight(1f)) { Text("WYCZYŚĆ ROBOCZĄ") }
+                OutlineGoldButton("ODŚWIEŻ", viewModel::refresh, Modifier.weight(1f), Icons.Default.Refresh)
+                OutlineGoldButton("WYCZYŚĆ ROBOCZĄ", viewModel::clearWorking, Modifier.weight(1f), Icons.Default.Delete)
             }
-            Button(onClick = viewModel::clearAll, modifier = Modifier.fillMaxWidth()) { Text("WYCZYŚĆ CAŁĄ PAMIĘĆ") }
+            GoldButton("WYCZYŚĆ CAŁĄ PAMIĘĆ", viewModel::clearAll, icon = Icons.Default.DeleteForever)
         }
     }
 }

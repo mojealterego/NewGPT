@@ -1,6 +1,7 @@
 package com.mojealterego.newgpt.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -13,12 +14,19 @@ import com.mojealterego.newgpt.presentation.evolution.EvolutionScreen
 import com.mojealterego.newgpt.presentation.memory.MemoryScreen
 import com.mojealterego.newgpt.presentation.settings.SettingsScreen
 import com.mojealterego.newgpt.presentation.studio.StudioScreen
+import com.mojealterego.newgpt.presentation.theme.LocalNewGptNavigate
 import com.mojealterego.newgpt.presentation.theme.NewGptTheme
 
 @Composable
 fun NewGptApp() {
     NewGptTheme {
         val nav = rememberNavController()
+        CompositionLocalProvider(LocalNewGptNavigate provides { route ->
+            if (nav.currentDestination?.route != route) nav.navigate(route) {
+                launchSingleTop = true
+                restoreState = true
+            }
+        }) {
         NavHost(navController = nav, startDestination = "chat") {
             composable("chat") {
                 ChatScreen(
@@ -44,6 +52,7 @@ fun NewGptApp() {
             composable("evolution") { EvolutionScreen(onBack = { nav.popBackStack() }) }
             composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }
             composable("cognitive") { CognitiveScreen(onBack = { nav.popBackStack() }) }
+        }
         }
     }
 }
