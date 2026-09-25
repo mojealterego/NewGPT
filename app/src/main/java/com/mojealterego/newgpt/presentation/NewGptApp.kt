@@ -12,6 +12,7 @@ import com.mojealterego.newgpt.presentation.cognitive.CognitiveCoreScreen
 import com.mojealterego.newgpt.presentation.evolution.EvolutionScreen
 import com.mojealterego.newgpt.presentation.memory.MemoryScreen
 import com.mojealterego.newgpt.presentation.nexus.DigitalNexusScreen
+import com.mojealterego.newgpt.presentation.runtime.AbsoluteMaximumScreen
 import com.mojealterego.newgpt.presentation.settings.SettingsScreen
 import com.mojealterego.newgpt.presentation.studio.StudioScreen
 import com.mojealterego.newgpt.presentation.theme.NewGptTheme
@@ -29,7 +30,8 @@ fun NewGptApp() {
                     onMemory = { nav.navigate("memory") },
                     onEvolution = { nav.navigate("evolution") },
                     onBuilder = { nav.navigate("builder") },
-                    onCognitiveCore = { nav.navigate("cognitive") }
+                    onCognitiveCore = { nav.navigate("cognitive") },
+                    onAbsoluteMaximum = { nav.navigate("absolute-maximum") }
                 )
             }
             composable("agents") {
@@ -46,6 +48,7 @@ fun NewGptApp() {
             composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }
             composable("cognitive") { CognitiveCoreScreen(onBack = { nav.popBackStack() }, onNexusCore = { nav.navigate("nexus") }) }
             composable("nexus") { DigitalNexusScreen(onBack = { nav.popBackStack() }) }
+            composable("absolute-maximum") { AbsoluteMaximumScreen(onBack = { nav.popBackStack() }) }
         }
     }
 }
