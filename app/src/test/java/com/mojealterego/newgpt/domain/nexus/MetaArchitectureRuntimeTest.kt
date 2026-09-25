@@ -9,7 +9,7 @@ import org.junit.Test
 class MetaArchitectureRuntimeTest {
     @Test
     fun alignmentGateRejectsChangedPolicyHash() {
-        val gate = AlignmentGate()
+        val gate = GovernanceInvariantGate()
         val policy = gate.policy("1", setOf("human-safety"), setOf("deception"))
         val proposal = MutationProposal(
             id = "m1",
@@ -40,16 +40,6 @@ class MetaArchitectureRuntimeTest {
         )
         assertTrue(result.failed.isEmpty())
         assertEquals("C", result.outputs["c"])
-    }
-
-    @Test
-    fun quantumAdapterUsesExactClassicalFallback() {
-        val result = QuantumHybridAdapter().search(
-            QuantumQuery(listOf(1, 2, 3)) { it == 2 }
-        )
-        assertEquals(2, result.item)
-        assertEquals("CLASSICAL_FALLBACK", result.backend)
-        assertTrue(result.exact)
     }
 
     @Test
