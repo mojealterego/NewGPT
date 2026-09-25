@@ -62,7 +62,7 @@ class IbmQuantumRuntime(private val config: QuantumConfig) {
 
     suspend fun job(jobId: String): String = get("/jobs/" + jobId.encodePathSegment())
 
-    suspend fun result(jobId: String): String = get("/jobs/" + jobId.encodePathSegment())
+    suspend fun result(jobId: String): String = get("/jobs/" + jobId.encodePathSegment() + "/results")
 
     private suspend fun get(path: String): String = withContext(Dispatchers.IO) {
         val connection = (URL(config.baseUrl.trimEnd('/') + path).openConnection() as HttpURLConnection).apply {
