@@ -88,6 +88,7 @@ class ChatRepositoryImpl @Inject constructor(
 
         val contextParts = mutableListOf<String>()
         val gotInputId = got.append("input", prompt, 0.7f)
+        got.appendStage(gotInputId, "hypothesis", "Answer using the configured provider with retrieved memory/RAG/web context when enabled.", 0.6f)
         val surprise = titans.observe(prompt)
         if (surprise > 0.25f) {
             contextParts += titans.retrieve(prompt, pref.memoryTopK).map { "[TITANS MEMORY]\\n" + it.value }.joinToString("\\n\\n")
@@ -119,6 +120,7 @@ class ChatRepositoryImpl @Inject constructor(
         }.ifBlank { null }
 
         val response = StringBuilder()
+        got.appendStage(gotInputId, "action", "Generate response with provider=" + config.activeProvider + ".", 0.7f)
         try {
             strategy.generateStream(
                 previousMessages + Message(userId, conversationId, prompt, true, now),
