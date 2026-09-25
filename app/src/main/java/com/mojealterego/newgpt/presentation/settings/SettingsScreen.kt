@@ -3,6 +3,7 @@ package com.mojealterego.newgpt.presentation.settings
 import com.mojealterego.newgpt.presentation.theme.BrandBottomNav
 import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
 import com.mojealterego.newgpt.presentation.theme.BrandHero
+import com.mojealterego.newgpt.presentation.theme.BrandPalette
 import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
 import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -92,7 +93,7 @@ fun SettingsScreen(
             BrandPageHeader("USTAWIENIA", "AI CONTROL CENTER · DOSTAWCY · RAG · MEMORY · GGUF", onBack)
             BrandHero(
                 "AI CONTROL CENTER",
-                "OBSydian · 24K GOLD · SERIF · LOCAL AI · RAG · CREATIVE API",
+                "OBSIDIAN · 24K GOLD · SERIF · LOCAL AI · RAG · CREATIVE API",
                 androidx.compose.material.icons.Icons.Default.Settings,
                 BrandPalette.Gold
             )
