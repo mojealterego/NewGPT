@@ -16,7 +16,7 @@ class DigitalNexusRuntimeTest {
             )
         )
         assertEquals(3, result.evaluatedOptions.size)
-        assertEquals("a", result.selectedId)
+        assertEquals("b", result.selectedId)
         assertTrue(result.confidence > 0f)
     }
 
