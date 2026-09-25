@@ -22,6 +22,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
+      - name: Create CI signing key
+        run: |
+          mkdir -p "$HOME/.android"
+          keytool -genkeypair -v             -keystore "$HOME/.android/debug.keystore"             -storepass android             -keypass android             -alias androiddebugkey             -keyalg RSA             -keysize 2048             -validity 10000             -dname "CN=NewGPT CI, O=MojeAlterego, C=PL"
       - name: Assemble installable release APK
         run: gradle --no-daemon assembleRelease
       - name: Build installable release AAB
