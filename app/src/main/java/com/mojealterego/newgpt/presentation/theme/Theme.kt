@@ -8,35 +8,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 
-private val Obsidian = Color(0xFF050506)
-private val ObsidianSurface = Color(0xFF101012)
-private val ObsidianRaised = Color(0xFF17171A)
-private val Gold24K = Color(0xFFD4AF37)
-private val GoldHighlight = Color(0xFFF3D77A)
-private val Ivory = Color(0xFFF5F1E7)
-private val Titanium = Color(0xFFB8BBC2)
-private val Burgundy = Color(0xFF5E1724)
-
 private val NewGptDarkScheme = darkColorScheme(
-    primary = Gold24K,
-    onPrimary = Obsidian,
-    primaryContainer = Color(0xFF3A3010),
-    onPrimaryContainer = GoldHighlight,
-    secondary = Titanium,
-    onSecondary = Obsidian,
-    secondaryContainer = ObsidianRaised,
-    onSecondaryContainer = Ivory,
-    tertiary = GoldHighlight,
-    onTertiary = Obsidian,
-    background = Obsidian,
-    onBackground = Ivory,
-    surface = ObsidianSurface,
-    onSurface = Ivory,
-    surfaceVariant = Color(0xFF222227),
-    onSurfaceVariant = Color(0xFFD2D0C9),
-    outline = Color(0xFF6F674E),
+    primary = BrandPalette.Gold,
+    onPrimary = BrandPalette.Obsidian,
+    primaryContainer = Color(0xFF3A2C08),
+    onPrimaryContainer = BrandPalette.GoldBright,
+    secondary = BrandPalette.Titanium,
+    onSecondary = BrandPalette.Obsidian,
+    secondaryContainer = BrandPalette.Leather,
+    onSecondaryContainer = BrandPalette.Ivory,
+    tertiary = BrandPalette.GoldBright,
+    onTertiary = BrandPalette.Obsidian,
+    background = BrandPalette.Obsidian,
+    onBackground = BrandPalette.Ivory,
+    surface = BrandPalette.AnilineBlack,
+    onSurface = BrandPalette.Ivory,
+    surfaceVariant = Color(0xFF1D1D21),
+    onSurfaceVariant = Color(0xFFD4D0C6),
+    outline = Color(0xFF665D45),
+    outlineVariant = Color(0xFF302D27),
     error = Color(0xFFE57373),
-    errorContainer = Burgundy
+    errorContainer = BrandPalette.Burgundy
 )
 
 private val NewGptTypography = Typography().let {
