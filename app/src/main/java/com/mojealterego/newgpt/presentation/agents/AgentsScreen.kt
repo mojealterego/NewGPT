@@ -91,7 +91,7 @@ fun AgentsScreen(
                             }
                             GoldRule()
                             state.selectedAgent?.let { agent ->
-                                if (agent.id in listOf("coordinator", "researcher", "architect", "coder", "writer", "wda-photo", "mobile-operator")) {
+                                if (agent.id in listOf("coordinator", "researcher", "architect", "coder", "writer", "wda-photo", "web-researcher")) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
