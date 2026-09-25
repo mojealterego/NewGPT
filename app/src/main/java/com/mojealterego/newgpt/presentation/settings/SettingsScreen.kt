@@ -1,11 +1,6 @@
 package com.mojealterego.newgpt.presentation.settings
 
-import com.mojealterego.newgpt.presentation.theme.BrandBottomNav
-import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
-import com.mojealterego.newgpt.presentation.theme.BrandHero
-import com.mojealterego.newgpt.presentation.theme.BrandPalette
-import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
-import com.mojealterego.newgpt.presentation.theme.LuxuryCard
+import com.mojealterego.newgpt.presentation.theme.*
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +22,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
