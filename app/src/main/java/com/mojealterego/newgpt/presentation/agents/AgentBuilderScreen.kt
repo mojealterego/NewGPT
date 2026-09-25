@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.presentation.agents
 
+import androidx.compose.material.icons.filled.AccountTree
 import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
 import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
 import com.mojealterego.newgpt.presentation.theme.LuxuryCard
@@ -47,6 +48,7 @@ fun AgentBuilderScreen(onBack: () -> Unit, viewModel: AgentBuilderViewModel = hi
                         }
                     }
                 )
+                BrandHero("Zaprojektuj własnego agenta", "System prompt · skills · tools · pamięć · pipeline.", Icons.Default.AccountTree, BrandPalette.Gold)
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     contentPadding = PaddingValues(16.dp),
