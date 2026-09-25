@@ -27,7 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier\nimport androidx.compose.ui.semantics.contentDescription\nimport androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -119,7 +119,7 @@ fun CognitiveCoreScreen(
             }
             item {
                 Button(onClick = onNexusCore, modifier = Modifier.fillMaxWidth()) {
-                    Text("OTWÓRZ DIGITAL NEXUS CORE")
+                    Text("OTWÓRZ DIGITAL NEXUS CORE", modifier = Modifier.semantics { contentDescription = "Otwórz Digital Nexus Core" })
                 }
             }
             item { MetricCard(Icons.Default.Memory, "RAG chunks", state.ragChunks.toString(), "Lokalny hybrid retrieval") }
