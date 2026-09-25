@@ -1,1 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><resources><style name="Theme.NewGPT" parent="android:style/Theme.Material.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:windowLightStatusBar">false</item><item name="android:navigationBarColor">@android:color/black</item><item name="android:statusBarColor">@android:color/transparent</item></style></resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.NewGPT" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">#050506</item>
+        <item name="android:navigationBarColor">#050506</item>
+        <item name="android:windowBackground">#050506</item>
+        <item name="android:colorAccent">#D4AF37</item>
+    </style>
+</resources>
