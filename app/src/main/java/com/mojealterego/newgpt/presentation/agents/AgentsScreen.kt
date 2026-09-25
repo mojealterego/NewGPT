@@ -64,7 +64,8 @@ fun AgentsScreen(
             topBar = {
                 BrandGlobalHeader(
                     onMenu = onBack,
-                    onSettings = onSettings
+                    onSettings = onSettings,
+                    onClear = { viewModel.clear() }
                 )
             },
             bottomBar = {
