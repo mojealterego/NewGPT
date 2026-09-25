@@ -10,7 +10,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 import java.security.MessageDigest
-import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Meta Architecture Runtime.
@@ -18,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong
  * This is a deterministic control plane for the capabilities described in the
  * NewGPT architecture notes. It intentionally does not claim autonomous control
  * of physical factories, quantum hardware, human values, or production self-modification.
- * Those capabilities are represented by governed adapters and evidence gates.
+ * Capabilities that are not executable on Android are not represented as fake implementations.
  */
 data class DecisionEvidence(
     val source: String,
@@ -112,18 +111,6 @@ data class EnergyPolicy(
     val maxWorkFraction: Double,
     val preferLocal: Boolean,
     val allowBackgroundWork: Boolean
-)
-
-data class QuantumQuery<T>(
-    val items: List<T>,
-    val predicate: (T) -> Boolean
-)
-
-data class QuantumResult<T>(
-    val item: T?,
-    val backend: String,
-    val exact: Boolean,
-    val elapsedHint: String
 )
 
 data class AlignmentPolicy(
