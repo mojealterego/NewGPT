@@ -102,6 +102,7 @@ private fun AgentEditor(agent: AgentDefinition, onChange: (AgentDefinition) -> U
                     "coordinator" -> 96.dp
                     "researcher" -> 88.dp
                     "architect" -> 96.dp
+                    "coder" -> 100.dp
                     else -> 64.dp
                 }
             )
@@ -110,6 +111,7 @@ private fun AgentEditor(agent: AgentDefinition, onChange: (AgentDefinition) -> U
                     "coordinator" -> BrandSectionLabel("AGENT 01 · MASTER ORCHESTRATOR")
                     "researcher" -> BrandSectionLabel("AGENT 02 · DEEP RESEARCH AGENT")
                     "architect" -> BrandSectionLabel("AGENT 03 · SYSTEM ARCHITECT")
+                    "coder" -> BrandSectionLabel("AGENT 04 · AI DEVELOPMENT AGENT")
                     else -> BrandSectionLabel("AGENT PROFILE")
                 }
                 Text(agent.name, style = MaterialTheme.typography.headlineSmall, color = BrandPalette.Ivory)
