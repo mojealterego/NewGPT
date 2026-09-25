@@ -74,14 +74,14 @@ class StudioViewModel @Inject constructor(
 }
 
 @Composable
-fun StudioScreen(onBack: () -> Unit, viewModel: StudioViewModel = hiltViewModel()) {
+fun StudioScreen(onBack: () -> Unit, onSettings: () -> Unit, viewModel: StudioViewModel = hiltViewModel()) {
     var text by remember { mutableStateOf("") }
     var selected by remember { mutableStateOf("ElevenLabs") }
 
     BrandBackground {
         Scaffold(
             containerColor = Color.Transparent,
-            topBar = { BrandGlobalHeader(onMenu = onBack) }
+            topBar = { BrandGlobalHeader(onMenu = onBack, onSettings = onSettings) }
         ) { padding ->
             Column(
                 Modifier
