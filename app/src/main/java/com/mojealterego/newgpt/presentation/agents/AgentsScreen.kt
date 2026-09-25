@@ -86,7 +86,7 @@ fun AgentsScreen(
             } else {
                 LazyColumn(
                     state = listState,
-                    Modifier.weight(1f).fillMaxWidth(),
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
                     contentPadding = PaddingValues(14.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
