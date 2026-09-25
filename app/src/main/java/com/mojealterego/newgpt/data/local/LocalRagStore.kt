@@ -52,17 +52,32 @@ class LocalRagStore @Inject constructor(@ApplicationContext private val context:
 
     suspend fun retrieve(query: String, topK: Int): List<RagDocument> = withContext(Dispatchers.IO) {
         val terms = query.lowercase(Locale.ROOT)
-            .split(Regex("""[^p{L}p{Nd}]+"""))
+            .split(Regex("""[^\\p{L}\\p{Nd}]+"""))
             .filter { it.length >= 3 }
             .distinct()
         if (terms.isEmpty()) return@withContext emptyList()
-        load().map { doc ->
+
+        load().flatMap { doc ->
             val haystack = doc.text.lowercase(Locale.ROOT)
-            val score = terms.sumOf { term -> minOf(Regex(Regex.escape(term)).findAll(haystack).count(), 8) }
-            doc to score
-        }.filter { it.second > 0 }
-            .sortedByDescending { it.second }
-            .take(topK.coerceIn(1, 12))
-            .map { it.first.copy(text = it.first.text.take(6000)) }
+            val score = terms.sumOf { term ->
+                minOf(Regex(Regex.escape(term)).findAll(haystack).count(), 8)
+            }
+            if (score == 0) {
+                emptyList()
+            } else {
+                val firstHit = terms.asSequence()
+                    .mapNotNull { term -> haystack.indexOf(term).takeIf { it >= 0 } }
+                    .minOrNull() ?: 0
+                val start = (firstHit - 1800).coerceAtLeast(0)
+                val end = (start + 6000).coerceAtMost(doc.text.length)
+                listOf(doc.copy(text = doc.text.substring(start, end)))
+            }
+        }
+            .sortedByDescending { doc ->
+                terms.sumOf { term ->
+                    minOf(Regex(Regex.escape(term), RegexOption.IGNORE_CASE).findAll(doc.text).count(), 8)
+                }
+            }
+            .take(topK.coerceIn(1, 20))
     }
 }
