@@ -33,7 +33,8 @@ fun NewGptApp() {
             composable("agents") {
                 AgentsScreen(
                     onBuilder = { nav.navigate("agent-builder") },
-                    onSettings = { nav.navigate("settings") }
+                    onSettings = { nav.navigate("settings") },
+                    onCognitive = { nav.navigate("cognitive") }
                 )
             }
             composable("agent-builder") { AgentBuilderScreen(onBack = { nav.popBackStack() }) }
