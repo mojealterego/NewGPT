@@ -2,11 +2,21 @@ name: Android CI
 
 on:
   push:
-    branches: ["main", "implementation/**"]
+    branches: ["main", "implementation/**", "feature/**"]
   pull_request:
     branches: ["main"]
 
 jobs:
+  rust-core:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Rust unit tests
+        working-directory: rust-core
+        run: cargo test --all-targets --release
+
   build:
     runs-on: ubuntu-24.04
     steps:
