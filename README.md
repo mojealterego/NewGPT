@@ -6,6 +6,12 @@ Native Android AI client with cloud and local inference, now extended with a per
 
 The current implementation includes bitemporal memory, a cognitive decision-cycle layer, capability/policy gating, hybrid RAG orchestration primitives, bounded mutation/evolution primitives, and a Cognitive Control Center. Experimental modules remain isolated until benchmarked.
 
+## Cognitive OS 1.1.0
+
+The 1.1.0 line adds a production-oriented cognitive foundation: bitemporal memory with point-in-time queries, a CoALA-inspired memory taxonomy, decision-cycle/Graph-of-Thought primitives, capability and policy gating, hybrid memory/document retrieval, bounded evolution and digital genotype primitives, synthetic red-team scaffolding, adaptive model routing, runtime budgets, a local model registry, and a dedicated Cognitive Control Center.
+
+The design also reserves explicit integration boundaries for Android AppFunctions, MCP, speculative decoding, formal verification, JEPA/HDC/SNN research modules, and future multi-model GGUF scheduling. Experimental components remain isolated until benchmarked.
+
 ## Implemented foundation
 - Kotlin + Jetpack Compose
 - Clean Architecture + MVI-style state
