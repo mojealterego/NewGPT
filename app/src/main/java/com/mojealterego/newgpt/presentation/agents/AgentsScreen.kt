@@ -28,7 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextField\nimport androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +47,7 @@ import com.mojealterego.newgpt.domain.model.Message
 @Composable
 fun AgentsScreen(
     onBuilder: () -> Unit,
-    onSettings: () -> Unit,
+    onSettings: () -> Unit,\n    onCognitive: () -> Unit = {},
     viewModel: AgentsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
