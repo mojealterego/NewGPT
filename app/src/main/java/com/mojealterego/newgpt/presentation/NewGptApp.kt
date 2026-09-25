@@ -7,6 +7,8 @@ import androidx.navigation.compose.rememberNavController
 import com.mojealterego.newgpt.presentation.agents.AgentBuilderScreen
 import com.mojealterego.newgpt.presentation.agents.AgentsScreen
 import com.mojealterego.newgpt.presentation.chat.ChatScreen
+import com.mojealterego.newgpt.presentation.evolution.EvolutionScreen
+import com.mojealterego.newgpt.presentation.memory.MemoryScreen
 import com.mojealterego.newgpt.presentation.settings.SettingsScreen
 import com.mojealterego.newgpt.presentation.studio.StudioScreen
 import com.mojealterego.newgpt.presentation.theme.NewGptTheme
@@ -20,7 +22,9 @@ fun NewGptApp() {
                 ChatScreen(
                     onAgents = { nav.navigate("agents") },
                     onSettings = { nav.navigate("settings") },
-                    onStudio = { nav.navigate("studio") }
+                    onStudio = { nav.navigate("studio") },
+                    onMemory = { nav.navigate("memory") },
+                    onEvolution = { nav.navigate("evolution") }
                 )
             }
             composable("agents") {
@@ -29,11 +33,11 @@ fun NewGptApp() {
                     onSettings = { nav.navigate("settings") }
                 )
             }
-            composable("agent-builder") {
-                AgentBuilderScreen(onBack = { nav.popBackStack() })
-            }
+            composable("agent-builder") { AgentBuilderScreen(onBack = { nav.popBackStack() }) }
             composable("settings") { SettingsScreen(onBack = { nav.popBackStack() }) }
             composable("studio") { StudioScreen(onBack = { nav.popBackStack() }) }
+            composable("memory") { MemoryScreen(onBack = { nav.popBackStack() }) }
+            composable("evolution") { EvolutionScreen(onBack = { nav.popBackStack() }) }
         }
     }
 }
