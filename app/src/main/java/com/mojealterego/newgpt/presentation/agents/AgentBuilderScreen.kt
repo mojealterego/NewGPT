@@ -92,7 +92,21 @@ fun AgentBuilderScreen(onBack: () -> Unit, viewModel: AgentBuilderViewModel = hi
 @Composable
 private fun AgentEditor(agent: AgentDefinition, onChange: (AgentDefinition) -> Unit, onSave: () -> Unit, onDelete: () -> Unit) {
     Column(Modifier.fillMaxWidth().padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        AgentIdentity(agent.id, agent.name)
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ) {
+            AgentPortrait(agent.id, size = if (agent.id == "coordinator") 96.dp else 64.dp)
+            Column(Modifier.padding(start = 14.dp)) {
+                if (agent.id == "coordinator") {
+                    BrandSectionLabel("AGENT 01 · MASTER ORCHESTRATOR")
+                } else {
+                    BrandSectionLabel("AGENT PROFILE")
+                }
+                Text(agent.name, style = MaterialTheme.typography.headlineSmall, color = BrandPalette.Ivory)
+                Text(agent.id.uppercase(), style = MaterialTheme.typography.labelSmall, color = BrandPalette.GoldBright)
+            }
+        }
         GoldRule()
         TextField(value = agent.name, onValueChange = { onChange(agent.copy(name = it)) }, modifier = Modifier.fillMaxWidth(), label = { Text("Nazwa") })
         TextField(value = agent.description, onValueChange = { onChange(agent.copy(description = it)) }, modifier = Modifier.fillMaxWidth(), label = { Text("Opis") })
