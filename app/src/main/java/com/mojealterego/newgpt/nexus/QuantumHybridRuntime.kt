@@ -47,9 +47,8 @@ class IbmQuantumRuntime(private val config: QuantumConfig) {
                 .put("backend", config.backend)
                 .put("params", JSONObject()
                     .put("pubs", listOf(listOf(openQasm3)))
-                    .put("options", JSONObject())
-                    .put("version", 2)
-                    .put("shots", shots))
+                    .put("options", JSONObject().put("default_shots", shots))
+                    .put("version", 2))
                 .toString()
 
             connection.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
