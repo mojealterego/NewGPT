@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.presentation.studio
 
+import androidx.compose.material.icons.filled.Mic
 import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
 import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
 import com.mojealterego.newgpt.presentation.theme.LuxuryCard
@@ -84,6 +85,7 @@ fun StudioScreen(onBack: () -> Unit, viewModel: StudioViewModel = hiltViewModel(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             BrandPageHeader("CREATIVE STUDIO", "VOICE · MUSIC · VIDEO · DESIGN", onBack)
+            BrandHero("ElevenLabs · Voice · Music · xAI Video", "Twórz głos, muzykę i wideo z AI.", Icons.Default.Mic, BrandPalette.Burgundy)
             Text("ElevenLabs · Voice · Music · xAI Video", style = MaterialTheme.typography.headlineSmall)
             Text("Klucze API ustaw w Ustawieniach.", color = MaterialTheme.colorScheme.onSurfaceVariant)
             OutlinedTextField(value = text, onValueChange = { text = it }, modifier = Modifier.fillMaxWidth(), minLines = 5, label = { Text("Prompt / tekst") })
