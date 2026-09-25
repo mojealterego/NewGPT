@@ -15,7 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier\nimport androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -57,10 +57,10 @@ Nie twierdź, że aplikacja została zbudowana lub wdrożona. Twórz konkretne k
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBuilderScreen(onBack: () -> Unit, viewModel: AppBuilderViewModel = hiltViewModel()) {
+fun AppBuilderScreen(onBack: () -> Unit, viewModel: AppBuilderViewModel = hiltViewModel()) {\n    BrandBackground {
     var brief by remember { mutableStateOf("") }
     var platform by remember { mutableStateOf("Kotlin + Jetpack Compose / Android") }
-    Scaffold(
+    Scaffold(\n            containerColor = Color.Transparent,
         topBar = {
             TopAppBar(title = { Text("AI APP BUILDER") }, navigationIcon = { Button(onClick = onBack) { Text("‹") } })
         }
@@ -85,4 +85,4 @@ fun AppBuilderScreen(onBack: () -> Unit, viewModel: AppBuilderViewModel = hiltVi
             }
         }
     }
-}
+\n    }\n}
