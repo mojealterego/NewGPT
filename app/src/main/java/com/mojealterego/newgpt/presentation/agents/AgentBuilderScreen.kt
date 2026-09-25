@@ -98,10 +98,10 @@ private fun AgentEditor(agent: AgentDefinition, onChange: (AgentDefinition) -> U
         ) {
             AgentPortrait(agent.id, size = if (agent.id == "coordinator") 96.dp else 64.dp)
             Column(Modifier.padding(start = 14.dp)) {
-                if (agent.id == "coordinator") {
-                    BrandSectionLabel("AGENT 01 · MASTER ORCHESTRATOR")
-                } else {
-                    BrandSectionLabel("AGENT PROFILE")
+                when (agent.id) {
+                    "coordinator" -> BrandSectionLabel("AGENT 01 · MASTER ORCHESTRATOR")
+                    "researcher" -> BrandSectionLabel("AGENT 02 · DEEP RESEARCH AGENT")
+                    else -> BrandSectionLabel("AGENT PROFILE")
                 }
                 Text(agent.name, style = MaterialTheme.typography.headlineSmall, color = BrandPalette.Ivory)
                 Text(agent.id.uppercase(), style = MaterialTheme.typography.labelSmall, color = BrandPalette.GoldBright)
