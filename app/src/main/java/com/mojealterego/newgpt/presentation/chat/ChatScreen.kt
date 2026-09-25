@@ -61,6 +61,7 @@ fun ChatScreen(
     onMemory: () -> Unit,
     onEvolution: () -> Unit,
     onBuilder: () -> Unit,
+    onCognitiveCore: () -> Unit,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -94,6 +95,7 @@ fun ChatScreen(
                 NavigationDrawerItem(label = { Text("Holographic Memory") }, selected = false, onClick = { closeAnd(onMemory) })
                 NavigationDrawerItem(label = { Text("DGM · RSI Evolution Lab") }, selected = false, onClick = { closeAnd(onEvolution) })
                 NavigationDrawerItem(label = { Text("AI App Builder") }, selected = false, onClick = { closeAnd(onBuilder) })
+                NavigationDrawerItem(label = { Text("Cognitive Core") }, selected = false, onClick = { closeAnd(onCognitiveCore) })
                 NavigationDrawerItem(label = { Text("Ustawienia") }, selected = false, onClick = { closeAnd(onSettings) })
                 Column(
                     Modifier.fillMaxSize().padding(18.dp),

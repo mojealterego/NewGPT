@@ -8,8 +8,10 @@ import com.mojealterego.newgpt.presentation.agents.AgentBuilderScreen
 import com.mojealterego.newgpt.presentation.agents.AgentsScreen
 import com.mojealterego.newgpt.presentation.chat.ChatScreen
 import com.mojealterego.newgpt.presentation.builder.AppBuilderScreen
+import com.mojealterego.newgpt.presentation.cognitive.CognitiveCoreScreen
 import com.mojealterego.newgpt.presentation.evolution.EvolutionScreen
 import com.mojealterego.newgpt.presentation.memory.MemoryScreen
+import com.mojealterego.newgpt.presentation.nexus.DigitalNexusScreen
 import com.mojealterego.newgpt.presentation.settings.SettingsScreen
 import com.mojealterego.newgpt.presentation.studio.StudioScreen
 import com.mojealterego.newgpt.presentation.theme.NewGptTheme
@@ -26,7 +28,8 @@ fun NewGptApp() {
                     onStudio = { nav.navigate("studio") },
                     onMemory = { nav.navigate("memory") },
                     onEvolution = { nav.navigate("evolution") },
-                    onBuilder = { nav.navigate("builder") }
+                    onBuilder = { nav.navigate("builder") },
+                    onCognitiveCore = { nav.navigate("cognitive") }
                 )
             }
             composable("agents") {
@@ -41,6 +44,8 @@ fun NewGptApp() {
             composable("memory") { MemoryScreen(onBack = { nav.popBackStack() }) }
             composable("evolution") { EvolutionScreen(onBack = { nav.popBackStack() }) }
             composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }
+            composable("cognitive") { CognitiveCoreScreen(onBack = { nav.popBackStack() }, onNexusCore = { nav.navigate("nexus") }) }
+            composable("nexus") { DigitalNexusScreen(onBack = { nav.popBackStack() }) }
         }
     }
 }

@@ -2,11 +2,21 @@ name: Android CI
 
 on:
   push:
-    branches: ["main", "implementation/**"]
+    branches: ["main", "implementation/**", "feature/**"]
   pull_request:
     branches: ["main"]
 
 jobs:
+  rust-core:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Rust unit tests
+        working-directory: rust-core
+        run: cargo test --all-targets --release
+
   build:
     runs-on: ubuntu-24.04
     steps:
@@ -20,10 +30,10 @@ jobs:
         with:
           packages: ""
       - name: Install Android SDK components
-        run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13113456" "cmake;3.31.6"
+        run: sdkmanager "platform-tools" "platforms;android-37" "build-tools;37.0.0" "ndk;29.0.13113456" "cmake;3.31.6"
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "8.13"
+          gradle-version: "9.4.1"
       - name: Assemble debug APK
         run: gradle --no-daemon assembleDebug
       - name: Build debug AAB
