@@ -93,4 +93,4 @@ enum class MutationStatus {
     EVALUATED,
     ACCEPTED,
     REJECTED
-)
+}
