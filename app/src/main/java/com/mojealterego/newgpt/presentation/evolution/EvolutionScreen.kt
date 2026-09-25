@@ -18,7 +18,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier\nimport androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -45,12 +45,12 @@ class EvolutionViewModel @Inject constructor(private val store: EvolutionLabStor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltViewModel()) {
+fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltViewModel()) {\n    BrandBackground {
     val state = viewModel.state
     var title by remember { mutableStateOf("") }
     var rationale by remember { mutableStateOf("") }
     var change by remember { mutableStateOf("") }
-    Scaffold(
+    Scaffold(\n            containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text("DGM · RSI EVOLUTION LAB") },
@@ -106,7 +106,7 @@ fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltView
             }
         }
     }
-}
+\n    }\n}
 
 @Composable
 private fun ToggleRow(label: String, checked: Boolean, onChecked: (Boolean) -> Unit) {
