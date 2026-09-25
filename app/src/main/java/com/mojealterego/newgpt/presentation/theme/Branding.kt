@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.DeleteOutline
@@ -249,6 +251,91 @@ fun BrandGlobalHeader(
             }
         }
         GoldRule()
+    }
+}
+
+@Composable
+fun BrandHero(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    accent: Color = BrandPalette.Gold,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(220.dp)
+            .clip(RoundedCornerShape(28.dp))
+            .background(
+                Brush.radialGradient(
+                    colors = listOf(
+                        accent.copy(alpha = 0.38f),
+                        BrandPalette.AnilineBlack.copy(alpha = 0.94f),
+                        BrandPalette.Obsidian
+                    )
+                )
+            )
+            .border(1.5.dp, BrandPalette.Gold.copy(alpha = 0.72f), RoundedCornerShape(28.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(Modifier.fillMaxSize()) {
+            val center = Offset(size.width * 0.72f, size.height * 0.50f)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    listOf(BrandPalette.GoldBright.copy(alpha = 0.24f), Color.Transparent)
+                ),
+                radius = size.minDimension * 0.46f,
+                center = center
+            )
+            for (i in 1..3) {
+                drawCircle(
+                    color = BrandPalette.Gold.copy(alpha = 0.20f - i * 0.035f),
+                    radius = size.minDimension * (0.20f + i * 0.09f),
+                    center = center,
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.2.dp.toPx())
+                )
+            }
+        }
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                BrandSectionLabel("MOJEALTEREGO · NEWGPT")
+                Text(
+                    title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = BrandPalette.Ivory,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = BrandPalette.Titanium,
+                    modifier = Modifier.padding(top = 6.dp)
+                )
+            }
+            Box(
+                Modifier
+                    .size(132.dp)
+                    .clip(CircleShape)
+                    .background(
+                        Brush.radialGradient(
+                            listOf(BrandPalette.GoldBright, accent, BrandPalette.Obsidian)
+                        )
+                    )
+                    .border(2.dp, BrandPalette.GoldBright, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    Modifier.size(104.dp).clip(CircleShape).background(BrandPalette.Obsidian.copy(alpha = 0.82f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(icon, contentDescription = null, tint = BrandPalette.GoldBright, modifier = Modifier.size(62.dp))
+                }
+            }
+        }
     }
 }
 
