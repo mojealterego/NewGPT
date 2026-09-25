@@ -245,13 +245,13 @@ class KnowledgeGraphExtractor {
             .findAll(text).map{KnowledgeRelation(it.groupValues[1],it.groupValues[2],it.groupValues[3])}.toList()
 }
 
-// 95–99: software-side safety and replaceable hardware boundaries.
-data class AlignmentInvariant(val id:String,val description:String,val enabled:Boolean=true)
+// 95–99: executable software-side governance only; impossible physical/quantum capabilities are not represented.
+data class GovernanceInvariant(val id:String,val description:String,val enabled:Boolean=true)
 data class MutationVerification(val mutationId:String,val preserved:List<String>,val passed:Boolean,val humanApprovalRequired:Boolean)
-class ProvableAlignmentGate(private val invariants:List<AlignmentInvariant>) {
-    fun verify(mutationId:String,candidateDigest:String):MutationVerification {
+class GovernanceInvariantGate(private val invariants:List<GovernanceInvariant>) {
+    fun verify(mutationId:String, candidateDigest:String):MutationVerification {
         val preserved=invariants.filter{it.enabled}.map{it.id}
-        val passed=preserved.isNotEmpty() && candidateDigest.isNotBlank()
+        val passed=mutationId.isNotBlank() && candidateDigest.isNotBlank() && preserved.isNotEmpty()
         return MutationVerification(mutationId,preserved,passed,true)
     }
 }
@@ -261,31 +261,6 @@ class EpistemicHumilityLoop {
         EpistemicCheck(confidence.coerceIn(0.0,1.0),contradictions.take(20),rollbackAvailable)
 }
 
-interface ComputeSubstrateAdapter { fun describe():String; fun canExecute(operation:String):Boolean }
-class SoftwareSubstrateAdapter:ComputeSubstrateAdapter {
-    override fun describe()="CPU/GPU software runtime; no physical fabrication control"
-    override fun canExecute(operation:String)=operation in setOf("VECTOR","MATRIX","SNN_SIM","CiM_SIM")
-}
-interface QuantumBackendAdapter { fun available():Boolean; fun execute(operation:String,payload:ByteArray):ByteArray? }
-class UnavailableQuantumBackend:QuantumBackendAdapter {
-    override fun available()=false
-    override fun execute(operation:String,payload:ByteArray):ByteArray?=null
-}
-
-// 105: Compute-in-Memory UIR.
-sealed interface ActiveMemoryOp {
-    data class Read(val address:Long):ActiveMemoryOp
-    data class InSituAdd(val address:Long,val delta:Int):ActiveMemoryOp
-    data class InSituMultiply(val address:Long,val factor:Int):ActiveMemoryOp
-    data class CompareAndSwap(val address:Long,val expected:Int,val replacement:Int):ActiveMemoryOp
-}
-data class ActiveMemoryProgram(val operations:List<ActiveMemoryOp>,val target:String="CIM-SIM")
-class ActiveMemoryUirCompiler { fun compile(operations:List<ActiveMemoryOp>)=ActiveMemoryProgram(operations.take(10000)) }
-
-// 106: SNN transpiler.
-enum class SpikeCoding { RATE,TEMPORAL }
-data class Spike(val neuron:Int,val timeStep:Int,val amplitude:Int=1)
-data class SnnProgram(val neurons:Int,val steps:Int,val spikes:List<Spike>)
 class SnnTranspiler {
     fun transpile(weights:FloatArray,coding:SpikeCoding,steps:Int=16,threshold:Float=.5f):SnnProgram{
         val safeSteps=steps.coerceIn(1,4096); val spikes=mutableListOf<Spike>()
@@ -322,12 +297,13 @@ class MetaArchitectRuntime {
     val zeroTrust=ZeroTrustGate(); val confidence=ConfidenceGate(); val loadShedder=LoadShedder()
     val clarifier=FuzzyClarifier(); val dag=DagPlanner(); val semanticRouter=SemanticRouter()
     val reasoning=ReasoningAuditor(); val knowledgeGraph=KnowledgeGraphExtractor()
-    val alignment=ProvableAlignmentGate(listOf(
-        AlignmentInvariant("human-approval","Self-modifying or consequential changes require human approval"),
-        AlignmentInvariant("rollback","Every evolution candidate must have a rollback path"),
-        AlignmentInvariant("least-privilege","Tools execute only within explicit permissions")
+    val alignment=GovernanceInvariantGate(listOf(
+        GovernanceInvariant("human-approval","Self-modifying or consequential changes require human approval"),
+        GovernanceInvariant("rollback","Every evolution candidate must have a rollback path"),
+        GovernanceInvariant("least-privilege","Tools execute only within explicit permissions")
     ))
-    val humility=EpistemicHumilityLoop(); val substrate:ComputeSubstrateAdapter=SoftwareSubstrateAdapter()
-    val quantum:QuantumBackendAdapter=UnavailableQuantumBackend(); val cim=ActiveMemoryUirCompiler()
-    val snn=SnnTranspiler(); val energy=EnergyAwareRouter(); val noise=NoiseEngine()
+    val humility=EpistemicHumilityLoop()
+    val snn=SnnTranspiler()
+    val energy=EnergyAwareRouter()
+    val noise=NoiseEngine()
 }
