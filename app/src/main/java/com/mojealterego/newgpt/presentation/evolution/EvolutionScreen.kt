@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.presentation.evolution
 
+import androidx.compose.material.icons.filled.Science
 import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
 import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
 import com.mojealterego.newgpt.presentation.theme.LuxuryCard
@@ -64,6 +65,7 @@ fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltView
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             BrandPageHeader("DGM · RSI EVOLUTION LAB", "PROPOSE → EVALUATE → KEEP / REJECT", onBack)
+            BrandHero("DGM / RSI Evolution Lab", "Kontrolowany harness: propose → evaluate → keep / reject.", Icons.Default.Science, BrandPalette.BottleGreen)
             Text("Propose → Evaluate → Keep / Reject", style = MaterialTheme.typography.headlineSmall)
             Text(
                 "DGM/RSI działają tutaj jako kontrolowany harness: system może tworzyć propozycje usprawnień i je oceniać, ale nie zmienia samodzielnie kodu aplikacji ani nie publikuje zmian.",
