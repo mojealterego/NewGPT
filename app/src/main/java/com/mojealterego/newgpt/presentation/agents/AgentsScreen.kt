@@ -77,6 +77,7 @@ fun AgentsScreen(
                     }
                 },
                 actions = {
+                    TextButton(onClick = onCognitive) { Text("Cognitive OS") }
                     IconButton(onClick = viewModel::clear) { Icon(Icons.Default.Delete, "Wyczyść") }
                     IconButton(onClick = onBuilder) { Icon(Icons.Default.Settings, "Agent Builder") }
                 }
