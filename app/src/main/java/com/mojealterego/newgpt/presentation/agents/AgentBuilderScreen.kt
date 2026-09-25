@@ -34,7 +34,19 @@ fun AgentBuilderScreen(onBack: () -> Unit, viewModel: AgentBuilderViewModel = hi
             topBar = { BrandGlobalHeader(onMenu = onBack) }
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding).imePadding()) {
-                BrandPageHeader("AGENT BUILDER", "TWÓRZ · EDYTUJ · ZARZĄDZAJ AGENTAMI", onBack)
+                BrandPageHeader(
+                    "AGENT BUILDER",
+                    "TWÓRZ · EDYTUJ · ZARZĄDZAJ AGENTAMI",
+                    onBack,
+                    actions = {
+                        IconButton(onClick = { draft = viewModel.newAgent() }) {
+                            Icon(Icons.Default.Add, "Nowy agent", tint = BrandPalette.GoldBright)
+                        }
+                        IconButton(onClick = viewModel::reset) {
+                            Icon(Icons.Default.Refresh, "Przywróć domyślne", tint = BrandPalette.GoldBright)
+                        }
+                    }
+                )
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     contentPadding = PaddingValues(16.dp),
