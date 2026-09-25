@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.mojealterego.newgpt"
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         applicationId = "com.mojealterego.newgpt"
         minSdk = 26
