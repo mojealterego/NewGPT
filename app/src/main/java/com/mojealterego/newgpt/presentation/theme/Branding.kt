@@ -14,6 +14,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountTree
+import androidx.compose.material.icons.filled.AutoStories
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -243,13 +256,37 @@ fun AgentPortrait(
                 .border(1.dp, BrandPalette.GoldDeep, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            if (showNumber) {
-                Text(
-                    text = number,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = BrandPalette.Ivory,
-                    fontWeight = FontWeight.Bold
+            val icon = when (agentId) {
+                "coordinator" -> Icons.Default.AccountTree
+                "researcher" -> Icons.Default.Search
+                "architect" -> Icons.Default.Explore
+                "coder" -> Icons.Default.Code
+                "writer" -> Icons.Default.AutoStories
+                "wda-photo" -> Icons.Default.PhotoCamera
+                "mobile-operator" -> Icons.Default.SmartToy
+                "rag-master" -> Icons.Default.Memory
+                "web-researcher" -> Icons.Default.Explore
+                "creative-director" -> Icons.Default.Mic
+                "gguf-engineer" -> Icons.Default.Build
+                "memory-architect" -> Icons.Default.Memory
+                "evolution-engineer" -> Icons.Default.Settings
+                else -> Icons.Default.SmartToy
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size((size.value * 0.22f).dp),
+                    tint = BrandPalette.GoldBright
                 )
+                if (showNumber) {
+                    Text(
+                        text = number,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = BrandPalette.Ivory,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
