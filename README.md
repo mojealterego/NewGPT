@@ -2,7 +2,7 @@
 
 Native Android AI client with cloud and local inference, now extended with a persistent agent runtime and Agent Builder.
 
-## Implemented foundation
+## Cognitive OS foundation\n\nThe current implementation includes bitemporal memory, a cognitive decision-cycle layer, capability/policy gating, hybrid RAG orchestration primitives, bounded mutation/evolution primitives, and a Cognitive Control Center. Experimental modules remain isolated until benchmarked.\n\n## Implemented foundation
 - Kotlin + Jetpack Compose
 - Clean Architecture + MVI-style state
 - Room Single Source of Truth for chat history
