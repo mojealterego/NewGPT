@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: ["main", "implementation/**"]
+    branches: ["main", "implementation/**", "feature/**"]
   pull_request:
     branches: ["main"]
 
@@ -27,6 +27,7 @@ jobs:
           java-version: "17"
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
+        with:
           packages: ""
       - name: Install Android SDK components
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13113456" "cmake;3.31.6"
