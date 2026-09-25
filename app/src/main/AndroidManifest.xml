@@ -7,8 +7,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.NewGPT"
-        android:icon="@drawable/ic_newgpt_master"
-        android:roundIcon="@drawable/ic_newgpt_master">
+        android:icon="@drawable/ic_newgpt"
+        android:roundIcon="@drawable/ic_newgpt">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

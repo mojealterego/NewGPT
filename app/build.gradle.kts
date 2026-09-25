@@ -1,5 +1,3 @@
-import java.util.Base64
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -56,18 +54,7 @@ dependencies {
 }
 
 kotlin {
-    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
-}
-
-val generateNewGptIcon = tasks.register("generateNewGptIcon") {
-    val source = layout.projectDirectory.file("src/main/icon/newgpt_icon.b64").asFile
-    val output = layout.projectDirectory.file("src/main/res/drawable-nodpi/ic_newgpt_master.jpg").asFile
-    inputs.file(source)
-    outputs.file(output)
-    doLast {
-        output.parentFile.mkdirs()
-        output.writeBytes(Base64.getDecoder().decode(source.readText().trim()))
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
-
-tasks.named("preBuild") { dependsOn(generateNewGptIcon) }
