@@ -204,9 +204,9 @@ fun DigitalNexusScreen(
                                     Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    StatPill("TOOLS", state.tools.toString())
-                                    StatPill("AUDIT", state.audits.toString())
-                                    StatPill("MEMORY", state.gMemory.values.sum().toString())
+                                    StatPill("TOOLS", state.tools.toString(), Modifier.weight(1f))
+                                    StatPill("AUDIT", state.audits.toString(), Modifier.weight(1f))
+                                    StatPill("MEMORY", state.gMemory.values.sum().toString(), Modifier.weight(1f))
                                 }
                             }
                         }
@@ -307,9 +307,9 @@ private fun ModuleRow(name: String, enabled: Boolean) {
 }
 
 @Composable
-private fun StatPill(label: String, value: String) {
+private fun StatPill(label: String, value: String, modifier: Modifier = Modifier) {
     Card(
-        modifier = Modifier.weight(1f),
+        modifier = modifier,
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1C25))
     ) {
