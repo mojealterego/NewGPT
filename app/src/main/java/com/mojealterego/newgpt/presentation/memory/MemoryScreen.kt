@@ -1,9 +1,8 @@
 package com.mojealterego.newgpt.presentation.memory
 
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Memory
-import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
-import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
-import com.mojealterego.newgpt.presentation.theme.LuxuryCard
+import com.mojealterego.newgpt.presentation.theme.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
