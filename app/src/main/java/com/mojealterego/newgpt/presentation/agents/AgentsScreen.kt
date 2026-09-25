@@ -91,7 +91,7 @@ fun AgentsScreen(
                             }
                             GoldRule()
                             state.selectedAgent?.let { agent ->
-                                if (agent.id in listOf("coordinator", "researcher", "architect", "coder", "writer")) {
+                                if (agent.id in listOf("coordinator", "researcher", "architect", "coder", "writer", "wda-photo")) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
@@ -103,7 +103,8 @@ fun AgentsScreen(
                                                 "researcher" -> 112.dp
                                                 "architect" -> 116.dp
                                                 "coder" -> 120.dp
-                                                else -> 124.dp
+                                                "writer" -> 124.dp
+                                                else -> 128.dp
                                             }
                                         )
                                         Column(
@@ -116,7 +117,8 @@ fun AgentsScreen(
                                                     "researcher" -> "AGENT 02"
                                                     "architect" -> "AGENT 03"
                                                     "coder" -> "AGENT 04"
-                                                    else -> "AGENT 05"
+                                                    "writer" -> "AGENT 05"
+                                                    else -> "AGENT 06"
                                                 }
                                             )
                                             Text(
@@ -125,7 +127,8 @@ fun AgentsScreen(
                                                     "researcher" -> "DEEP RESEARCH AGENT"
                                                     "architect" -> "SYSTEM ARCHITECT"
                                                     "coder" -> "AI DEVELOPMENT AGENT"
-                                                    else -> "CREATIVE WRITING AGENT"
+                                                    "writer" -> "CREATIVE WRITING AGENT"
+                                                    else -> "VISUAL DIRECTOR AGENT"
                                                 },
                                                 style = MaterialTheme.typography.headlineSmall,
                                                 color = BrandPalette.GoldBright
