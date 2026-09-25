@@ -80,8 +80,14 @@ class BitemporalMemoryStore @Inject constructor(
             .toList()
     }
 
-    suspend fun pointInTime(at: Long): List<CognitiveMemoryItem> =
-        query("", atValidTime = at, atRecordedTime = at, limit = 5000)
+    suspend fun pointInTime(at: Long): List<CognitiveMemoryItem> = withContext(Dispatchers.IO) {
+        load().filter { item ->
+            item.interval.validFrom <= at &&
+                (item.interval.validTo == null || at < item.interval.validTo!!) &&
+                item.interval.recordedFrom <= at &&
+                (item.interval.recordedTo == null || at < item.interval.recordedTo!!)
+        }
+    }
 
     suspend fun closeFact(id: String, validTo: Long, recordedTo: Long = System.currentTimeMillis()) =
         withContext(Dispatchers.IO) {
