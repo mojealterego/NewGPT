@@ -1,5 +1,8 @@
 package com.mojealterego.newgpt.presentation.builder
 
+import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
+import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
+import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,14 +67,13 @@ fun AppBuilderScreen(onBack: () -> Unit, viewModel: AppBuilderViewModel = hiltVi
     var platform by remember { mutableStateOf("Kotlin + Jetpack Compose / Android") }
     Scaffold(
             containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(title = { Text("AI APP BUILDER") }, navigationIcon = { Button(onClick = onBack) { Text("‹") } })
-        }
+        topBar = { BrandGlobalHeader(onMenu = onBack) }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            BrandPageHeader("AI APP BUILDER", "OD POMYSŁU DO SPECYFIKACJI PRODUKCYJNEJ", onBack)
             Text("Od pomysłu do specyfikacji produkcyjnej", style = MaterialTheme.typography.headlineSmall)
             OutlinedTextField(platform, { platform = it }, Modifier.fillMaxWidth(), label = { Text("Platforma / stack") })
             OutlinedTextField(
