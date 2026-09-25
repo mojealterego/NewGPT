@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Search
@@ -265,7 +266,7 @@ fun AgentPortrait(
                 "wda-photo" -> Icons.Default.PhotoCamera
                 "mobile-operator" -> Icons.Default.SmartToy
                 "rag-master" -> Icons.Default.Memory
-                "web-researcher" -> Icons.Default.Explore
+                "web-researcher" -> Icons.Default.Language
                 "creative-director" -> Icons.Default.Mic
                 "gguf-engineer" -> Icons.Default.Build
                 "memory-architect" -> Icons.Default.Memory
