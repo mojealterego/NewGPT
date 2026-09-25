@@ -96,11 +96,20 @@ private fun AgentEditor(agent: AgentDefinition, onChange: (AgentDefinition) -> U
             Modifier.fillMaxWidth(),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
-            AgentPortrait(agent.id, size = if (agent.id == "coordinator") 96.dp else 64.dp)
+            AgentPortrait(
+                agent.id,
+                size = when (agent.id) {
+                    "coordinator" -> 96.dp
+                    "researcher" -> 88.dp
+                    "architect" -> 96.dp
+                    else -> 64.dp
+                }
+            )
             Column(Modifier.padding(start = 14.dp)) {
                 when (agent.id) {
                     "coordinator" -> BrandSectionLabel("AGENT 01 · MASTER ORCHESTRATOR")
                     "researcher" -> BrandSectionLabel("AGENT 02 · DEEP RESEARCH AGENT")
+                    "architect" -> BrandSectionLabel("AGENT 03 · SYSTEM ARCHITECT")
                     else -> BrandSectionLabel("AGENT PROFILE")
                 }
                 Text(agent.name, style = MaterialTheme.typography.headlineSmall, color = BrandPalette.Ivory)
