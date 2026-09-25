@@ -22,6 +22,7 @@ import com.mojealterego.newgpt.presentation.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgentsScreen(
+    onBack: () -> Unit,
     onBuilder: () -> Unit,
     onSettings: () -> Unit,
     viewModel: AgentsViewModel = hiltViewModel()
@@ -33,21 +34,7 @@ fun AgentsScreen(
     BrandBackground {
         Scaffold(
             containerColor = Color.Transparent,
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Column {
-                            Text("AGENT COMMAND", style = MaterialTheme.typography.titleLarge)
-                            Text("MOJEALTEREGO · MULTI-AGENT SYSTEM", style = MaterialTheme.typography.labelSmall, color = BrandPalette.GoldBright)
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Ustawienia", tint = BrandPalette.Titanium) }
-                        IconButton(onClick = onBuilder) { Icon(Icons.Default.Settings, "Agent Builder", tint = BrandPalette.GoldBright) }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
-                )
-            },
+            topBar = { BrandGlobalHeader(onMenu = onBack, onSettings = onSettings) },
             bottomBar = {
                 Row(Modifier.fillMaxWidth().navigationBarsPadding().imePadding().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     TextField(
