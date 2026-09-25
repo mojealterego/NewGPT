@@ -1,5 +1,8 @@
 package com.mojealterego.newgpt.presentation.studio
 
+import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
+import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
+import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -74,17 +77,13 @@ fun StudioScreen(onBack: () -> Unit, viewModel: StudioViewModel = hiltViewModel(
     var text by remember { mutableStateOf("") }
     Scaffold(
             containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(
-                title = { Text("CREATIVE STUDIO") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+        topBar = { BrandGlobalHeader(onMenu = onBack) }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(18.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            BrandPageHeader("CREATIVE STUDIO", "VOICE · MUSIC · VIDEO · DESIGN", onBack)
             Text("ElevenLabs · Voice · Music · xAI Video", style = MaterialTheme.typography.headlineSmall)
             Text("Klucze API ustaw w Ustawieniach.", color = MaterialTheme.colorScheme.onSurfaceVariant)
             OutlinedTextField(value = text, onValueChange = { text = it }, modifier = Modifier.fillMaxWidth(), minLines = 5, label = { Text("Prompt / tekst") })
