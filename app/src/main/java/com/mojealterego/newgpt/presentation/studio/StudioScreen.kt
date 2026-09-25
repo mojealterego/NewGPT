@@ -202,7 +202,7 @@ fun StudioScreen(onBack: () -> Unit, onSettings: () -> Unit, viewModel: StudioVi
 }
 
 @Composable
-private fun ProviderTile(
+private fun RowScope.ProviderTile(
     label: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     active: Boolean,
