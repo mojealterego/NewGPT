@@ -1,5 +1,8 @@
 package com.mojealterego.newgpt.presentation.evolution
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Science
+import com.mojealterego.newgpt.presentation.theme.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -46,22 +50,21 @@ class EvolutionViewModel @Inject constructor(private val store: EvolutionLabStor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltViewModel()) {
+    BrandBackground {
     val state = viewModel.state
     var title by remember { mutableStateOf("") }
     var rationale by remember { mutableStateOf("") }
     var change by remember { mutableStateOf("") }
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("DGM · RSI EVOLUTION LAB") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+            containerColor = Color.Transparent,
+        topBar = { BrandGlobalHeader(onMenu = onBack) }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            BrandPageHeader("DGM · RSI EVOLUTION LAB", "PROPOSE → EVALUATE → KEEP / REJECT", onBack)
+            BrandHero("DGM / RSI Evolution Lab", "Kontrolowany harness: propose → evaluate → keep / reject.", Icons.Default.Science, BrandPalette.BottleGreen)
             Text("Propose → Evaluate → Keep / Reject", style = MaterialTheme.typography.headlineSmall)
             Text(
                 "DGM/RSI działają tutaj jako kontrolowany harness: system może tworzyć propozycje usprawnień i je oceniać, ale nie zmienia samodzielnie kodu aplikacji ani nie publikuje zmian.",
@@ -79,7 +82,7 @@ fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltView
             ToggleRow("Tylko sandbox / brak auto-deploy", state.sandboxOnly) { value ->
                 viewModel.updateFlags(state.dgmEnabled, state.rsiEnabled, state.humanApprovalRequired, value)
             }
-            Card(Modifier.fillMaxWidth()) {
+            LuxuryCard(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(title, { title = it }, Modifier.fillMaxWidth(), label = { Text("Propozycja") })
                     OutlinedTextField(rationale, { rationale = it }, Modifier.fillMaxWidth(), minLines = 2, label = { Text("Uzasadnienie") })
@@ -105,6 +108,8 @@ fun EvolutionScreen(onBack: () -> Unit, viewModel: EvolutionViewModel = hiltView
                 }
             }
         }
+    }
+
     }
 }
 

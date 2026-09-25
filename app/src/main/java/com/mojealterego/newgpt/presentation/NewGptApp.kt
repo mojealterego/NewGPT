@@ -31,13 +31,22 @@ fun NewGptApp() {
             }
             composable("agents") {
                 AgentsScreen(
+                    onBack = { nav.popBackStack() },
                     onBuilder = { nav.navigate("agent-builder") },
                     onSettings = { nav.navigate("settings") }
                 )
             }
             composable("agent-builder") { AgentBuilderScreen(onBack = { nav.popBackStack() }) }
-            composable("settings") { SettingsScreen(onBack = { nav.popBackStack() }) }
-            composable("studio") { StudioScreen(onBack = { nav.popBackStack() }) }
+            composable("settings") {
+                SettingsScreen(
+                    onBack = { nav.popBackStack() },
+                    onPanel = { nav.navigate("chat") { popUpTo("chat") { inclusive = false } } },
+                    onAgents = { nav.navigate("agents") },
+                    onMemory = { nav.navigate("memory") },
+                    onTools = { nav.navigate("studio") }
+                )
+            }
+            composable("studio") { StudioScreen(onBack = { nav.popBackStack() }, onSettings = { nav.navigate("settings") }) }
             composable("memory") { MemoryScreen(onBack = { nav.popBackStack() }) }
             composable("evolution") { EvolutionScreen(onBack = { nav.popBackStack() }) }
             composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }

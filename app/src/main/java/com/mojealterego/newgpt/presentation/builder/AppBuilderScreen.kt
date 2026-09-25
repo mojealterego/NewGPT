@@ -1,5 +1,9 @@
 package com.mojealterego.newgpt.presentation.builder
 
+import androidx.compose.material.icons.filled.Build
+import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
+import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
+import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -58,17 +63,19 @@ Nie twierdź, że aplikacja została zbudowana lub wdrożona. Twórz konkretne k
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBuilderScreen(onBack: () -> Unit, viewModel: AppBuilderViewModel = hiltViewModel()) {
+    BrandBackground {
     var brief by remember { mutableStateOf("") }
     var platform by remember { mutableStateOf("Kotlin + Jetpack Compose / Android") }
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("AI APP BUILDER") }, navigationIcon = { Button(onClick = onBack) { Text("‹") } })
-        }
+            containerColor = Color.Transparent,
+        topBar = { BrandGlobalHeader(onMenu = onBack) }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            BrandPageHeader("AI APP BUILDER", "OD POMYSŁU DO SPECYFIKACJI PRODUKCYJNEJ", onBack)
+            BrandHero("Od pomysłu do aplikacji", "Specyfikacja, architektura, UI/UX i build APK/AAB.", Icons.Default.Build, BrandPalette.Gold)
             Text("Od pomysłu do specyfikacji produkcyjnej", style = MaterialTheme.typography.headlineSmall)
             OutlinedTextField(platform, { platform = it }, Modifier.fillMaxWidth(), label = { Text("Platforma / stack") })
             OutlinedTextField(
@@ -84,5 +91,7 @@ fun AppBuilderScreen(onBack: () -> Unit, viewModel: AppBuilderViewModel = hiltVi
                 Text(viewModel.result, style = MaterialTheme.typography.bodyLarge)
             }
         }
+    }
+
     }
 }

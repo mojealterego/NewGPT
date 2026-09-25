@@ -1,5 +1,8 @@
 package com.mojealterego.newgpt.presentation.memory
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Memory
+import com.mojealterego.newgpt.presentation.theme.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
@@ -45,20 +49,19 @@ class MemoryViewModel @Inject constructor(private val store: MemoryGraphStore) :
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel()) {
+    BrandBackground {
     val graph = viewModel.graph
     var showPermanent by remember { mutableStateOf(true) }
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("HOLOGRAPHIC MEMORY") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+            containerColor = Color.Transparent,
+        topBar = { BrandGlobalHeader(onMenu = onBack) }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            BrandPageHeader("HOLOGRAPHIC MEMORY", "PAMIĘĆ · GRAF SKOJARZEŃ · KONTEKST", onBack)
+            BrandHero("Pamięć robocza + stała", "Graf skojarzeń, kontekst i retrieval.", Icons.Default.Memory, BrandPalette.RoyalBlue)
             Text("Pamięć robocza + pamięć stała + graf skojarzeń", style = MaterialTheme.typography.headlineSmall)
             Text(
                 "Widok holograficzny jest projekcją grafu: węzły reprezentują wspomnienia i pojęcia, a krawędzie ich relacje.",
@@ -68,7 +71,7 @@ fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel(
                 Text("Pokaż pamięć stałą")
                 Switch(checked = showPermanent, onCheckedChange = { showPermanent = it })
             }
-            Card(Modifier.fillMaxWidth()) { MemoryGraphCanvas(graph, showPermanent) }
+            LuxuryCard(Modifier.fillMaxWidth()) { MemoryGraphCanvas(graph, showPermanent) }
             Text("Węzły: " + graph.nodes.size + " · relacje: " + graph.edges.size)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = viewModel::refresh, modifier = Modifier.weight(1f)) { Text("ODŚWIEŻ") }
@@ -76,6 +79,8 @@ fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel(
             }
             Button(onClick = viewModel::clearAll, modifier = Modifier.fillMaxWidth()) { Text("WYCZYŚĆ CAŁĄ PAMIĘĆ") }
         }
+    }
+
     }
 }
 

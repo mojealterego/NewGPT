@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.presentation.settings
 
+import com.mojealterego.newgpt.presentation.theme.*
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -21,8 +22,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,7 +37,15 @@ import com.mojealterego.newgpt.domain.model.ProviderType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(
+    onBack: () -> Unit,
+    onPanel: () -> Unit = onBack,
+    onAgents: () -> Unit = onBack,
+    onMemory: () -> Unit = onBack,
+    onTools: () -> Unit = onBack,
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
+    BrandBackground {
     val config by viewModel.config.collectAsStateWithLifecycle()
     val prefs by viewModel.preferences.collectAsStateWithLifecycle()
     val canvaToken by viewModel.canvaAccessToken.collectAsStateWithLifecycle()
@@ -58,10 +70,16 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("NEWGPT · USTAWIENIA") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
+            containerColor = Color.Transparent,
+        topBar = { BrandGlobalHeader(onMenu = onBack) },
+        bottomBar = {
+            BrandBottomNav(
+                selected = "Ustawienia",
+                onPanel = onPanel,
+                onAgents = onAgents,
+                onMemory = onMemory,
+                onTools = onTools,
+                onSettings = { }
             )
         }
     ) { padding ->
@@ -69,8 +87,13 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Text("AI CONTROL CENTER", style = androidx.compose.material3.MaterialTheme.typography.headlineSmall)
-            Text("Obsydian · 24K Gold · Serif", color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
+            BrandPageHeader("USTAWIENIA", "AI CONTROL CENTER · DOSTAWCY · RAG · MEMORY · GGUF", onBack)
+            BrandHero(
+                "AI CONTROL CENTER",
+                "OBSIDIAN · 24K GOLD · SERIF · LOCAL AI · RAG · CREATIVE API",
+                androidx.compose.material.icons.Icons.Default.Settings,
+                BrandPalette.Gold
+            )
 
             Section("JĘZYK / LANGUAGE") {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -217,11 +240,13 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             }, modifier = Modifier.fillMaxWidth()) { Text("ZAPISZ WSZYSTKO") }
         }
     }
+
+    }
 }
 
 @Composable
 private fun Section(title: String, content: @Composable () -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
+    LuxuryCard(Modifier.fillMaxWidth()) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(title, style = androidx.compose.material3.MaterialTheme.typography.titleLarge)
             HorizontalDivider()
