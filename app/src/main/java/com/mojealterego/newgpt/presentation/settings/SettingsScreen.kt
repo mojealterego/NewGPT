@@ -1,5 +1,8 @@
 package com.mojealterego.newgpt.presentation.settings
 
+import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
+import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
+import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -61,17 +64,13 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
 
     Scaffold(
             containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(
-                title = { Text("NEWGPT · USTAWIENIA") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+        topBar = { BrandGlobalHeader(onMenu = onBack) }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
+            BrandPageHeader("USTAWIENIA", "AI CONTROL CENTER · DOSTAWCY · RAG · MEMORY · GGUF", onBack)
             Text("AI CONTROL CENTER", style = androidx.compose.material3.MaterialTheme.typography.headlineSmall)
             Text("Obsydian · 24K Gold · Serif", color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
 
@@ -226,7 +225,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
 
 @Composable
 private fun Section(title: String, content: @Composable () -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
+    LuxuryCard(Modifier.fillMaxWidth()) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(title, style = androidx.compose.material3.MaterialTheme.typography.titleLarge)
             HorizontalDivider()
