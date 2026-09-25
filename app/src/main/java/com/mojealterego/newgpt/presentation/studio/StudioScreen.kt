@@ -70,27 +70,43 @@ class StudioViewModel @Inject constructor(
 @Composable
 fun StudioScreen(onBack: () -> Unit, viewModel: StudioViewModel = hiltViewModel()) {
     var text by remember { mutableStateOf("") }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("CREATIVE STUDIO") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+    PremiumScaffold(
+        selected = "Narzędzia",
+        title = "CREATIVE STUDIO",
+        subtitle = "VOICE · MUSIC · VIDEO · DESIGN",
+        onBack = onBack,
+        onPanel = {},
+        onAgents = {},
+        onMemory = {},
+        onTools = {},
+        onSettingsNav = {}
     ) { padding ->
         Column(
-            Modifier.fillMaxSize().padding(padding).padding(18.dp).verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize().padding(padding).padding(14.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("ElevenLabs · Voice · Music · xAI Video", style = MaterialTheme.typography.headlineSmall)
-            Text("Klucze API ustaw w Ustawieniach.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            OutlinedTextField(value = text, onValueChange = { text = it }, modifier = Modifier.fillMaxWidth(), minLines = 5, label = { Text("Prompt / tekst") })
-            Button(onClick = { viewModel.speech("JBFqnCBsd6RMkjVDRZzb", text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ GŁOS") }
-            Button(onClick = { viewModel.music(text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ MUZYKĘ") }
-            Button(onClick = { viewModel.video(text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ WIDEO") }
-            Button(onClick = { viewModel.canva(text.ifBlank { "NewGPT Creative Design" }) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("UTWÓRZ PROJEKT CANVA") }
-            Text(viewModel.status, color = MaterialTheme.colorScheme.primary)
-            Text("Canva Connect wymaga OAuth 2.0 Authorization Code + PKCE i scope design:content:write; token developerski można ustawić w Ustawieniach.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            GoldCard(title = "ElevenLabs · Voice · Music · xAI Video", icon = Icons.Default.AutoAwesome) {
+                Text("Twórz głos, muzykę i wideo z AI. Klucze API konfigurujesz w Ustawieniach.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 6,
+                    label = { Text("PROMPT / TEKST") },
+                    placeholder = { Text("Opisz, co chcesz wygenerować…") }
+                )
+            }
+            GoldButton("GENERUJ GŁOS", { viewModel.speech("JBFqnCBsd6RMkjVDRZzb", text) }, enabled = text.isNotBlank(), icon = Icons.Default.Mic)
+            GoldButton("GENERUJ MUZYKĘ", { viewModel.music(text) }, enabled = text.isNotBlank(), icon = Icons.Default.MusicNote)
+            GoldButton("GENERUJ WIDEO", { viewModel.video(text) }, enabled = text.isNotBlank(), icon = Icons.Default.VideoLibrary)
+            GoldButton("UTWÓRZ PROJEKT CANVA", { viewModel.canva(text.ifBlank { "NewGPT Creative Design" }) }, enabled = text.isNotBlank(), icon = Icons.Default.Palette)
+            if (viewModel.status.isNotBlank()) {
+                GoldCard(title = "STATUS", icon = Icons.Default.Info) { Text(viewModel.status) }
+            }
+            GoldCard(title = "INTEGRACJE", icon = Icons.Default.Extension) {
+                Text("ElevenLabs · Music · xAI Video · Canva", color = MaterialTheme.colorScheme.primary)
+                Text("Canva Connect wymaga OAuth 2.0 Authorization Code + PKCE.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
     }
 }
