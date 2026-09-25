@@ -130,8 +130,25 @@ class ChatRepositoryImpl @Inject constructor(
             }
             val finalResponse = response.toString()
             dao.update(aiId, finalResponse, false)
+
+            // GoT stores only compact, inspectable summaries — never hidden chain-of-thought.
+            val resultId = got.appendStage(
+                gotInputId,
+                "result",
+                finalResponse,
+                if (finalResponse.isNotBlank()) 0.8f else 0.2f
+            )
+            if (contextParts.isNotEmpty()) {
+                got.appendStage(gotInputId, "evidence", "Retrieved context items: " + contextParts.size, 0.65f)
+            }
             if (pref.permanentMemoryEnabled) {
                 memory.rememberPermanent("[" + conversationId + "] USER: " + prompt + "\nASSISTANT: " + finalResponse)
+            }
+            if (surprise > 0.25f) {
+                titans.consolidateWithDecay(
+                    "[$conversationId] USER: $prompt\nASSISTANT: $finalResponse",
+                    importance = if (surprise > 0.6f) 0.8f else 0.45f
+                )
             }
             finalResponse
         } catch (error: CancellationException) {
