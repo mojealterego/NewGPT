@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mojealterego.newgpt.data.local.AppPreferencesStore
+import com.mojealterego.newgpt.data.local.SecureSettings
 import com.mojealterego.newgpt.data.remote.CreativeStudioService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StudioViewModel @Inject constructor(
     private val prefs: AppPreferencesStore,
+    private val secureSettings: SecureSettings,
     private val service: CreativeStudioService
 ) : ViewModel() {
     var status by mutableStateOf("")
@@ -49,6 +51,11 @@ class StudioViewModel @Inject constructor(
 
     fun video(prompt: String) = run("Video") {
         "Wideo: " + service.generateVideo(prefs.preferences.value.xaiKey, prompt)
+    }
+
+    fun canva(title: String) = run("Canva") {
+        val editUrl = service.createCanvaDesign(secureSettings.canvaAccessToken.value, title)
+        "Canva edit URL: " + editUrl
     }
 
     private fun run(label: String, block: suspend () -> String) {
@@ -81,8 +88,9 @@ fun StudioScreen(onBack: () -> Unit, viewModel: StudioViewModel = hiltViewModel(
             Button(onClick = { viewModel.speech("JBFqnCBsd6RMkjVDRZzb", text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ GŁOS") }
             Button(onClick = { viewModel.music(text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ MUZYKĘ") }
             Button(onClick = { viewModel.video(text) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("GENERUJ WIDEO") }
+            Button(onClick = { viewModel.canva(text.ifBlank { "NewGPT Creative Design" }) }, modifier = Modifier.fillMaxWidth(), enabled = text.isNotBlank()) { Text("UTWÓRZ PROJEKT CANVA") }
             Text(viewModel.status, color = MaterialTheme.colorScheme.primary)
-            Text("Canva i zewnętrzne App Buildery są przygotowane jako warstwa integracji API/webhook. Nie są oznaczane jako natywne integracje bez udokumentowanego API.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("Canva Connect wymaga OAuth 2.0 Authorization Code + PKCE i scope design:content:write; token developerski można ustawić w Ustawieniach.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
