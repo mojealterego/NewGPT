@@ -15,6 +15,9 @@ data class AppPreferences(
     val webAccess: Boolean = true,
     val ragEnabled: Boolean = true,
     val ragTopK: Int = 5,
+    val workingMemoryEnabled: Boolean = true,
+    val permanentMemoryEnabled: Boolean = true,
+    val memoryTopK: Int = 5,
     val temperature: Float = 0.7f,
     val topP: Float = 0.9f,
     val maxTokens: Int = 512,
@@ -37,6 +40,9 @@ class AppPreferencesStore @Inject constructor(@ApplicationContext context: Conte
         webAccess = prefs.getBoolean("web_access", true),
         ragEnabled = prefs.getBoolean("rag_enabled", true),
         ragTopK = prefs.getInt("rag_top_k", 5),
+        workingMemoryEnabled = prefs.getBoolean("working_memory_enabled", true),
+        permanentMemoryEnabled = prefs.getBoolean("permanent_memory_enabled", true),
+        memoryTopK = prefs.getInt("memory_top_k", 5),
         temperature = prefs.getFloat("temperature", 0.7f),
         topP = prefs.getFloat("top_p", 0.9f),
         maxTokens = prefs.getInt("max_tokens", 512),
@@ -54,6 +60,9 @@ class AppPreferencesStore @Inject constructor(@ApplicationContext context: Conte
             .putBoolean("web_access", value.webAccess)
             .putBoolean("rag_enabled", value.ragEnabled)
             .putInt("rag_top_k", value.ragTopK.coerceIn(1, 12))
+            .putBoolean("working_memory_enabled", value.workingMemoryEnabled)
+            .putBoolean("permanent_memory_enabled", value.permanentMemoryEnabled)
+            .putInt("memory_top_k", value.memoryTopK.coerceIn(1, 12))
             .putFloat("temperature", value.temperature.coerceIn(0f, 2f))
             .putFloat("top_p", value.topP.coerceIn(0.05f, 1f))
             .putInt("max_tokens", value.maxTokens.coerceIn(64, 8192))
