@@ -103,7 +103,9 @@ class LocalRagStore @Inject constructor(@ApplicationContext private val context:
                 minOf(Regex(Regex.escape(term)).findAll(haystack).count(), 8)
             }.toFloat() / (queryTerms.size * 2f).coerceAtLeast(1f)
             val semantic = HashEmbeddingEngine.cosine(queryEmbedding, doc.embedding.toFloatArray())
-            val hybrid = semantic.coerceIn(-1f, 1f) * 0.65f + lexical.coerceIn(0f, 1f) * 0.35f
+            val exactPhrase = if (query.trim().length >= 6 && haystack.contains(query.trim().lowercase(Locale.ROOT))) 0.15f else 0f
+            val semanticScore = ((semantic + 1f) / 2f).coerceIn(0f, 1f)
+            val hybrid = semanticScore * 0.60f + lexical.coerceIn(0f, 1f) * 0.25f + exactPhrase
             doc to hybrid
         }
             .filter { it.second > 0.05f }
