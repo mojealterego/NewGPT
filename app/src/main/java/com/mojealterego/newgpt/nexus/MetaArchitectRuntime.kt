@@ -327,4 +327,46 @@ class MetaArchitectRuntime {
     val snn=SnnTranspiler()
     val energy=EnergyAwareRouter()
     val noise=NoiseEngine()
+
+    // Real-world extensions. These adapters perform no fake work:
+    // they require operator-supplied credentials/endpoints before execution.
+    val epistemicHumility = EpistemicHumilityController()
+    val preferenceLedger = PreferenceLearningLedger()
+    val constitutionalGovernance = ConstitutionalGovernance.create(
+        version = 1L,
+        rules = listOf(
+            ConstitutionalRule(
+                id = "human-control",
+                statement = "Consequential changes remain under explicit human control",
+                prohibitedActions = setOf("autonomous-production-deploy"),
+                requiredControls = setOf("human-approval")
+            ),
+            ConstitutionalRule(
+                id = "rollback",
+                statement = "Evolution changes must remain reversible",
+                prohibitedActions = setOf("delete-last-known-good"),
+                requiredControls = setOf("rollback")
+            ),
+            ConstitutionalRule(
+                id = "least-privilege",
+                statement = "External capabilities require explicit authorization",
+                prohibitedActions = setOf("unbounded-tool-execution"),
+                requiredControls = setOf("authorization")
+            )
+        )
+    )
+
+    /**
+     * Physical substrate work is exposed as an authenticated lab boundary.
+     * No fabrication endpoint is assumed or synthesized by the app.
+     */
+    fun substrateRuntime(endpoint: String, allowedHost: String): PhysicalSubstrateRuntime =
+        PhysicalSubstrateRuntime(endpoint, allowedHost)
+
+    /**
+     * IBM Quantum Runtime connector for real QPU execution.
+     * Credentials are supplied by the operator and never persisted here.
+     */
+    fun quantumRuntime(config: QuantumConfig): IbmQuantumRuntime =
+        IbmQuantumRuntime(config)
 }
