@@ -71,6 +71,12 @@ class DigitalNexusCore @Inject constructor(
     val snn = SnnEventGate()
     val formalVerification = UnconfiguredFormalVerificationAdapter()
 
+    /** Unified orchestration facade shared by UI, agents and Android integrations. */
+    val runtime = NexusRuntimeFacade()
+    val modelCatalog = ModelCatalog()
+    val workspaces = WorkspaceRegistry()
+    val recoveryGuard = RecoveryGuard()
+
     init {
         registerDefaultTools()
     }
