@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -14,8 +16,8 @@ android {
         applicationId = "com.mojealterego.newgpt"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "1.0.0"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
     compileOptions {
@@ -53,9 +55,19 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 }
 
-
 kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
+}
+
+val generateNewGptIcon = tasks.register("generateNewGptIcon") {
+    val source = layout.projectDirectory.file("src/main/icon/newgpt_icon.b64").asFile
+    val output = layout.projectDirectory.file("src/main/res/drawable-nodpi/ic_newgpt_master.jpg").asFile
+    inputs.file(source)
+    outputs.file(output)
+    doLast {
+        output.parentFile.mkdirs()
+        output.writeBytes(Base64.getDecoder().decode(source.readText().trim()))
     }
 }
+
+tasks.named("preBuild") { dependsOn(generateNewGptIcon) }
