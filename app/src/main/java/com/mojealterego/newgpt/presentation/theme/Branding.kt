@@ -143,3 +143,106 @@ fun GoldRule(modifier: Modifier = Modifier) {
             )
     )
 }
+
+
+@Composable
+fun BrandTopBar(
+    title: String,
+    subtitle: String? = null,
+    onBack: (() -> Unit)? = null,
+    actions: @Composable (() -> Unit) = {}
+) {
+    androidx.compose.material3.TopAppBar(
+        title = {
+            Column {
+                Text(title, style = MaterialTheme.typography.titleLarge, color = BrandPalette.Ivory)
+                subtitle?.let {
+                    Text(it, style = MaterialTheme.typography.labelSmall, color = BrandPalette.GoldBright)
+                }
+            }
+        },
+        navigationIcon = {
+            onBack?.let {
+                androidx.compose.material3.IconButton(onClick = it) {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.ArrowBack,
+                        contentDescription = "Wstecz",
+                        tint = BrandPalette.GoldBright
+                    )
+                }
+            }
+        },
+        actions = actions,
+        colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent,
+            scrolledContainerColor = BrandPalette.AnilineBlack.copy(alpha = 0.96f)
+        )
+    )
+}
+
+@Composable
+fun AgentIdentity(agentId: String, name: String, modifier: Modifier = Modifier) {
+    val accent = when (agentId) {
+        "wda-photo" -> BrandPalette.Burgundy
+        "creative-director" -> BrandPalette.RoyalBlue
+        "memory-architect" -> BrandPalette.BottleGreen
+        "evolution-engineer" -> Color(0xFF5B3A86)
+        "gguf-engineer" -> BrandPalette.Titanium
+        "mobile-operator" -> Color(0xFF6B4E24)
+        "researcher", "web-researcher", "rag-master" -> BrandPalette.RoyalBlue
+        "architect", "coder" -> BrandPalette.GoldDeep
+        "writer" -> Color(0xFF704214)
+        else -> BrandPalette.Gold
+    }
+    androidx.compose.foundation.layout.Row(
+        modifier = modifier,
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+    ) {
+        androidx.compose.foundation.layout.Box(
+            Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(
+                    Brush.radialGradient(
+                        listOf(BrandPalette.GoldBright, accent, BrandPalette.Obsidian)
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = name.take(2).uppercase(),
+                style = MaterialTheme.typography.titleMedium,
+                color = BrandPalette.Obsidian,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        androidx.compose.foundation.layout.Column(Modifier.padding(start = 12.dp)) {
+            Text(name, style = MaterialTheme.typography.titleMedium, color = BrandPalette.Ivory)
+            Text(
+                agentId.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                color = BrandPalette.GoldBright
+            )
+        }
+    }
+}
+
+@Composable
+fun LuxuryCard(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    androidx.compose.material3.Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(
+            containerColor = BrandPalette.Leather.copy(alpha = 0.88f)
+        ),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            BrandPalette.GoldDeep.copy(alpha = 0.55f)
+        )
+    ) {
+        content()
+    }
+}
