@@ -17,7 +17,6 @@ jobs:
           java-version: "17"
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
-          # Intentionally keep SDK setup explicit for reproducible builds.
       - name: Install Android SDK components
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13113456" "cmake;3.31.6"
       - uses: gradle/actions/setup-gradle@v4
