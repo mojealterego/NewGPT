@@ -3,11 +3,16 @@ package com.mojealterego.newgpt.presentation.theme
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -181,7 +186,11 @@ fun BrandTopBar(
 }
 
 @Composable
-fun AgentIdentity(agentId: String, name: String, modifier: Modifier = Modifier) {
+fun AgentPortrait(
+    agentId: String,
+    size: androidx.compose.ui.unit.Dp = 72.dp,
+    showNumber: Boolean = true
+) {
     val accent = when (agentId) {
         "wda-photo" -> BrandPalette.Burgundy
         "creative-director" -> BrandPalette.RoyalBlue
@@ -194,29 +203,66 @@ fun AgentIdentity(agentId: String, name: String, modifier: Modifier = Modifier) 
         "writer" -> Color(0xFF704214)
         else -> BrandPalette.Gold
     }
-    androidx.compose.foundation.layout.Row(
-        modifier = modifier,
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-    ) {
-        androidx.compose.foundation.layout.Box(
-            Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(
-                    Brush.radialGradient(
-                        listOf(BrandPalette.GoldBright, accent, BrandPalette.Obsidian)
+    val number = when (agentId) {
+        "coordinator" -> "1"
+        "researcher" -> "2"
+        "architect" -> "3"
+        "coder" -> "4"
+        "writer" -> "5"
+        "wda-photo" -> "6"
+        "mobile-operator" -> "7"
+        "rag-master" -> "8"
+        "web-researcher" -> "9"
+        "creative-director" -> "10"
+        "gguf-engineer" -> "11"
+        "memory-architect" -> "12"
+        "evolution-engineer" -> "13"
+        else -> "•"
+    }
+
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(
+                Brush.radialGradient(
+                    colors = listOf(
+                        BrandPalette.GoldBright.copy(alpha = 0.96f),
+                        accent.copy(alpha = 0.82f),
+                        BrandPalette.Obsidian
                     )
-                ),
+                )
+            )
+            .border(2.dp, BrandPalette.GoldBright.copy(alpha = 0.92f), CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(size * 0.78f)
+                .clip(CircleShape)
+                .border(1.dp, BrandPalette.GoldDeep, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = name.take(2).uppercase(),
-                style = MaterialTheme.typography.titleMedium,
-                color = BrandPalette.Obsidian,
-                fontWeight = FontWeight.Bold
-            )
+            if (showNumber) {
+                Text(
+                    text = number,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = BrandPalette.Ivory,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
-        androidx.compose.foundation.layout.Column(Modifier.padding(start = 12.dp)) {
+    }
+}
+
+@Composable
+fun AgentIdentity(agentId: String, name: String, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AgentPortrait(agentId = agentId, size = 52.dp)
+        Column(Modifier.padding(start = 12.dp)) {
             Text(name, style = MaterialTheme.typography.titleMedium, color = BrandPalette.Ivory)
             Text(
                 agentId.uppercase(),
