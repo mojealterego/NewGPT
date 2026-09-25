@@ -1,5 +1,8 @@
 package com.mojealterego.newgpt.presentation.agents
 
+import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
+import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
+import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -28,19 +31,10 @@ fun AgentBuilderScreen(onBack: () -> Unit, viewModel: AgentBuilderViewModel = hi
     BrandBackground {
         Scaffold(
             containerColor = androidx.compose.ui.graphics.Color.Transparent,
-            topBar = {
-                TopAppBar(
-                    title = { Column { Text("AGENT BUILDER"); Text("MOJEALTEREGO · AGENT LAB", style = MaterialTheme.typography.labelSmall, color = BrandPalette.GoldBright) } },
-                    navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, "Wstecz", tint = BrandPalette.GoldBright) } },
-                    actions = {
-                        IconButton(onClick = { draft = viewModel.newAgent() }) { Icon(Icons.Default.Add, "Nowy agent", tint = BrandPalette.GoldBright) }
-                        IconButton(onClick = viewModel::reset) { Icon(Icons.Default.Refresh, "Przywróć domyślne", tint = BrandPalette.Titanium) }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = androidx.compose.ui.graphics.Color.Transparent)
-                )
-            }
+            topBar = { BrandGlobalHeader(onMenu = onBack) }
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding).imePadding()) {
+                BrandPageHeader("AGENT BUILDER", "TWÓRZ · EDYTUJ · ZARZĄDZAJ AGENTAMI", onBack)
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     contentPadding = PaddingValues(16.dp),
@@ -48,7 +42,7 @@ fun AgentBuilderScreen(onBack: () -> Unit, viewModel: AgentBuilderViewModel = hi
                 ) {
                     item { BrandSectionLabel("AGENT REGISTRY · ${state.agents.size} AGENTS") }
                     items(state.agents, key = { it.id }) { agent ->
-                        LuxuryCard(Modifier.fillMaxWidth()) {
+                        LuxuryLuxuryCard(Modifier.fillMaxWidth()) {
                             Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 AgentIdentity(agent.id, agent.name)
                                 Text(agent.description, color = BrandPalette.Titanium)
