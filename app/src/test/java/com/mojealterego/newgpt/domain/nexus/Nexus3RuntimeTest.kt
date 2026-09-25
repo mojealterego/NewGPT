@@ -1,5 +1,5 @@
 package com.mojealterego.newgpt.domain.nexus
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -26,7 +26,7 @@ class Nexus3RuntimeTest{
   if(android.os.Build.VERSION.SDK_INT<36) assertTrue(bridge.capabilities().isEmpty())
  }
  @Test fun modelRouter_failsOverAfterCooldown(){
-  runTest{
+  runBlocking{
    val router=ModelRouter3{1000L}
    router.register(ModelEndpoint("a","x","m",setOf(RouteMode.CLOUD),1,1))
    router.register(ModelEndpoint("b","y","m",setOf(RouteMode.CLOUD),2,1))
