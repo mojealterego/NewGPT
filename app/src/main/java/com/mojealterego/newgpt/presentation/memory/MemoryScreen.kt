@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.presentation.memory
 
+import androidx.compose.material.icons.filled.Memory
 import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
 import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
 import com.mojealterego.newgpt.presentation.theme.LuxuryCard
@@ -61,6 +62,7 @@ fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             BrandPageHeader("HOLOGRAPHIC MEMORY", "PAMIĘĆ · GRAF SKOJARZEŃ · KONTEKST", onBack)
+            BrandHero("Pamięć robocza + stała", "Graf skojarzeń, kontekst i retrieval.", Icons.Default.Memory, BrandPalette.RoyalBlue)
             Text("Pamięć robocza + pamięć stała + graf skojarzeń", style = MaterialTheme.typography.headlineSmall)
             Text(
                 "Widok holograficzny jest projekcją grafu: węzły reprezentują wspomnienia i pojęcia, a krawędzie ich relacje.",
