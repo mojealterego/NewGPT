@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
+import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Code
@@ -265,7 +266,7 @@ fun AgentPortrait(
                 "writer" -> Icons.Default.AutoStories
                 "wda-photo" -> Icons.Default.PhotoCamera
                 "mobile-operator" -> Icons.Default.SmartToy
-                "rag-master" -> Icons.Default.Memory
+                "rag-master" -> Icons.Default.Science
                 "web-researcher" -> Icons.Default.Language
                 "creative-director" -> Icons.Default.Mic
                 "gguf-engineer" -> Icons.Default.Build
