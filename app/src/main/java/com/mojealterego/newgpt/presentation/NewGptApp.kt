@@ -42,7 +42,8 @@ fun NewGptApp() {
             composable("studio") { StudioScreen(onBack = { nav.popBackStack() }) }
             composable("memory") { MemoryScreen(onBack = { nav.popBackStack() }) }
             composable("evolution") { EvolutionScreen(onBack = { nav.popBackStack() }) }
-            composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }\n            composable("cognitive") { CognitiveScreen(onBack = { nav.popBackStack() }) }
+            composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }
+            composable("cognitive") { CognitiveScreen(onBack = { nav.popBackStack() }) }
         }
     }
 }
