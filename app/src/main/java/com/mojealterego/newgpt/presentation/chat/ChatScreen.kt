@@ -44,7 +44,7 @@ fun ChatScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    fun go(action: () -> Unit) = scope.launch { drawerState.close(); action() }
+    fun go(action: () -> Unit) { scope.launch { drawerState.close(); action() } }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
