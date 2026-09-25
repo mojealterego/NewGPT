@@ -91,7 +91,11 @@ fun AgentsScreen(
                             }
                             GoldRule()
                             state.selectedAgent?.let { agent ->
-                                if (agent.id in listOf("coordinator", "researcher", "architect", "coder", "writer", "wda-photo", "web-researcher", "mobile-operator", "rag-master")) {
+                                if (agent.id in listOf(
+                                    "coordinator", "researcher", "architect", "coder", "writer",
+                                    "wda-photo", "web-researcher", "mobile-operator", "rag-master",
+                                    "creative-director", "gguf-engineer", "memory-architect", "evolution-engineer"
+                                )) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
@@ -105,9 +109,13 @@ fun AgentsScreen(
                                                 "coder" -> 120.dp
                                                 "writer" -> 124.dp
                                                 "wda-photo" -> 128.dp
-                                                "web-researcher" -> 132.dp
-                                                "mobile-operator" -> 136.dp
-                                                else -> 140.dp
+                                                "mobile-operator" -> 132.dp
+                                                "rag-master" -> 136.dp
+                                                "web-researcher" -> 140.dp
+                                                "creative-director" -> 144.dp
+                                                "gguf-engineer" -> 148.dp
+                                                "memory-architect" -> 152.dp
+                                                else -> 156.dp
                                             }
                                         )
                                         Column(
@@ -122,9 +130,13 @@ fun AgentsScreen(
                                                     "coder" -> "AGENT 04"
                                                     "writer" -> "AGENT 05"
                                                     "wda-photo" -> "AGENT 06"
-                                                    "web-researcher" -> "AGENT 07"
-                                                    "mobile-operator" -> "AGENT 08"
-                                                    else -> "AGENT 09"
+                                                    "mobile-operator" -> "AGENT 07"
+                                                    "rag-master" -> "AGENT 08"
+                                                    "web-researcher" -> "AGENT 09"
+                                                    "creative-director" -> "AGENT 10"
+                                                    "gguf-engineer" -> "AGENT 11"
+                                                    "memory-architect" -> "AGENT 12"
+                                                    else -> "AGENT 13"
                                                 }
                                             )
                                             Text(
@@ -135,9 +147,13 @@ fun AgentsScreen(
                                                     "coder" -> "AI DEVELOPMENT AGENT"
                                                     "writer" -> "CREATIVE WRITING AGENT"
                                                     "wda-photo" -> "VISUAL DIRECTOR AGENT"
-                                                    "web-researcher" -> "INTELLIGENCE AGENT"
                                                     "mobile-operator" -> "ANDROID AUTOMATION AGENT"
-                                                    else -> "RESEARCH & DEVELOPMENT AGENT"
+                                                    "rag-master" -> "KNOWLEDGE INTELLIGENCE AGENT"
+                                                    "web-researcher" -> "RESEARCH AUTOMATION AGENT"
+                                                    "creative-director" -> "VISUAL STORYTELLING AGENT"
+                                                    "gguf-engineer" -> "LOCAL AI OPTIMIZATION AGENT"
+                                                    "memory-architect" -> "CONTEXT & KNOWLEDGE AGENT"
+                                                    else -> "SELF-IMPROVING AI AGENT"
                                                 },
                                                 style = MaterialTheme.typography.headlineSmall,
                                                 color = BrandPalette.GoldBright
@@ -147,13 +163,22 @@ fun AgentsScreen(
                                                     "coordinator" -> "Central command · planning · delegation · verification"
                                                     "researcher" -> "Information · analysis · sources · facts · insights · verification"
                                                     "architect" -> "System design · architecture · data flow · infrastructure · scalability · integration · security"
-                                                    else -> "Code · automate · debug · deploy · API · agents · tools · optimize · document"
+                                                    "coder" -> "Code · automate · debug · deploy · API · agents · tools · optimize · document"
+                                                    "writer" -> "Research · writing · editing · ideas · scripting · storytelling · brand voice · publishing · SEO"
+                                                    "wda-photo" -> "Capture · Edit · Colorgrade · Retouch · Compose · AI Enhance · Batch Process · Export · Publish"
+                                                    "mobile-operator" -> "Apps · Messaging · Calls · Contacts · Automation · Network · Sync · Security · GPS · ADB Control · AI Assist · Tasks · Monitor"
+                                                    "rag-master" -> "Search · browse · retrieve · summarize · compare · fact check · citations · context · knowledge"
+                                                    "web-researcher" -> "Browse · research · analyze · extract · summarize · compare · fact check · citations · export · monitor"
+                                                    "creative-director" -> "Concept · storyboard · visual style · prompting · characters · environments · editing · cinematic · color grading · publish"
+                                                    "gguf-engineer" -> "GGUF models · quantization · model management · inference · optimization · Android deploy · benchmark · UI integration · tools · conversion · testing"
+                                                    "memory-architect" -> "Memory store · context · knowledge graph · long term · summarize · recall · organize · sync · optimize · backup · search"
+                                                    else -> "Evolve · self-improve · adapt · analyze · feedback · simulate · automate · new skills · next-gen · experiment · deploy"
                                                 },
                                                 style = MaterialTheme.typography.labelMedium,
                                                 color = BrandPalette.Titanium
                                             )
                                         }
-                                    }
+                                    )
                                     Spacer(Modifier.height(10.dp))
                                     GoldRule()
                                 }
