@@ -76,6 +76,8 @@ class DigitalNexusCore @Inject constructor(
     val modelCatalog = ModelCatalog()
     val workspaces = WorkspaceRegistry()
     val recoveryGuard = RecoveryGuard()
+    /** Unified control plane for negotiation, evaluation, resilience, alignment and physical-compute advisories. */
+    val meta = MetaArchitectureRuntime()
 
     init {
         registerDefaultTools()
