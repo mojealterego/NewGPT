@@ -39,23 +39,16 @@ class NexusRuntimeFacade(
         val warnings = compiled.warnings.toMutableList()
 
         if (request.privacy == RuntimePrivacy.PRIVATE) {
-            val privacyViolation = privacy.validate(request.text)
-            if (privacyViolation != null) warnings += privacyViolation
+            if (!privacy.allow(setOf("text"), if (request.privacy == RuntimePrivacy.PRIVATE) "LOCAL" else "CLOUD", privateMode = true)) warnings += "PRIVATE_DATA_FLOW_BLOCKED"
         }
 
-        val allowed = requestedTools.filter { permissions.check(it, privateMode = request.privacy != RuntimePrivacy.STANDARD).allowed }
-        val confirmation = requestedTools.any {
-            !permissions.check(it, privateMode = request.privacy != RuntimePrivacy.STANDARD).allowed ||
-                capabilities.find(it).any { cap -> cap.requiresConfirmation }
-        }
+        val decisions = requestedTools.mapNotNull { id -> capabilities.find(id).firstOrNull()?.let { cap -> id to permissions.decide(ToolGrant(id, if (cap.risk >= 3) ToolRisk.EXTERNAL else if (cap.risk >= 1) ToolRisk.WRITE else ToolRisk.READ, requiresConfirmation = cap.requiresConfirmation), request.privacy != RuntimePrivacy.STANDARD) } }
+        val allowed = decisions.filter { it.second.allowed }.map { it.first }
+        val confirmation = decisions.any { it.second.requiresConfirmation }
 
-        lifecycle.classify(
-            text = request.text,
-            trust = TrustLevel.USER_CONFIRMED,
-            importance = 0.5
-        )
+        lifecycle.classify(LifecycleMemory("runtime-request", request.text, System.currentTimeMillis(), System.currentTimeMillis(), 0.5, 1.0, TrustLevel.USER_CONFIRMED))
 
-        observability.record("runtime.plan", System.nanoTime() - started)
+        observability.record(AiMetric("runtime.plan", (System.nanoTime() - started) / 1_000_000L, true))
         return RuntimePlan(endpoint, compiled, warnings, allowed, confirmation)
     }
 }
