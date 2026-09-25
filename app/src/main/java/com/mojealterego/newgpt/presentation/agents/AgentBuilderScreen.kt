@@ -78,7 +78,7 @@ private fun AgentEditor(
     onDelete: () -> Unit
 ) {
     LazyColumn(
-        Modifier.fillMaxWidth().weight(1f),
+        Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(14.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
