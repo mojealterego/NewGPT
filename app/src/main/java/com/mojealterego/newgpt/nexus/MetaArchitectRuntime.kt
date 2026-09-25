@@ -261,6 +261,10 @@ class EpistemicHumilityLoop {
         EpistemicCheck(confidence.coerceIn(0.0,1.0),contradictions.take(20),rollbackAvailable)
 }
 
+enum class SpikeCoding { RATE, TEMPORAL }
+data class Spike(val neuron:Int,val timeStep:Int,val amplitude:Int=1)
+data class SnnProgram(val neurons:Int,val steps:Int,val spikes:List<Spike>)
+
 class SnnTranspiler {
     fun transpile(weights:FloatArray,coding:SpikeCoding,steps:Int=16,threshold:Float=.5f):SnnProgram{
         val safeSteps=steps.coerceIn(1,4096); val spikes=mutableListOf<Spike>()
