@@ -71,8 +71,29 @@ class DigitalNexusCore @Inject constructor(
     val snn = SnnEventGate()
     val formalVerification = UnconfiguredFormalVerificationAdapter()
 
+    val modelRouter = ModelRouter3()
+    val contextCompiler = ContextCompiler()
+    val memoryLifecycle = MemoryLifecycleEngine()
+    val capabilityRegistry = CapabilityRegistry()
+    val toolPermissions = ToolPermissionEngine()
+    val observability = ObservabilityCore()
+    val privacyPolicy = PrivacyPolicyEngine()
+    val runtime = NexusRuntimeFacade(
+        modelRouter,
+        contextCompiler,
+        memoryLifecycle,
+        capabilityRegistry,
+        toolPermissions,
+        observability,
+        privacyPolicy
+    )
+    val modelCatalog = ModelCatalog()
+    val runtimeCounters = RuntimeCounters()
+
     init {
         registerDefaultTools()
+        registerDefaultCapabilities()
+        registerDefaultModels()
     }
 
     fun status() = NexusStatus(
@@ -90,6 +111,33 @@ class DigitalNexusCore @Inject constructor(
         snnAdapter = true,
         formalVerificationAdapter = true
     )
+
+    private fun registerDefaultCapabilities() {
+        listOf(
+            CapabilityManifest("chat", "core", "Unified conversation runtime", requiresConfirmation = false),
+            CapabilityManifest("agents", "agents", "Multi-agent orchestration"),
+            CapabilityManifest("memory", "knowledge", "Local user-controlled memory"),
+            CapabilityManifest("rag", "knowledge", "Hybrid local retrieval", requiresConfirmation = false),
+            CapabilityManifest("web-search", "tools", "Current web search", requiresConfirmation = false),
+            CapabilityManifest("image-generation", "creative", "Image generation", risk = 2),
+            CapabilityManifest("video-generation", "creative", "Video generation", risk = 2),
+            CapabilityManifest("voice-generation", "creative", "Voice generation", risk = 2),
+            CapabilityManifest("music-generation", "creative", "Music generation", risk = 2),
+            CapabilityManifest("app-builder", "development", "Application specification and build orchestration", risk = 2),
+            CapabilityManifest("repository", "development", "Repository inspection", requiresConfirmation = false),
+            CapabilityManifest("git", "development", "Governed source control", risk = 2),
+            CapabilityManifest("export", "data", "Export user-controlled data"),
+            CapabilityManifest("import", "data", "Import user-controlled data")
+        ).forEach(capabilityRegistry::register)
+    }
+
+    private fun registerDefaultModels() {
+        listOf(
+            ModelCatalog.Model("local-gguf", "llama.cpp", "GGUF", local = true),
+            ModelCatalog.Model("gemini-cloud", "Google", "Gemini", multimodal = true),
+            ModelCatalog.Model("openai-compatible", "OpenAI-compatible", "API")
+        ).forEach(modelCatalog::upsert)
+    }
 
     private fun registerDefaultTools() {
         listOf(
