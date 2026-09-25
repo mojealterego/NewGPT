@@ -20,7 +20,10 @@ data class RagDocument(
     val text: String,
     val addedAt: Long,
     val chunkIndex: Int = 0,
-    val embedding: List<Float> = emptyList()
+    val embedding: List<Float> = emptyList(),
+    val sourceStart: Int = 0,
+    val sourceEnd: Int = 0,
+    val contentHash: Int = 0
 )
 
 @Singleton
@@ -64,7 +67,10 @@ class LocalRagStore @Inject constructor(@ApplicationContext private val context:
                             text = chunk,
                             addedAt = System.currentTimeMillis(),
                             chunkIndex = index++,
-                            embedding = embeddingEngine.embed(chunk).toList()
+                            embedding = embeddingEngine.embed(chunk).toList(),
+                            sourceStart = start,
+                            sourceEnd = end,
+                            contentHash = chunk.hashCode()
                         )
                     )
                 }
@@ -72,7 +78,10 @@ class LocalRagStore @Inject constructor(@ApplicationContext private val context:
                 start = (end - overlap).coerceAtLeast(start + 1)
             }
         }
-        save(load().apply { addAll(chunks) })
+        val existing = load()
+        val keys = existing.map { it.name + "|" + it.chunkIndex + "|" + it.contentHash }.toHashSet()
+        val fresh = chunks.filter { (it.name + "|" + it.chunkIndex + "|" + it.contentHash) !in keys }
+        save(existing.apply { addAll(fresh) })
         name + " · " + chunks.size + " chunks"
     }
 
