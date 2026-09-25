@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mojealterego.newgpt.domain.model.Message
+import com.mojealterego.newgpt.domain.agent.AgentDefinition
 import com.mojealterego.newgpt.presentation.theme.*
 
 @Composable
