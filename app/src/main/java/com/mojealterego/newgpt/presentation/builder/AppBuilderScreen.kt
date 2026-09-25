@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.presentation.builder
 
+import androidx.compose.material.icons.filled.Build
 import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
 import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
 import com.mojealterego.newgpt.presentation.theme.LuxuryCard
@@ -74,6 +75,7 @@ fun AppBuilderScreen(onBack: () -> Unit, viewModel: AppBuilderViewModel = hiltVi
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             BrandPageHeader("AI APP BUILDER", "OD POMYSŁU DO SPECYFIKACJI PRODUKCYJNEJ", onBack)
+            BrandHero("Od pomysłu do aplikacji", "Specyfikacja, architektura, UI/UX i build APK/AAB.", Icons.Default.Build, BrandPalette.Gold)
             Text("Od pomysłu do specyfikacji produkcyjnej", style = MaterialTheme.typography.headlineSmall)
             OutlinedTextField(platform, { platform = it }, Modifier.fillMaxWidth(), label = { Text("Platforma / stack") })
             OutlinedTextField(
