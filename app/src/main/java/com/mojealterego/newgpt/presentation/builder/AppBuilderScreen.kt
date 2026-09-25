@@ -60,28 +60,51 @@ Nie twierdź, że aplikacja została zbudowana lub wdrożona. Twórz konkretne k
 fun AppBuilderScreen(onBack: () -> Unit, viewModel: AppBuilderViewModel = hiltViewModel()) {
     var brief by remember { mutableStateOf("") }
     var platform by remember { mutableStateOf("Kotlin + Jetpack Compose / Android") }
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("AI APP BUILDER") }, navigationIcon = { Button(onClick = onBack) { Text("‹") } })
-        }
+    PremiumScaffold(
+        selected = "Narzędzia",
+        title = "AI APP BUILDER",
+        subtitle = "OD POMYSŁU DO SPECYFIKACJI PRODUKCYJNEJ",
+        onBack = onBack,
+        onPanel = {},
+        onAgents = {},
+        onMemory = {},
+        onTools = {},
+        onSettingsNav = {}
     ) { padding ->
         Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize().padding(padding).padding(14.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Od pomysłu do specyfikacji produkcyjnej", style = MaterialTheme.typography.headlineSmall)
-            OutlinedTextField(platform, { platform = it }, Modifier.fillMaxWidth(), label = { Text("Platforma / stack") })
-            OutlinedTextField(
-                brief, { brief = it }, Modifier.fillMaxWidth(),
-                minLines = 7, label = { Text("Opisz aplikację") }
-            )
-            Button(
-                onClick = { viewModel.generate(brief, platform) },
-                enabled = brief.isNotBlank() && !viewModel.busy,
-                modifier = Modifier.fillMaxWidth()
-            ) { Text(if (viewModel.busy) "GENEROWANIE..." else "ZAPROJEKTUJ APLIKACJĘ") }
-            if (viewModel.result.isNotBlank()) {
-                Text(viewModel.result, style = MaterialTheme.typography.bodyLarge)
+            GoldCard(title = "PLATFORMA / STACK", icon = Icons.Default.Layers) {
+                OutlinedTextField(platform, { platform = it }, Modifier.fillMaxWidth(), label = { Text("Platforma / stack") })
+            }
+            GoldCard(title = "OPISZ APLIKACJĘ", icon = Icons.Default.Description) {
+                OutlinedTextField(
+                    brief, { brief = it }, Modifier.fillMaxWidth(),
+                    minLines = 8,
+                    label = { Text("Brief produkcyjny") },
+                    placeholder = { Text("Cel, funkcje, użytkownicy, styl, integracje, wymagania…") }
+                )
+                GoldButton(
+                    if (viewModel.busy) "PROJEKTOWANIE…" else "ZAPROJEKTUJ APLIKACJĘ",
+                    { viewModel.generate(brief, platform) },
+                    enabled = brief.isNotBlank() && !viewModel.busy,
+                    icon = Icons.Default.Build
+                )
+            }
+            GoldCard(title = "PODGLĄD SPECYFIKACJI", icon = Icons.Default.AutoAwesome) {
+                Text("Architektura · UI/UX · Funkcje · Zależności · Bezpieczeństwo · Build APK/AAB", color = MaterialTheme.colorScheme.primary)
+                if (viewModel.result.isNotBlank()) {
+                    HorizontalDivider(color = Color(0x555F4A18))
+                    Text(viewModel.result, style = MaterialTheme.typography.bodyLarge)
+                } else {
+                    Text("Wynik pojawi się po wygenerowaniu specyfikacji.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlineGoldButton("MOJE PROJEKTY", {}, Modifier.weight(1f), Icons.Default.Folder)
+                OutlineGoldButton("SZABLONY", {}, Modifier.weight(1f), Icons.Default.Description)
+                OutlineGoldButton("POMYSŁY", {}, Modifier.weight(1f), Icons.Default.Lightbulb)
             }
         }
     }
