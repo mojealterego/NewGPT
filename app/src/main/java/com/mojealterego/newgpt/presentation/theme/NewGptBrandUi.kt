@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mojealterego.newgpt.R
 
+val LocalNewGptNavigate = androidx.compose.runtime.compositionLocalOf<(String) -> Unit> { {} }
+
 private val Gold = Color(0xFFE1B84A)
 private val GoldBright = Color(0xFFFFE7A0)
 private val GoldDeep = Color(0xFF8D6412)
@@ -232,13 +234,14 @@ fun NewGptBottomNav(
     onTools: () -> Unit,
     onSettings: () -> Unit
 ) {
+    val navigate = LocalNewGptNavigate.current
     NavigationBar(containerColor = Color(0xF5070708), tonalElevation = 0.dp) {
         val items = listOf(
-            Triple("Panel", Icons.Default.Home, onPanel),
-            Triple("Agenci", Icons.Default.SmartToy, onAgents),
-            Triple("Wiedza", Icons.Default.Storage, onMemory),
-            Triple("Narzędzia", Icons.Default.Build, onTools),
-            Triple("Ustawienia", Icons.Default.Settings, onSettings)
+            Triple("Panel", Icons.Default.Home, { navigate("chat") }),
+            Triple("Agenci", Icons.Default.SmartToy, { navigate("agents") }),
+            Triple("Wiedza", Icons.Default.Storage, { navigate("memory") }),
+            Triple("Narzędzia", Icons.Default.Build, { navigate("cognitive") }),
+            Triple("Ustawienia", Icons.Default.Settings, { navigate("settings") })
         )
         items.forEach { (label, icon, action) ->
             NavigationBarItem(
