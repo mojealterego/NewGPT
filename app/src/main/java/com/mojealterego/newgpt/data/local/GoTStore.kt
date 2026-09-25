@@ -74,6 +74,13 @@ class GoTStore @Inject constructor(@ApplicationContext context: Context) {
         graph.copy(nodes = nodes, edges = graph.edges.filter { it.from in ids && it.to in ids })
     }
 
+    suspend fun appendStage(
+        inputId: String,
+        stage: String,
+        content: String,
+        score: Float = 0.5f
+    ): String = append(stage, content, score, listOf(inputId))
+
     suspend fun clear() = withContext(Dispatchers.IO) {
         if (file.exists()) file.delete()
     }
