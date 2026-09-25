@@ -67,11 +67,38 @@ class TitansMemoryStore @Inject constructor(@ApplicationContext context: Context
 
     suspend fun retrieve(query: String, limit: Int = 5): List<TitansMemory> = withContext(Dispatchers.IO) {
         val key = embedding.embed(query)
-        load()
+        val current = load().toMutableList()
+        val ranked = current
             .map { it to HashEmbeddingEngine.cosine(key, it.key.toFloatArray()) }
             .sortedByDescending { it.second + it.first.importance * 0.2f + it.first.surprise * 0.1f }
             .take(limit.coerceIn(1, 20))
-            .map { it.first }
+        if (ranked.isNotEmpty()) {
+            val used = ranked.map { it.first.id }.toSet()
+            val updated = current.map { item ->
+                if (item.id in used) item.copy(usage = item.usage + 1, updatedAt = System.currentTimeMillis())
+                else item
+            }
+            save(updated.sortedByDescending { it.updatedAt }.takeLast(1000))
+        }
+        ranked.map { it.first }
+    }
+
+    suspend fun consolidateWithDecay(
+        text: String,
+        importance: Float = 0.5f,
+        decayAfterMs: Long = 7L * 24L * 60L * 60L * 1000L
+    ): Boolean = withContext(Dispatchers.IO) {
+        val now = System.currentTimeMillis()
+        val decayed = load().map { item ->
+            val age = (now - item.updatedAt).coerceAtLeast(0L)
+            val factor = if (age <= decayAfterMs) 1f else 0.85f
+            item.copy(
+                importance = (item.importance * factor).coerceIn(0f, 1f),
+                surprise = (item.surprise * factor).coerceIn(0f, 1f)
+            )
+        }.filter { it.importance >= 0.05f || it.surprise >= 0.05f }
+        save(decayed)
+        consolidate(text, importance)
     }
 
     suspend fun clear() = withContext(Dispatchers.IO) {
