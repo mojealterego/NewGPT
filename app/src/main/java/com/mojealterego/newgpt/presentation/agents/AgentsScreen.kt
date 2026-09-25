@@ -28,6 +28,25 @@ import com.mojealterego.newgpt.domain.model.Message
 import com.mojealterego.newgpt.domain.agent.AgentDefinition
 import com.mojealterego.newgpt.presentation.theme.*
 
+
+@Composable
+private fun agentRole(id: String): String = when (id) {
+    "coordinator" -> "GŁÓWNY AGENT"
+    "researcher" -> "BADANIA I ANALIZY"
+    "architect" -> "ARCHITEKT SYSTEMÓW"
+    "coder" -> "PROGRAMOWANIE"
+    "writer" -> "TEKSTY I PUBLIKACJE"
+    "wda-photo" -> "EDYCJA I FOTO"
+    "mobile-operator" -> "ANDROID I ADB"
+    "rag-master" -> "BAZA WIEDZY"
+    "web-researcher" -> "WYSZUKIWANIE WWW"
+    "creative-director" -> "KREACJA I WIZJA"
+    "gguf-engineer" -> "MODELE LLM"
+    "memory-architect" -> "PAMIĘĆ I KONTEKST"
+    "evolution-engineer" -> "ROZWÓJ I AUTOMATYZACJA"
+    else -> "AGENT NEWGPT"
+}
+
 @Composable
 fun AgentsScreen(
     onBack: () -> Unit,
@@ -135,7 +154,7 @@ private fun AgentRegistry(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        agent.role.uppercase(),
+                        agentRole(agent.id),
                         style = MaterialTheme.typography.labelSmall,
                         color = BrandPalette.Titanium,
                         maxLines = 1
@@ -204,7 +223,7 @@ private fun AgentDetail(
                         fontWeight = FontWeight.Black
                     )
                     Text(
-                        agent.role.uppercase(),
+                        agentRole(agent.id),
                         style = MaterialTheme.typography.labelMedium,
                         color = BrandPalette.GoldBright
                     )
