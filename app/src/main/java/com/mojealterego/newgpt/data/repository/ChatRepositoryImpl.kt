@@ -3,6 +3,8 @@ package com.mojealterego.newgpt.data.repository
 import com.mojealterego.newgpt.data.local.AppPreferencesStore
 import com.mojealterego.newgpt.data.local.LocalRagStore
 import com.mojealterego.newgpt.data.local.MemoryGraphStore
+import com.mojealterego.newgpt.data.local.GoTStore
+import com.mojealterego.newgpt.data.local.TitansMemoryStore
 import com.mojealterego.newgpt.data.local.MessageDao
 import com.mojealterego.newgpt.data.local.MessageEntity
 import com.mojealterego.newgpt.data.local.gguf.GgufStrategy
@@ -34,6 +36,8 @@ class ChatRepositoryImpl @Inject constructor(
     private val gguf: GgufStrategy,
     private val rag: LocalRagStore,
     private val memory: MemoryGraphStore,
+    private val got: GoTStore,
+    private val titans: TitansMemoryStore,
     private val web: WebAccessService,
     private val preferences: AppPreferencesStore
 ) : ChatRepository {
@@ -83,6 +87,11 @@ class ChatRepositoryImpl @Inject constructor(
         }
 
         val contextParts = mutableListOf<String>()
+        val gotInputId = got.append("input", prompt, 0.7f)
+        val surprise = titans.observe(prompt)
+        if (surprise > 0.25f) {
+            contextParts += titans.retrieve(prompt, pref.memoryTopK).map { "[TITANS MEMORY]\\n" + it.value }.joinToString("\\n\\n")
+        }
         if (pref.ragEnabled) {
             rag.retrieve(prompt, pref.ragTopK).forEach { doc ->
                 contextParts += "[RAG: " + doc.name + "]\n" + doc.text
