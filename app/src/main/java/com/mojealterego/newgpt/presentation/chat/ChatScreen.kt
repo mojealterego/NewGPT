@@ -19,16 +19,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mojealterego.newgpt.R
 import com.mojealterego.newgpt.domain.model.Message
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,92 +58,136 @@ fun ChatScreen(
     onAgents: () -> Unit,
     onSettings: () -> Unit,
     onStudio: () -> Unit,
+    onMemory: () -> Unit,
+    onEvolution: () -> Unit,
+    onBuilder: () -> Unit,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_newgpt),
-                            contentDescription = "MojeAlterego",
-                            modifier = Modifier.size(42.dp),
-                            tint = Color.Unspecified
-                        )
-                        Column(Modifier.padding(start = 10.dp)) {
-                            Text("NewGPT", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-                            Text("ANDRZEJ MIKULSKI · MOJEALTEREGO", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                },
-                actions = {
-                    IconButton(onClick = viewModel::clear, enabled = state.inputEnabled) { Icon(Icons.Default.Delete, "Wyczyść") }
-                    IconButton(onClick = onStudio) { Icon(Icons.Default.AutoAwesome, "Creative Studio") }
-                    IconButton(onClick = onAgents) { Icon(Icons.Default.AutoAwesome, "Agenci") }
-                    IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Ustawienia") }
-                }
-            )
-        },
-        bottomBar = {
-            Row(
-                Modifier.fillMaxWidth().navigationBarsPadding().imePadding().padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    modifier = Modifier.weight(1f),
-                    enabled = state.inputEnabled,
-                    placeholder = { Text("Napisz wiadomość…") },
-                    shape = RoundedCornerShape(24.dp),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(onSend = {
-                        if (text.isNotBlank()) {
-                            viewModel.send(text)
-                            text = ""
-                        }
-                    })
-                )
-                IconButton(
-                    onClick = { viewModel.send(text); text = "" },
-                    enabled = state.inputEnabled && text.isNotBlank()
-                ) { Icon(Icons.Default.Send, "Wyślij") }
-            }
-        }
-    ) { padding ->
-        if (state.messages.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 28.dp)) {
+    fun closeAnd(action: () -> Unit) {
+        scope.launch { drawerState.close(); action() }
+    }
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Icon(
                         painter = painterResource(R.drawable.ic_newgpt),
                         contentDescription = "Logo MojeAlterego",
-                        modifier = Modifier.size(132.dp),
+                        modifier = Modifier.size(88.dp),
                         tint = Color.Unspecified
                     )
-                    Text("NewGPT", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary)
-                    Text("ANDRZEJ MIKULSKI", style = MaterialTheme.typography.titleMedium)
-                    Text("MOJEALTEREGO", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                    Box(Modifier.height(18.dp))
-                    Text("Nowa rozmowa", style = MaterialTheme.typography.headlineSmall)
-                    Text("Skonfiguruj dostawcę, RAG i dostęp do sieci w Ustawieniach.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("NEWGPT", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
+                    Text("MOJEALTEREGO AI CONTROL CENTER", style = MaterialTheme.typography.labelSmall)
+                    HorizontalDivider()
+                }
+                NavigationDrawerItem(label = { Text("Rozmowa") }, selected = true, onClick = { scope.launch { drawerState.close() } })
+                NavigationDrawerItem(label = { Text("Agenci") }, selected = false, onClick = { closeAnd(onAgents) })
+                NavigationDrawerItem(label = { Text("Creative Studio") }, selected = false, onClick = { closeAnd(onStudio) })
+                NavigationDrawerItem(label = { Text("Holographic Memory") }, selected = false, onClick = { closeAnd(onMemory) })
+                NavigationDrawerItem(label = { Text("DGM · RSI Evolution Lab") }, selected = false, onClick = { closeAnd(onEvolution) })
+                NavigationDrawerItem(label = { Text("AI App Builder") }, selected = false, onClick = { closeAnd(onBuilder) })
+                NavigationDrawerItem(label = { Text("Ustawienia") }, selected = false, onClick = { closeAnd(onSettings) })
+                Column(
+                    Modifier.fillMaxSize().padding(18.dp),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    HorizontalDivider()
+                    Text("Wszystkie prawa zastrzeżone Mojealterego", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(top = 12.dp))
                 }
             }
-        } else {
-            LaunchedEffect(state.messages.size) {
-                if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.lastIndex)
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(Icons.Default.Menu, "Menu")
+                        }
+                    },
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_newgpt),
+                                contentDescription = "Mojealterego",
+                                modifier = Modifier.size(42.dp),
+                                tint = Color.Unspecified
+                            )
+                            Column(Modifier.padding(start = 10.dp)) {
+                                Text("NewGPT", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+                                Text("MOJEALTEREGO", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                            }
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = viewModel::clear, enabled = state.inputEnabled) { Icon(Icons.Default.Delete, "Wyczyść") }
+                        IconButton(onClick = onStudio) { Icon(Icons.Default.AutoAwesome, "Creative Studio") }
+                    }
+                )
+            },
+            bottomBar = {
+                Row(
+                    Modifier.fillMaxWidth().navigationBarsPadding().imePadding().padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        modifier = Modifier.weight(1f),
+                        enabled = state.inputEnabled,
+                        placeholder = { Text("Napisz wiadomość…") },
+                        shape = RoundedCornerShape(24.dp),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(onSend = {
+                            if (text.isNotBlank()) {
+                                viewModel.send(text)
+                                text = ""
+                            }
+                        })
+                    )
+                    IconButton(
+                        onClick = { viewModel.send(text); text = "" },
+                        enabled = state.inputEnabled && text.isNotBlank()
+                    ) { Icon(Icons.Default.Send, "Wyślij") }
+                }
             }
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize().padding(padding).imePadding(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(state.messages, key = { it.id }) { MessageBubble(it) }
+        ) { padding ->
+            if (state.messages.isEmpty()) {
+                Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 28.dp)) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_newgpt),
+                            contentDescription = "Logo Mojealterego",
+                            modifier = Modifier.size(132.dp),
+                            tint = Color.Unspecified
+                        )
+                        Text("NewGPT", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary)
+                        Text("MOJEALTEREGO", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                        Box(Modifier.height(18.dp))
+                        Text("Nowa rozmowa", style = MaterialTheme.typography.headlineSmall)
+                        Text("Dostawcy AI · RAG · pamięć · internet · GGUF · Creative Studio", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            } else {
+                LaunchedEffect(state.messages.size) {
+                    if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.lastIndex)
+                }
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize().padding(padding).imePadding(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(state.messages, key = { it.id }) { MessageBubble(it) }
+                }
             }
         }
     }

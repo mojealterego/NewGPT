@@ -36,8 +36,10 @@ import com.mojealterego.newgpt.domain.model.ProviderType
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
     val config by viewModel.config.collectAsStateWithLifecycle()
     val prefs by viewModel.preferences.collectAsStateWithLifecycle()
+    val canvaToken by viewModel.canvaAccessToken.collectAsStateWithLifecycle()
     var draft by remember(config) { mutableStateOf(config) }
     var prefDraft by remember(prefs) { mutableStateOf(prefs) }
+    var canvaDraft by remember(canvaToken) { mutableStateOf(canvaToken) }
     var providerExpanded by remember { mutableStateOf(false) }
     var presetExpanded by remember { mutableStateOf(false) }
     var languageExpanded by remember { mutableStateOf(false) }
@@ -131,6 +133,31 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 if (ragStatus.isNotBlank()) Text(ragStatus, color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
             }
 
+            Section("MEMORY · WORKING / PERMANENT / GRAPH") {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Pamięć robocza")
+                        Text("Zapamiętuje bieżące doświadczenia i buduje graf skojarzeń.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(checked = prefDraft.workingMemoryEnabled, onCheckedChange = { prefDraft = prefDraft.copy(workingMemoryEnabled = it) })
+                }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Pamięć stała")
+                        Text("Przechowuje wybrane doświadczenia między sesjami.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(checked = prefDraft.permanentMemoryEnabled, onCheckedChange = { prefDraft = prefDraft.copy(permanentMemoryEnabled = it) })
+                }
+                OutlinedTextField(
+                    value = prefDraft.memoryTopK.toString(),
+                    onValueChange = { prefDraft = prefDraft.copy(memoryTopK = it.toIntOrNull()?.coerceIn(1, 12) ?: prefDraft.memoryTopK) },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Liczba wspomnień do retrieval") },
+                    singleLine = true
+                )
+                Text("Graf pamięci jest dostępny z Menu → Holographic Memory.", color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
+            }
+
             Section("INTERNET / WEB ACCESS") {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Pobieraj treść adresów HTTP(S) podanych w wiadomości.")
@@ -178,11 +205,14 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             Section("CREATIVE API") {
                 OutlinedTextField(value = prefDraft.elevenLabsKey, onValueChange = { prefDraft = prefDraft.copy(elevenLabsKey = it) }, modifier = Modifier.fillMaxWidth(), label = { Text("ElevenLabs API key") }, visualTransformation = PasswordVisualTransformation(), singleLine = true)
                 OutlinedTextField(value = prefDraft.xaiKey, onValueChange = { prefDraft = prefDraft.copy(xaiKey = it) }, modifier = Modifier.fillMaxWidth(), label = { Text("xAI API key") }, visualTransformation = PasswordVisualTransformation(), singleLine = true)
+                OutlinedTextField(value = canvaDraft, onValueChange = { canvaDraft = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Canva Connect access token") }, visualTransformation = PasswordVisualTransformation(), singleLine = true)
+                Text("Token jest przechowywany w EncryptedSharedPreferences. Produkcyjny OAuth Canva wymaga Authorization Code + PKCE.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Button(onClick = {
                 viewModel.update(draft)
                 viewModel.updatePreferences(prefDraft)
+                viewModel.updateCanvaAccessToken(canvaDraft)
                 onBack()
             }, modifier = Modifier.fillMaxWidth()) { Text("ZAPISZ WSZYSTKO") }
         }

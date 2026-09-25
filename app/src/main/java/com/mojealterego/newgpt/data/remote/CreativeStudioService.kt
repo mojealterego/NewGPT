@@ -30,6 +30,15 @@ private data class XaiVideoRequest(
 @Serializable private data class XaiVideoStart(val request_id: String)
 @Serializable private data class XaiVideoResult(val status: String, val video: XaiVideoOutput? = null)
 @Serializable private data class XaiVideoOutput(val url: String)
+@Serializable private data class CanvaDesignType(val type: String, val name: String)
+@Serializable private data class CanvaCreateRequest(
+    val type: String = "type_and_asset",
+    val design_type: CanvaDesignType,
+    val title: String
+)
+@Serializable private data class CanvaUrls(val edit_url: String, val view_url: String)
+@Serializable private data class CanvaDesign(val id: String, val urls: CanvaUrls, val title: String? = null)
+@Serializable private data class CanvaCreateResponse(val design: CanvaDesign)
 
 @Singleton
 class CreativeStudioService @Inject constructor(private val client: HttpClient) {
@@ -53,6 +62,18 @@ class CreativeStudioService @Inject constructor(private val client: HttpClient) 
         }
         check(response.status.value in 200..299) { "ElevenLabs HTTP " + response.status.value }
         return response.readBytes()
+    }
+
+    suspend fun createCanvaDesign(accessToken: String, title: String, preset: String = "presentation"): String {
+        require(accessToken.isNotBlank()) { "Brak Canva Connect access token." }
+        require(preset in setOf("doc", "email", "presentation", "whiteboard")) { "Nieobsługiwany preset Canva." }
+        val response = client.post("https://api.canva.com/rest/v1/designs") {
+            header(HttpHeaders.Authorization, "Bearer " + accessToken)
+            header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(CanvaCreateRequest(design_type = CanvaDesignType("preset", preset), title = title.take(255)))
+        }
+        check(response.status.value in 200..299) { "Canva HTTP " + response.status.value + ": " + response.bodyAsText() }
+        return Json.decodeFromString<CanvaCreateResponse>(response.bodyAsText()).design.urls.edit_url
     }
 
     suspend fun generateVideo(apiKey: String, prompt: String): String {
