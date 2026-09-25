@@ -555,3 +555,39 @@ class PhysicalComputeAdvisor {
         "Optimize algorithms and scheduling before attempting physical substrate changes."
     )
 }
+
+
+/** Aggregated, dependency-light control plane exposed to the Digital Nexus Core. */
+class MetaArchitectureRuntime {
+    val negotiation = NegotiationEngine()
+    val dataDriven = DataDrivenDecisionEngine()
+    val conflict = ConflictResolutionEngine()
+    val criticalThinking = CriticalThinkingEngine()
+    val delegation = DelegationEngine()
+    val attention = AttentionCompiler()
+    val retry = RetryPolicy()
+    val failures = FailureMemoryStore()
+    val concurrency = ConcurrencyEngine()
+    val latency = LatencyBudgetEngine()
+    val creativity = CreativityPolicy()
+    val bandit = BanditRouter()
+    val drift = DriftDetector()
+    val prefetch = PredictivePrefetchPolicy()
+    val zeroTrust = ZeroTrustGate()
+    val reward = GoalRewardEngine()
+    val knowledgeTransfer = KnowledgeTransferRegistry()
+    val discovery = ServiceDiscoveryRegistry()
+    val asyncCompletion = AsyncCompletionRegistry()
+    val confidence = ConfidenceGate()
+    val structuredOutput = StructuredOutputGate()
+    val degradation = DegradationController()
+    val clarification = ClarificationEngine()
+    val dag = DagPlanner()
+    val semanticIndex = SemanticClusterIndex()
+    val knowledgeGraph = KnowledgeGraph()
+    val audit = AuditTrail()
+    val alignment = AlignmentGate()
+    val humility = EpistemicHumilityLoop()
+    val quantum = QuantumHybridAdapter()
+    val physicalCompute = PhysicalComputeAdvisor()
+}
