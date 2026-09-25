@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Build
@@ -166,6 +168,144 @@ fun GoldRule(modifier: Modifier = Modifier) {
     )
 }
 
+
+@Composable
+fun BrandGlobalHeader(
+    onMenu: () -> Unit,
+    onSettings: (() -> Unit)? = null,
+    onClear: (() -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(BrandPalette.Obsidian.copy(alpha = 0.97f))
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(82.dp)
+                .padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            androidx.compose.material3.IconButton(onClick = onMenu) {
+                androidx.compose.material3.Icon(
+                    androidx.compose.material.icons.Icons.Default.Menu,
+                    contentDescription = "Menu",
+                    tint = BrandPalette.GoldBright,
+                    modifier = Modifier.size(34.dp)
+                )
+            }
+            Image(
+                painter = painterResource(R.drawable.newgpt_brand),
+                contentDescription = "Andrzej Mikulski · MojeAlterego",
+                modifier = Modifier
+                    .width(145.dp)
+                    .height(70.dp)
+            )
+            Box(
+                Modifier
+                    .height(50.dp)
+                    .width(1.dp)
+                    .background(BrandPalette.GoldDeep)
+            )
+            Column(
+                Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp)
+            ) {
+                Text(
+                    "NewGPT",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = BrandPalette.Ivory,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    "MOJEALTEREGO",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = BrandPalette.GoldBright,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            onClear?.let {
+                androidx.compose.material3.IconButton(onClick = it) {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.DeleteOutline,
+                        contentDescription = "Wyczyść",
+                        tint = BrandPalette.GoldBright,
+                        modifier = Modifier.size(27.dp)
+                    )
+                }
+            }
+            onSettings?.let {
+                androidx.compose.material3.IconButton(onClick = it) {
+                    androidx.compose.material3.Icon(
+                        androidx.compose.material.icons.Icons.Default.Settings,
+                        contentDescription = "Ustawienia",
+                        tint = BrandPalette.GoldBright,
+                        modifier = Modifier.size(27.dp)
+                    )
+                }
+            }
+        }
+        GoldRule()
+    }
+}
+
+@Composable
+fun BrandPageHeader(
+    title: String,
+    subtitle: String? = null,
+    onBack: (() -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        onBack?.let {
+            androidx.compose.material3.IconButton(
+                onClick = it,
+                modifier = Modifier
+                    .size(62.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(BrandPalette.GoldBright, BrandPalette.Gold, BrandPalette.GoldDeep)
+                        )
+                    )
+            ) {
+                androidx.compose.material3.Icon(
+                    androidx.compose.material.icons.Icons.Default.ArrowBack,
+                    contentDescription = "Wstecz",
+                    tint = BrandPalette.Obsidian,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = if (onBack != null) 14.dp else 0.dp)
+        ) {
+            Text(
+                title,
+                style = MaterialTheme.typography.headlineSmall,
+                color = BrandPalette.Ivory,
+                fontWeight = FontWeight.Bold
+            )
+            subtitle?.let {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = BrandPalette.GoldBright
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun BrandTopBar(
