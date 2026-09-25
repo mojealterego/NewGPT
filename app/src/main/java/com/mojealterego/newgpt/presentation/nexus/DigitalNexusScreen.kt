@@ -40,7 +40,12 @@ data class NexusUiState(
     val modules: List<Pair<String, Boolean>> = emptyList(),
     val gMemory: Map<String, Int> = emptyMap(),
     val tools: Int = 0,
-    val audits: Int = 0
+    val audits: Int = 0,
+    val capabilities: Int = 0,
+    val models: Int = 0,
+    val p95LatencyMs: Long = 0,
+    val requests: Long = 0,
+    val failures: Long = 0
 )
 
 @HiltViewModel
@@ -69,7 +74,12 @@ class DigitalNexusViewModel @Inject constructor(
                 ),
                 gMemory = core.gMemory.counts(),
                 tools = core.gateway.listTools().size,
-                audits = core.gateway.auditLog().size
+                audits = core.gateway.auditLog().size,
+                capabilities = core.capabilityRegistry.all().size,
+                models = core.modelCatalog.all().size,
+                p95LatencyMs = core.observability.p95Latency(),
+                requests = core.runtimeCounters.snapshot().first,
+                failures = core.runtimeCounters.snapshot().second
             )
         }
     }
@@ -116,6 +126,15 @@ fun DigitalNexusScreen(
                         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                             Text("MCP tools: " + state.tools)
                             Text("audits: " + state.audits)
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            Text("capabilities: " + state.capabilities)
+                            Text("models: " + state.models)
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            Text("p95: " + state.p95LatencyMs + " ms")
+                            Text("requests: " + state.requests)
+                            Text("failures: " + state.failures)
                         }
                     }
                 }
