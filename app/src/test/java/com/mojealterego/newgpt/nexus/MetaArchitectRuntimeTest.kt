@@ -27,12 +27,13 @@ class MetaArchitectRuntimeTest {
         assertTrue(schema.validate(mapOf("name" to 7)).contains("invalid:name"))
     }
 
-    @Test fun securityAndAlignmentRequireHumanForConsequentialChanges() {
+    @Test fun securityAndGovernanceRequireHumanForConsequentialChanges() {
         val runtime=MetaArchitectRuntime()
         assertTrue(runtime.zeroTrust.check(Risk.WRITE,false,false).requiresHuman)
-        val result=runtime.alignment.verify("m1","digest")
-        assertTrue(result.passed)
+        val result=runtime.governance.check("m1")
+        assertTrue(result.inputValid)
         assertTrue(result.humanApprovalRequired)
+        assertTrue(result.rollbackRequired)
     }
 
     @Test fun snnAndCimCompileDeterministically() {
