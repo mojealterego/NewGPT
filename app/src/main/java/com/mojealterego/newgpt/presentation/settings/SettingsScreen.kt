@@ -1,6 +1,8 @@
 package com.mojealterego.newgpt.presentation.settings
 
+import com.mojealterego.newgpt.presentation.theme.BrandBottomNav
 import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
+import com.mojealterego.newgpt.presentation.theme.BrandHero
 import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
 import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,7 +39,14 @@ import com.mojealterego.newgpt.domain.model.ProviderType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(
+    onBack: () -> Unit,
+    onPanel: () -> Unit = onBack,
+    onAgents: () -> Unit = onBack,
+    onMemory: () -> Unit = onBack,
+    onTools: () -> Unit = onBack,
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
     BrandBackground {
     val config by viewModel.config.collectAsStateWithLifecycle()
     val prefs by viewModel.preferences.collectAsStateWithLifecycle()
@@ -64,15 +73,29 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
 
     Scaffold(
             containerColor = Color.Transparent,
-        topBar = { BrandGlobalHeader(onMenu = onBack) }
+        topBar = { BrandGlobalHeader(onMenu = onBack) },
+        bottomBar = {
+            BrandBottomNav(
+                selected = "Ustawienia",
+                onPanel = onPanel,
+                onAgents = onAgents,
+                onMemory = onMemory,
+                onTools = onTools,
+                onSettings = { }
+            )
+        }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             BrandPageHeader("USTAWIENIA", "AI CONTROL CENTER · DOSTAWCY · RAG · MEMORY · GGUF", onBack)
-            Text("AI CONTROL CENTER", style = androidx.compose.material3.MaterialTheme.typography.headlineSmall)
-            Text("Obsydian · 24K Gold · Serif", color = androidx.compose.material3.MaterialTheme.colorScheme.primary)
+            BrandHero(
+                "AI CONTROL CENTER",
+                "OBSydian · 24K GOLD · SERIF · LOCAL AI · RAG · CREATIVE API",
+                androidx.compose.material.icons.Icons.Default.Settings,
+                BrandPalette.Gold
+            )
 
             Section("JĘZYK / LANGUAGE") {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
