@@ -509,41 +509,6 @@ class EpistemicHumilityLoop {
     )
 }
 
-class QuantumHybridAdapter {
-    /**
-     * Adapter boundary for a future QPU. Current implementation is exact classical
-     * fallback; it never fabricates quantum speedups or hardware access.
-     */
-    fun <T> search(query: QuantumQuery<T>): QuantumResult<T> {
-        val item = query.items.firstOrNull(query.predicate)
-        return QuantumResult(item, "CLASSICAL_FALLBACK", true, "linear-fallback")
-    }
-}
-
-class PhysicalComputeAdvisor {
-    fun recommend(
-        thermal: ThermalSnapshot,
-        availableRamMb: Long,
-        acceleratorPresent: Boolean
-    ): EnergyPolicy {
-        val thermalFactor = thermal.recommendedLoad.coerceIn(0.1, 1.0)
-        val memoryFactor = (availableRamMb / 4096.0).coerceIn(0.25, 1.0)
-        val maxWork = min(thermalFactor, memoryFactor)
-        return EnergyPolicy(
-            maxWorkFraction = maxWork,
-            preferLocal = acceleratorPresent && maxWork > 0.45,
-            allowBackgroundWork = thermal.status < 4 && thermal.batteryPct > 25
-        )
-    }
-
-    fun advisoryNotes(): List<String> = listOf(
-        "Use Android thermal/battery signals to budget inference.",
-        "Treat graphene/CNT/lab control as an external research adapter, not a device capability.",
-        "Optimize algorithms and scheduling before attempting physical substrate changes."
-    )
-}
-
-
 /** Aggregated, dependency-light control plane exposed to the Digital Nexus Core. */
 class MetaArchitectureRuntime {
     val negotiation = NegotiationEngine()
@@ -575,6 +540,4 @@ class MetaArchitectureRuntime {
     val audit = AuditTrail()
     val alignment = GovernanceInvariantGate()
     val humility = EpistemicHumilityLoop()
-    val quantum = QuantumHybridAdapter()
-    val physicalCompute = PhysicalComputeAdvisor()
 }
