@@ -19,7 +19,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier\nimport androidx.compose.ui.graphics.Color
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
@@ -44,10 +44,10 @@ class MemoryViewModel @Inject constructor(private val store: MemoryGraphStore) :
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel()) {
+fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel()) {\n    BrandBackground {
     val graph = viewModel.graph
     var showPermanent by remember { mutableStateOf(true) }
-    Scaffold(
+    Scaffold(\n            containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text("HOLOGRAPHIC MEMORY") },
@@ -77,7 +77,7 @@ fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel(
             Button(onClick = viewModel::clearAll, modifier = Modifier.fillMaxWidth()) { Text("WYCZYŚĆ CAŁĄ PAMIĘĆ") }
         }
     }
-}
+\n    }\n}
 
 @Composable
 private fun MemoryGraphCanvas(graph: MemoryGraph, showPermanent: Boolean) {
