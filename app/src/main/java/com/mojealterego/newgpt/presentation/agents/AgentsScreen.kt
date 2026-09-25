@@ -91,6 +91,32 @@ fun AgentsScreen(
                             }
                             GoldRule()
                             state.selectedAgent?.let { agent ->
+                                if (agent.id == "coordinator") {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        AgentPortrait("coordinator", size = 104.dp)
+                                        Column(
+                                            Modifier.padding(start = 16.dp),
+                                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            BrandSectionLabel("AGENT 01")
+                                            Text(
+                                                "MASTER ORCHESTRATOR",
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                color = BrandPalette.GoldBright
+                                            )
+                                            Text(
+                                                "Central command · planning · delegation · verification",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = BrandPalette.Titanium
+                                            )
+                                        }
+                                    }
+                                    Spacer(Modifier.height(10.dp))
+                                    GoldRule()
+                                }
                                 Text(agent.description, color = BrandPalette.Ivory)
                                 Text("SKILLS · ${agent.skills.joinToString(" · ")}", style = MaterialTheme.typography.labelSmall, color = BrandPalette.Titanium)
                                 if (agent.tools.isNotEmpty()) {
