@@ -81,6 +81,8 @@ fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel(
 
 @Composable
 private fun MemoryGraphCanvas(graph: MemoryGraph, showPermanent: Boolean) {
+    val primary = primary
+    val background = background
     Canvas(Modifier.fillMaxWidth().height(420.dp).padding(8.dp)) {
         val visible = graph.nodes.filter { showPermanent || it.type != "permanent" }.take(80)
         if (visible.isEmpty()) return@Canvas
@@ -93,13 +95,13 @@ private fun MemoryGraphCanvas(graph: MemoryGraph, showPermanent: Boolean) {
         graph.edges.forEach { edge ->
             val a = positions[edge.from]
             val b = positions[edge.to]
-            if (a != null && b != null) drawLine(MaterialTheme.colorScheme.primary, a, b, strokeWidth = 2f)
+            if (a != null && b != null) drawLine(primary, a, b, strokeWidth = 2f)
         }
         visible.forEach { node ->
             val p = positions[node.id] ?: return@forEach
-            drawCircle(MaterialTheme.colorScheme.primary, radius = if (node.type == "concept") 10f else 15f, center = p)
-            drawCircle(MaterialTheme.colorScheme.background, radius = 4f, center = p)
-            drawCircle(MaterialTheme.colorScheme.primary, radius = 15f, center = p, style = Stroke(width = 2f))
+            drawCircle(primary, radius = if (node.type == "concept") 10f else 15f, center = p)
+            drawCircle(background, radius = 4f, center = p)
+            drawCircle(primary, radius = 15f, center = p, style = Stroke(width = 2f))
         }
     }
 }
