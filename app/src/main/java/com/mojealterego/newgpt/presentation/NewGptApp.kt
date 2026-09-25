@@ -31,6 +31,7 @@ fun NewGptApp() {
             }
             composable("agents") {
                 AgentsScreen(
+                    onBack = { nav.popBackStack() },
                     onBuilder = { nav.navigate("agent-builder") },
                     onSettings = { nav.navigate("settings") }
                 )
