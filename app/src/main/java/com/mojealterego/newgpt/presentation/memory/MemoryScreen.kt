@@ -1,5 +1,8 @@
 package com.mojealterego.newgpt.presentation.memory
 
+import com.mojealterego.newgpt.presentation.theme.BrandGlobalHeader
+import com.mojealterego.newgpt.presentation.theme.BrandPageHeader
+import com.mojealterego.newgpt.presentation.theme.LuxuryCard
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,17 +54,13 @@ fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel(
     var showPermanent by remember { mutableStateOf(true) }
     Scaffold(
             containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(
-                title = { Text("HOLOGRAPHIC MEMORY") },
-                navigationIcon = { Button(onClick = onBack) { Text("‹") } }
-            )
-        }
+        topBar = { BrandGlobalHeader(onMenu = onBack) }
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            BrandPageHeader("HOLOGRAPHIC MEMORY", "PAMIĘĆ · GRAF SKOJARZEŃ · KONTEKST", onBack)
             Text("Pamięć robocza + pamięć stała + graf skojarzeń", style = MaterialTheme.typography.headlineSmall)
             Text(
                 "Widok holograficzny jest projekcją grafu: węzły reprezentują wspomnienia i pojęcia, a krawędzie ich relacje.",
@@ -71,7 +70,7 @@ fun MemoryScreen(onBack: () -> Unit, viewModel: MemoryViewModel = hiltViewModel(
                 Text("Pokaż pamięć stałą")
                 Switch(checked = showPermanent, onCheckedChange = { showPermanent = it })
             }
-            Card(Modifier.fillMaxWidth()) { MemoryGraphCanvas(graph, showPermanent) }
+            LuxuryCard(Modifier.fillMaxWidth()) { MemoryGraphCanvas(graph, showPermanent) }
             Text("Węzły: " + graph.nodes.size + " · relacje: " + graph.edges.size)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = viewModel::refresh, modifier = Modifier.weight(1f)) { Text("ODŚWIEŻ") }
