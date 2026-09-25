@@ -257,7 +257,8 @@ fun BrandPageHeader(
     title: String,
     subtitle: String? = null,
     onBack: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -304,6 +305,7 @@ fun BrandPageHeader(
                 )
             }
         }
+        actions()
     }
 }
 
