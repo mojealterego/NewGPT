@@ -482,7 +482,7 @@ class AuditTrail {
     fun recent(limit: Int = 50): List<Event> = events.takeLast(limit)
 }
 
-class AlignmentGate {
+class GovernanceInvariantGate {
     fun policy(version: String, principles: Set<String>, forbidden: Set<String>): AlignmentPolicy {
         val canonical = version + "|" + principles.sorted().joinToString(",") + "|" + forbidden.sorted().joinToString(",")
         return AlignmentPolicy(version, principles.toSet(), forbidden.toSet(), sha256(canonical))
@@ -586,7 +586,7 @@ class MetaArchitectureRuntime {
     val semanticIndex = SemanticClusterIndex()
     val knowledgeGraph = KnowledgeGraph()
     val audit = AuditTrail()
-    val alignment = AlignmentGate()
+    val alignment = GovernanceInvariantGate()
     val humility = EpistemicHumilityLoop()
     val quantum = QuantumHybridAdapter()
     val physicalCompute = PhysicalComputeAdvisor()
