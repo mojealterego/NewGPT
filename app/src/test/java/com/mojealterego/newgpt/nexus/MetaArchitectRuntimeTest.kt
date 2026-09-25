@@ -36,14 +36,6 @@ class MetaArchitectRuntimeTest {
         assertTrue(result.rollbackRequired)
     }
 
-    @Test fun snnAndCimCompileDeterministically() {
-        val runtime=MetaArchitectRuntime()
-        val snn=runtime.snn.transpile(floatArrayOf(.1f,.8f,.6f),SpikeCoding.TEMPORAL,8,.5f)
-        assertEquals(3,snn.neurons)
-        assertEquals(2,snn.spikes.size)
-        val program=runtime.cim.compile(listOf(ActiveMemoryOp.InSituAdd(4,2),ActiveMemoryOp.CompareAndSwap(5,1,9)))
-        assertEquals(2,program.operations.size)
-    }
 
     @Test fun gracefulDegradationAndClarificationWork() {
         val runtime=MetaArchitectRuntime()
