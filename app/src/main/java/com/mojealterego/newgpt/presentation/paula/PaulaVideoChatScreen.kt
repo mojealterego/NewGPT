@@ -1,5 +1,7 @@
 package com.mojealterego.newgpt.presentation.paula
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,6 +12,9 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -75,6 +80,7 @@ fun PaulaVideoChatScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val transcript by viewModel.transcript.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> if (granted) viewModel.listen() }
 
     val player = remember {
         ExoPlayer.Builder(context).build().apply {
@@ -140,7 +146,9 @@ fun PaulaVideoChatScreen(
                     )
                     if (transcript.isNotBlank()) Text(transcript, color = Color(0xFFD7D7D7), modifier = Modifier.padding(top = 6.dp))
                     Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        FilledTonalButton(onClick = viewModel::listen) {
+                        FilledTonalButton(onClick = {
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) viewModel.listen() else permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                        }) {
                             Icon(Icons.Default.Mic, null)
                             Spacer(Modifier.width(6.dp))
                             Text("Mów")
