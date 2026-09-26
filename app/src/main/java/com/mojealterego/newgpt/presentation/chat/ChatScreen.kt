@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +37,7 @@ fun ChatScreen(
     onEvolution: () -> Unit,
     onBuilder: () -> Unit,
     onSystem: () -> Unit,
+    onVoice: () -> Unit,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -64,12 +64,13 @@ fun ChatScreen(
                 }
                 listOf(
                     "Rozmowa" to { },
+                    "Rozmowa głosowa" to { go(onVoice) },
                     "Agenci" to { go(onAgents) },
                     "Creative Studio" to { go(onStudio) },
                     "Holographic Memory" to { go(onMemory) },
                     "DGM · RSI Evolution Lab" to { go(onEvolution) },
                     "AI App Builder" to { go(onBuilder) },
-                    "SYSTEM · 44 DOMAINS" to { go(onSystem) },
+                    "SYSTEM · 50 DOMAINS" to { go(onSystem) },
                     "Ustawienia" to { go(onSettings) }
                 ).forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -118,6 +119,12 @@ fun ChatScreen(
                                     "Dostawcy AI · RAG · pamięć · internet · GGUF · Creative Studio",
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
+                                Spacer(Modifier.height(16.dp))
+                                OutlinedButton(onClick = onVoice) {
+                                    Icon(Icons.Default.Mic, contentDescription = null)
+                                    Spacer(Modifier.width(8.dp))
+                                    Text("Uruchom rozmowę głosową")
+                                }
                             }
                         }
                     } else {
@@ -137,6 +144,9 @@ fun ChatScreen(
                         Modifier.fillMaxWidth().navigationBarsPadding().imePadding().padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        IconButton(onClick = onVoice, enabled = state.inputEnabled) {
+                            Icon(Icons.Default.Mic, contentDescription = "Rozmowa głosowa", tint = MaterialTheme.colorScheme.primary)
+                        }
                         TextField(
                             value = text,
                             onValueChange = { text = it },
