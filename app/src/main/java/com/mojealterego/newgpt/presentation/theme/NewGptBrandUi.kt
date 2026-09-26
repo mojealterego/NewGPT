@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.ImageVector\nimport androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -123,7 +123,7 @@ fun PremiumTitle(
             IconButton(
                 onClick = onBack,
                 modifier = Modifier.size(50.dp).background(Brush.linearGradient(listOf(GoldBright, Gold)), RoundedCornerShape(18.dp))
-            ) { Icon(Icons.Default.ArrowBack, null, tint = Obsidian) }
+            ) { Icon(Icons.Default.ArrowBack, "Wstecz", tint = Obsidian) }
             Spacer(Modifier.width(14.dp))
         }
         Column(Modifier.weight(1f)) {
@@ -186,7 +186,7 @@ fun GoldButton(
         ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp, pressedElevation = 2.dp)
     ) {
-        icon?.let { Icon(it, null); Spacer(Modifier.width(10.dp)) }
+        icon?.let { Icon(it, text); Spacer(Modifier.width(10.dp)) }
         Text(text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
     }
 }
@@ -205,13 +205,13 @@ fun OutlineGoldButton(
         border = BorderStroke(1.dp, GoldDeep),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = Ivory)
     ) {
-        icon?.let { Icon(it, null, tint = Gold); Spacer(Modifier.width(8.dp)) }
+        icon?.let { Icon(it, text); Spacer(Modifier.width(8.dp)) }
         Text(text)
     }
 }
 
 @Composable
-fun GoldSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+fun GoldSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit, contentDescription: String = "Przełącznik") {
     Switch(
         checked = checked,
         onCheckedChange = onCheckedChange,
