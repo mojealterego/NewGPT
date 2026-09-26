@@ -108,7 +108,7 @@ private fun AgentEditor(
                 TextField(agent.handoffs.joinToString(", "), { onChange(agent.copy(handoffs = csv(it))) }, Modifier.fillMaxWidth(), label = { Text("Handoffs — ID agentów") })
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Agent aktywny")
-                    GoldSwitch(agent.enabled) { onChange(agent.copy(enabled = it)) }
+                    GoldSwitch(checked = agent.enabled, onCheckedChange = { onChange(agent.copy(enabled = it)) })
                 }
             }
         }
