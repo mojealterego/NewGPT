@@ -38,13 +38,13 @@ class StudioViewModel @Inject constructor(
         private set
 
     fun speech(voice: String, text: String) = run("TTS") {
-        val bytes = service.textToSpeech(prefs.preferences.value.elevenLabsKey, voice, text)
+        val bytes = service.textToSpeech(secureSettings.elevenLabsKey.value, voice, text)
         File.createTempFile("newgpt-voice-", ".mp3").apply { writeBytes(bytes) }.absolutePath
             .let { "Wygenerowano audio: " + it }
     }
 
     fun music(prompt: String) = run("Music") {
-        val bytes = service.music(prefs.preferences.value.elevenLabsKey, prompt)
+        val bytes = service.music(secureSettings.elevenLabsKey.value, prompt)
         File.createTempFile("newgpt-music-", ".mp3").apply { writeBytes(bytes) }.absolutePath
             .let { "Wygenerowano muzykę: " + it }
     }
