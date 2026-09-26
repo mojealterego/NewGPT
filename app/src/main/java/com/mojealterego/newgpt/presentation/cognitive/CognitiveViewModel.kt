@@ -32,6 +32,8 @@ class CognitiveViewModel @Inject constructor(
                 CognitiveModuleUi("GoT + Decision Cycle", "Graf decyzji zamiast wyłącznie liniowego handoffu.", "CORE"),
                 CognitiveModuleUi("Hybrid RAG 2.0", "Dokumenty + pamięć + routing temporalny.", "CORE"),
                 CognitiveModuleUi("MCP Capability Broker", "Jedna granica dla narzędzi, zgód i polityk.", "CORE"),
+                CognitiveModuleUi("Connected App Fabric", "Google, komunikacja, produktywność, kreatywność, travel, media i lifestyle przez wspólny connector registry.", "INTEGRATION"),
+                CognitiveModuleUi("Android AppFunctions Bridge", "Odkrywanie i wykonywanie funkcji aplikacji na Androidzie 16+ z kontrolą uprawnień.", "ANDROID")
                 CognitiveModuleUi("Adversarial Gate", "Kontrola ryzyka przed uprzywilejowanym wykonaniem.", "CORE"),
                 CognitiveModuleUi("Reflexion / Self-Correction", "Weryfikacja i korekta wyników.", "CORE"),
                 CognitiveModuleUi("Digital Genotype", "Wersjonowany opis agenta pod Evolution Lab.", "EVOLUTION"),
