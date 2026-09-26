@@ -24,9 +24,11 @@ class SettingsViewModel @Inject constructor(
     val config: StateFlow<ProviderConfig> = secureSettings.config
     val preferences: StateFlow<AppPreferences> = appPreferences.preferences
     val canvaAccessToken: StateFlow<String> = secureSettings.canvaAccessToken
+    val elevenLabsKey: StateFlow<String> = secureSettings.elevenLabsKey
 
     fun update(config: ProviderConfig) = secureSettings.update(config)
     fun updateCanvaAccessToken(value: String) = secureSettings.updateCanvaAccessToken(value)
+    fun updateElevenLabsKey(value: String) = secureSettings.updateElevenLabsKey(value)
     fun updatePreferences(value: AppPreferences) = appPreferences.update(value)
 
     fun importRag(uri: Uri, onDone: (String) -> Unit) {
