@@ -8,7 +8,7 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
-import com.mojealterego.newgpt.data.local.AppPreferencesStore
+import com.mojealterego.newgpt.data.local.SecureSettings
 import com.mojealterego.newgpt.data.remote.PaulaVoiceDirectorService
 import com.mojealterego.newgpt.domain.voice.VoiceChatEngine
 import com.mojealterego.newgpt.domain.voice.VoiceSessionState
@@ -27,7 +27,8 @@ import javax.inject.Singleton
 class AndroidVoiceChatEngine @Inject constructor(
     @ApplicationContext private val context: Context,
     private val paulaVoice: PaulaVoiceDirectorService,
-    private val preferences: AppPreferencesStore
+    private val secureSettings: SecureSettings,
+    private val preferences: com.mojealterego.newgpt.data.local.AppPreferencesStore
 ) : VoiceChatEngine, RecognitionListener, TextToSpeech.OnInitListener {
 
     private val _state = kotlinx.coroutines.flow.MutableStateFlow(VoiceSessionState.IDLE)
@@ -86,7 +87,7 @@ class AndroidVoiceChatEngine @Inject constructor(
         stopSpeaking()
 
         val prefs = preferences.preferences.value
-        val key = prefs.elevenLabsKey.trim()
+        val key = secureSettings.elevenLabsKey.value.trim()
         val voiceId = prefs.paulaElevenLabsVoiceId.trim()
 
         if (key.isNotBlank() && voiceId.isNotBlank()) {
