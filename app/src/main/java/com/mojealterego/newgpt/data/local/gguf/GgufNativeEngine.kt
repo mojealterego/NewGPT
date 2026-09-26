@@ -11,7 +11,22 @@ import javax.inject.Singleton
 
 @Singleton
 class GgufNativeEngine @Inject constructor() {
-    init { System.loadLibrary("newgpt_native") }
+    @Volatile
+    private var nativeLoaded = false
+
+    @Synchronized
+    private fun ensureNativeLoaded() {
+        if (nativeLoaded) return
+        try {
+            System.loadLibrary("newgpt_native")
+            nativeLoaded = true
+        } catch (error: UnsatisfiedLinkError) {
+            throw IllegalStateException(
+                "Lokalny silnik GGUF nie może zostać uruchomiony na tym urządzeniu.",
+                error
+            )
+        }
+    }
 
     private external fun loadModelNative(modelPath: String, gpuLayers: Int): Long
     private external fun formatChatNative(contextPtr: Long, roles: Array<String>, contents: Array<String>): String?
@@ -34,6 +49,7 @@ class GgufNativeEngine @Inject constructor() {
 
     @Synchronized
     fun loadModel(path: String, gpuLayers: Int) {
+        ensureNativeLoaded()
         if (contextPtr != 0L && loadedPath == path && loadedGpuLayers == gpuLayers) return
         if (contextPtr != 0L) {
             stopGenerationNative(contextPtr)
@@ -47,6 +63,7 @@ class GgufNativeEngine @Inject constructor() {
 
     @Synchronized
     fun formatChat(messages: List<Pair<String, String>>): String? {
+        ensureNativeLoaded()
         check(contextPtr != 0L) { "Model GGUF nie został załadowany." }
         if (messages.isEmpty()) return null
         return formatChatNative(
@@ -64,6 +81,7 @@ class GgufNativeEngine @Inject constructor() {
         topP: Float,
         threads: Int
     ): Flow<String> = callbackFlow {
+        ensureNativeLoaded()
         val context = contextPtr
         check(context != 0L) { "Model GGUF nie został załadowany." }
         val callback = object : TokenCallback {
