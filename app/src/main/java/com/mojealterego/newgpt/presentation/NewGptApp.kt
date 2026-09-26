@@ -18,6 +18,7 @@ import com.mojealterego.newgpt.presentation.system.SystemOverviewScreen
 import com.mojealterego.newgpt.presentation.theme.LocalNewGptNavigate
 import com.mojealterego.newgpt.presentation.theme.NewGptTheme
 import com.mojealterego.newgpt.presentation.voice.VoiceChatScreen
+import com.mojealterego.newgpt.presentation.paula.PaulaVideoChatScreen
 
 @Composable
 fun NewGptApp() {
@@ -39,10 +40,12 @@ fun NewGptApp() {
                     onEvolution = { nav.navigate("evolution") },
                     onBuilder = { nav.navigate("builder") },
                     onSystem = { nav.navigate("system") },
-                    onVoice = { nav.navigate("voice") }
+                    onVoice = { nav.navigate("voice") },
+                    onPaula = { nav.navigate("paula") }
                 )
             }
             composable("voice") { VoiceChatScreen(onBack = { nav.popBackStack() }) }
+            composable("paula") { PaulaVideoChatScreen(onBack = { nav.popBackStack() }) }
             composable("agents") {
                 AgentsScreen(
                     onBuilder = { nav.navigate("agent-builder") },
