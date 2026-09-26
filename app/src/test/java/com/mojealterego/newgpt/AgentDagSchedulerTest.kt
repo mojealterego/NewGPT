@@ -12,7 +12,7 @@ import org.junit.Test
 
 class AgentDagSchedulerTest {
     @Test
-    fun executesDependenciesBeforeDependents() = runBlocking {
+    fun executesDependenciesBeforeDependents(): Unit = runBlocking {
         val scheduler = AgentDagScheduler()
         val a = AgentExecutionNode(id = "a", agentId = "researcher", input = "start")
         val b = AgentExecutionNode(id = "b", agentId = "writer", dependsOn = listOf("a"), input = "finish")
@@ -28,13 +28,19 @@ class AgentDagSchedulerTest {
         assertEquals(listOf("a", "b"), report.results.map { it.nodeId })
     }
 
-    @Test(expected = IllegalStateException::class)
-    fun rejectsCycles() = runBlocking {
+    @Test
+    fun rejectsCycles(): Unit = runBlocking {
         val scheduler = AgentDagScheduler()
         val a = AgentExecutionNode(id = "a", agentId = "a", dependsOn = listOf("b"), input = "")
         val b = AgentExecutionNode(id = "b", agentId = "b", dependsOn = listOf("a"), input = "")
-        scheduler.execute(AgentExecutionPlan(nodes = listOf(a, b))) { node, _ ->
-            AgentNodeResult(node.id, node.agentId, AgentNodeStatus.SUCCEEDED)
+        var rejected = false
+        try {
+            scheduler.execute(AgentExecutionPlan(nodes = listOf(a, b))) { node, _ ->
+                AgentNodeResult(node.id, node.agentId, AgentNodeStatus.SUCCEEDED)
+            }
+        } catch (_: IllegalStateException) {
+            rejected = true
         }
+        assertTrue(rejected)
     }
 }
