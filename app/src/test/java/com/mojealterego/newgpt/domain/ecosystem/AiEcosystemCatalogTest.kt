@@ -1,5 +1,6 @@
 package com.mojealterego.newgpt.domain.ecosystem
 
+import com.mojealterego.newgpt.domain.agent.AgentToolCatalog
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -44,5 +45,13 @@ class AiEcosystemCatalogTest {
         assertTrue(categories.containsKey(AiEcosystemCategory.COMMERCE))
         assertTrue(categories.containsKey(AiEcosystemCategory.MEDIA_VOICE))
         assertTrue(categories.containsKey(AiEcosystemCategory.KNOWLEDGE_SOURCES))
+    }
+
+    @Test
+    fun ecosystemEntriesAreExposedAsAgentTools() {
+        val toolIds = AgentToolCatalog.builtIns.map { it.id }.toSet()
+        AiEcosystemCatalog.entries.forEach { entry ->
+            assertTrue("Missing tool bridge for: " + entry.name, entry.id in toolIds)
+        }
     }
 }
