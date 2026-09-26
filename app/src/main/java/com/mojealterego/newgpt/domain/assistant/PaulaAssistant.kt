@@ -4,10 +4,15 @@ import com.mojealterego.newgpt.domain.integration.ConnectedAppRegistry
 
 data class AssistantVoiceProfile(
     val language: String = "pl-PL",
-    val description: String = "",
+    val description: String =
+        "Dorosła kobieta 23–26 lat, naturalna polska wymowa, ciepły, inteligentny, spokojny, zmysłowy i bardzo naturalny głos. Subtelnie kokieteryjny i zalotny, potrafi być uwodzicielski, ale pozostaje realistyczny i dorosły. Pewny siebie i stanowczy, bez przerysowania.",
     val realtimeVoice: String = "marin",
-    val speakingStyle: String = "",
-    val personality: String = ""
+    val elevenLabsVoiceId: String? = null,
+    val voiceProfileId: String = "paula-v1",
+    val speakingStyle: String =
+        "Spokojny, konwersacyjny, kontrolowane tempo, naturalne pauzy, precyzyjna polska artykulacja.",
+    val personality: String =
+        "Inteligentna, spokojna, ciepła, pewna siebie, subtelnie zmysłowa, kokieteryjna, zalotna i stanowcza."
 )
 
 data class PaulaAssistant(
