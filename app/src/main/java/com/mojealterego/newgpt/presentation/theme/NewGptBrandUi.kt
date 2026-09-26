@@ -94,7 +94,7 @@ fun NewGptHeader(
                 )
             }
             Icon(
-                painter = painterResource(R.drawable.ic_newgpt),
+                painter = painterResource(R.drawable.ic_newgpt_image),
                 contentDescription = "NewGPT",
                 tint = Color.Unspecified,
                 modifier = Modifier.size(48.dp)

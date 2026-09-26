@@ -14,6 +14,7 @@ import com.mojealterego.newgpt.presentation.evolution.EvolutionScreen
 import com.mojealterego.newgpt.presentation.memory.MemoryScreen
 import com.mojealterego.newgpt.presentation.settings.SettingsScreen
 import com.mojealterego.newgpt.presentation.studio.StudioScreen
+import com.mojealterego.newgpt.presentation.system.SystemOverviewScreen
 import com.mojealterego.newgpt.presentation.theme.LocalNewGptNavigate
 import com.mojealterego.newgpt.presentation.theme.NewGptTheme
 
@@ -35,7 +36,8 @@ fun NewGptApp() {
                     onStudio = { nav.navigate("studio") },
                     onMemory = { nav.navigate("memory") },
                     onEvolution = { nav.navigate("evolution") },
-                    onBuilder = { nav.navigate("builder") }
+                    onBuilder = { nav.navigate("builder") },
+                    onSystem = { nav.navigate("system") }
                 )
             }
             composable("agents") {
@@ -52,6 +54,7 @@ fun NewGptApp() {
             composable("evolution") { EvolutionScreen(onBack = { nav.popBackStack() }) }
             composable("builder") { AppBuilderScreen(onBack = { nav.popBackStack() }) }
             composable("cognitive") { CognitiveScreen(onBack = { nav.popBackStack() }) }
+            composable("system") { SystemOverviewScreen(onBack = { nav.popBackStack() }) }
         }
         }
     }

@@ -13,8 +13,8 @@ android {
         applicationId = "com.mojealterego.newgpt"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "1.3.0"
+        versionCode = 7
+        versionName = "1.4.0"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }

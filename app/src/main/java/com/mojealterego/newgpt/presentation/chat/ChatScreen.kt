@@ -37,6 +37,7 @@ fun ChatScreen(
     onMemory: () -> Unit,
     onEvolution: () -> Unit,
     onBuilder: () -> Unit,
+    onSystem: () -> Unit,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -56,7 +57,7 @@ fun ChatScreen(
                 drawerContentColor = MaterialTheme.colorScheme.onSurface
             ) {
                 Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Icon(painterResource(R.drawable.ic_newgpt), "NewGPT", Modifier.size(82.dp), tint = Color.Unspecified)
+                    Icon(painterResource(R.drawable.ic_newgpt_image), "NewGPT", Modifier.size(82.dp), tint = Color.Unspecified)
                     Text("NewGPT", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
                     Text("MOJEALTEREGO AI CONTROL CENTER", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                     HorizontalDivider(color = Color(0x664F3B12))
@@ -68,6 +69,7 @@ fun ChatScreen(
                     "Holographic Memory" to { go(onMemory) },
                     "DGM · RSI Evolution Lab" to { go(onEvolution) },
                     "AI App Builder" to { go(onBuilder) },
+                    "SYSTEM · 44 DOMAINS" to { go(onSystem) },
                     "Ustawienia" to { go(onSettings) }
                 ).forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -103,7 +105,7 @@ fun ChatScreen(
                         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
                                 Icon(
-                                    painterResource(R.drawable.ic_newgpt),
+                                    painterResource(R.drawable.ic_newgpt_image),
                                     "NewGPT",
                                     Modifier.size(154.dp),
                                     tint = Color.Unspecified
