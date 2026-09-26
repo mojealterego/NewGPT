@@ -1,5 +1,7 @@
 package com.mojealterego.newgpt.domain.agent
 
+import com.mojealterego.newgpt.domain.ecosystem.AiEcosystemCategory
+import com.mojealterego.newgpt.domain.ecosystem.AiEcosystemCatalog
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,7 +25,7 @@ data class AgentTool(
 }
 
 object AgentToolCatalog {
-    val builtIns = listOf(
+    private val coreBuiltIns = listOf(
         AgentTool("web", "Web", "Dostęp do zasobów HTTP(S).", AgentTool.Capability.NETWORK),
         AgentTool("web-search", "Web Search", "Warstwa wyszukiwania sieciowego.", AgentTool.Capability.NETWORK),
         AgentTool("web-fetch", "Web Fetch", "Pobieranie i ekstrakcja treści strony.", AgentTool.Capability.NETWORK),
@@ -53,6 +55,15 @@ object AgentToolCatalog {
         AgentTool("memory", "Memory", "Zarządzanie trwałym kontekstem użytkownika.", AgentTool.Capability.FILE_SYSTEM),
         AgentTool("translation", "Translation", "Tłumaczenie i lokalizacja treści.", AgentTool.Capability.NETWORK)
     )
+
+    val builtIns: List<AgentTool> = coreBuiltIns + AiEcosystemCatalog.entries.map { entry ->
+        AgentTool(
+            id = entry.id,
+            name = entry.name,
+            description = "Ecosystem adapter: " + entry.category.name.lowercase().replace('_', ' ') + ". Wymaga skonfigurowanego konektora.",
+            capability = AgentTool.Capability.NETWORK
+        )
+    }
 
     fun find(id: String): AgentTool? = builtIns.firstOrNull { it.id == id }
 }

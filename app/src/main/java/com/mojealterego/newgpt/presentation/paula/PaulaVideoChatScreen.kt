@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -71,6 +72,7 @@ class PaulaVideoChatViewModel @Inject constructor(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaulaVideoChatScreen(
     onBack: () -> Unit,
@@ -121,7 +123,7 @@ fun PaulaVideoChatScreen(
             AndroidView(
                 factory = { PlayerView(it).apply {
                     useController = false
-                    player = player
+                    this.player = player
                     layoutParams = ViewGroup.LayoutParams(-1, -1)
                 }},
                 modifier = Modifier.fillMaxSize()
