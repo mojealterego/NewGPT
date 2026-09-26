@@ -17,6 +17,7 @@ data class AgentTool(
         FILE_SYSTEM,
         ANDROID_UI,
         NOTIFICATIONS,
+        CONNECTED_APPS,
         CODE_EXECUTION
     }
 }
@@ -47,6 +48,7 @@ object AgentToolCatalog {
         AgentTool("evolution-lab", "Evolution Lab", "Kontrolowana pętla propose/evaluate/keep/reject.", AgentTool.Capability.CODE_EXECUTION),
         AgentTool("accessibility", "Android UI", "Planowanie działań na interfejsie Androida.", AgentTool.Capability.ANDROID_UI),
         AgentTool("notifications", "Notifications", "Praca z powiadomieniami urządzenia.", AgentTool.Capability.NOTIFICATIONS),
+        AgentTool("connected-apps", "Connected Apps", "Orkiestracja połączonych aplikacji przez AppFunctions, API, Intents i kontrolowane UI.", AgentTool.Capability.CONNECTED_APPS),
         AgentTool("browser", "Browser", "Kontrolowany dostęp do stron i formularzy.", AgentTool.Capability.NETWORK),
         AgentTool("memory", "Memory", "Zarządzanie trwałym kontekstem użytkownika.", AgentTool.Capability.FILE_SYSTEM),
         AgentTool("translation", "Translation", "Tłumaczenie i lokalizacja treści.", AgentTool.Capability.NETWORK)
