@@ -164,6 +164,17 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
 
             GoldCard(title = "CREATIVE API", icon = Icons.Default.AutoAwesome) {
                 SecretField("ElevenLabs API key", prefDraft.elevenLabsKey) { prefDraft = prefDraft.copy(elevenLabsKey = it) }
+                OutlinedTextField(
+                    prefDraft.paulaElevenLabsVoiceId,
+                    { prefDraft = prefDraft.copy(paulaElevenLabsVoiceId = it) },
+                    Modifier.fillMaxWidth(),
+                    label = { Text("Paula · ElevenLabs voice ID") },
+                    singleLine = true
+                )
+                Text(
+                    "Po utworzeniu/wybraniu głosu Pauli w ElevenLabs wklej tutaj voice_id. Puste pole = fallback Android TTS.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 SecretField("xAI API key", prefDraft.xaiKey) { prefDraft = prefDraft.copy(xaiKey = it) }
                 SecretField("Canva Connect access token", canvaDraft) { canvaDraft = it }
                 Text("Token jest przechowywany w EncryptedSharedPreferences. Produkcyjny OAuth Canva wymaga Authorization Code + PKCE.", color = MaterialTheme.colorScheme.onSurfaceVariant)
