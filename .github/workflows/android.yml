@@ -22,10 +22,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
-      - name: Create CI signing key
-        run: |
-          mkdir -p "$HOME/.android"
-          keytool -genkeypair -v             -keystore "$HOME/.android/debug.keystore"             -storepass android             -keypass android             -alias androiddebugkey             -keyalg RSA             -keysize 2048             -validity 10000             -dname "CN=NewGPT CI, O=MojeAlterego, C=PL"
+      - name: Verify stable sideload signing key
+        run: keytool -list -keystore app/newgpt-sideload.jks -storepass newgptdev -alias newgpt
       - name: Assemble installable release APK
         run: gradle --no-daemon assembleRelease
       - name: Build installable release AAB
@@ -37,7 +35,7 @@ jobs:
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: newgpt-android-1.4.0-installable
+          name: newgpt-android-1.4.1-installable
           path: |
             app/build/outputs/apk/release/*.apk
             app/build/outputs/bundle/release/*.aab

@@ -13,18 +13,18 @@ android {
         applicationId = "com.mojealterego.newgpt"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.4.0"
+        versionCode = 8
+        versionName = "1.4.1"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     signingConfigs {
         getByName("debug")
         create("installableRelease") {
-            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+            storeFile = file("newgpt-sideload.jks")
+            storePassword = "newgptdev"
+            keyAlias = "newgpt"
+            keyPassword = "newgptdev"
         }
     }
     buildTypes {
