@@ -23,7 +23,7 @@ class Supervisor @Inject constructor(
         val reasons = mutableListOf<String>()
         if (clean.isBlank()) reasons += "empty_output"
         if (clean.length > 200_000) reasons += "output_too_large"
-        val evidenceCount = evidence.recent(500).count {
+        val evidenceCount = evidence.snapshot().takeLast(500).count {
             it.type == EvidenceType.DOCUMENT ||
             it.type == EvidenceType.TOOL_RESULT ||
             it.type == EvidenceType.VERIFICATION
