@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: ["main", "implementation/**"]
+    branches: ["main", "implementation/**", "mobileappbuilder/**"]
   pull_request:
     branches: ["main"]
 
@@ -11,33 +11,65 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
+
       - name: Install Android SDK components
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13113456" "cmake;3.31.6"
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
-      - name: Verify stable sideload signing key
-        run: keytool -list -keystore app/newgpt-sideload.jks -storepass newgptdev -alias newgpt
-      - name: Assemble installable release APK
+
+      - name: Configure release signing
+        if: ${{ secrets.NEWGPT_KEYSTORE_BASE64 != '' }}
+        env:
+          NEWGPT_KEYSTORE_BASE64: ${{ secrets.NEWGPT_KEYSTORE_BASE64 }}
+          NEWGPT_RELEASE_STORE_PASSWORD: ${{ secrets.NEWGPT_RELEASE_STORE_PASSWORD }}
+          NEWGPT_RELEASE_KEY_ALIAS: ${{ secrets.NEWGPT_RELEASE_KEY_ALIAS }}
+          NEWGPT_RELEASE_KEY_PASSWORD: ${{ secrets.NEWGPT_RELEASE_KEY_PASSWORD }}
+        run: |
+          printf '%s' "$NEWGPT_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/newgpt-release.jks"
+          {
+            echo "NEWGPT_RELEASE_STORE_FILE=$RUNNER_TEMP/newgpt-release.jks"
+            echo "NEWGPT_RELEASE_STORE_PASSWORD=$NEWGPT_RELEASE_STORE_PASSWORD"
+            echo "NEWGPT_RELEASE_KEY_ALIAS=$NEWGPT_RELEASE_KEY_ALIAS"
+            echo "NEWGPT_RELEASE_KEY_PASSWORD=$NEWGPT_RELEASE_KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+
+      - name: Assemble release APK
         run: gradle --no-daemon assembleRelease
-      - name: Build installable release AAB
+
+      - name: Build release AAB
         run: gradle --no-daemon bundleRelease
+
       - name: Assemble debug APK
         run: gradle --no-daemon assembleDebug
+
       - name: Unit tests
         run: gradle --no-daemon testDebugUnitTest
+
+      - name: Report signing mode
+        run: |
+          if [ -n "$NEWGPT_RELEASE_STORE_FILE" ]; then
+            echo "Release artifacts are signed with the configured CI keystore."
+          else
+            echo "Release artifacts are unsigned. Configure NEWGPT_KEYSTORE_BASE64 and release credential secrets for signed distribution."
+          fi
+
       - name: Prepare named distribution artifacts
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/release/app-release.apk dist/NewGPT-1.4.4.apk
-          cp app/build/outputs/bundle/release/app-release.aab dist/NewGPT-1.4.4.aab
+          cp app/build/outputs/apk/release/app-release.apk dist/NewGPT-1.4.4-release.apk
+          cp app/build/outputs/bundle/release/app-release.aab dist/NewGPT-1.4.4-release.aab
           cp app/build/outputs/apk/debug/app-debug.apk dist/NewGPT-1.4.4-debug.apk
+
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         with:
