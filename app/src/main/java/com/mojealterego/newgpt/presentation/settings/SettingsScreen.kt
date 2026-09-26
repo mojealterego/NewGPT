@@ -25,9 +25,11 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
     val config by viewModel.config.collectAsStateWithLifecycle()
     val prefs by viewModel.preferences.collectAsStateWithLifecycle()
     val canvaToken by viewModel.canvaAccessToken.collectAsStateWithLifecycle()
+    val elevenLabsKey by viewModel.elevenLabsKey.collectAsStateWithLifecycle()
     var draft by remember(config) { mutableStateOf(config) }
     var prefDraft by remember(prefs) { mutableStateOf(prefs) }
     var canvaDraft by remember(canvaToken) { mutableStateOf(canvaToken) }
+    var elevenLabsDraft by remember(elevenLabsKey) { mutableStateOf(elevenLabsKey) }
     var providerExpanded by remember { mutableStateOf(false) }
     var presetExpanded by remember { mutableStateOf(false) }
     var languageExpanded by remember { mutableStateOf(false) }
@@ -163,7 +165,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             }
 
             GoldCard(title = "CREATIVE API", icon = Icons.Default.AutoAwesome) {
-                SecretField("ElevenLabs API key", prefDraft.elevenLabsKey) { prefDraft = prefDraft.copy(elevenLabsKey = it) }
+                SecretField("ElevenLabs API key", elevenLabsDraft) { elevenLabsDraft = it }
                 OutlinedTextField(
                     prefDraft.paulaElevenLabsVoiceId,
                     { prefDraft = prefDraft.copy(paulaElevenLabsVoiceId = it) },
@@ -177,7 +179,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 )
                 SecretField("xAI API key", prefDraft.xaiKey) { prefDraft = prefDraft.copy(xaiKey = it) }
                 SecretField("Canva Connect access token", canvaDraft) { canvaDraft = it }
-                Text("Token jest przechowywany w EncryptedSharedPreferences. Produkcyjny OAuth Canva wymaga Authorization Code + PKCE.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Token i klucz ElevenLabs są przechowywane w EncryptedSharedPreferences. Produkcyjny OAuth Canva wymaga Authorization Code + PKCE.", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             GoldButton(
@@ -186,6 +188,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                     viewModel.update(draft)
                     viewModel.updatePreferences(prefDraft)
                     viewModel.updateCanvaAccessToken(canvaDraft)
+                    viewModel.updateElevenLabsKey(elevenLabsDraft)
                     onBack()
                 },
                 icon = Icons.Default.Save
