@@ -28,8 +28,10 @@ class SecureSettings @Inject constructor(@ApplicationContext context: Context) {
 
     private val state = MutableStateFlow(load())
     private val canvaState = MutableStateFlow(prefs.getString("canva_access_token", "") ?: "")
+    private val elevenLabsState = MutableStateFlow(prefs.getString("elevenlabs_api_key", "") ?: "")
     val config: StateFlow<ProviderConfig> = state.asStateFlow()
     val canvaAccessToken: StateFlow<String> = canvaState.asStateFlow()
+    val elevenLabsKey: StateFlow<String> = elevenLabsState.asStateFlow()
 
     private fun load() = ProviderConfig(
         activeProvider = prefs.getString("provider", ProviderType.OPENAI.name)
@@ -51,6 +53,11 @@ class SecureSettings @Inject constructor(@ApplicationContext context: Context) {
     fun updateCanvaAccessToken(value: String) {
         prefs.edit().putString("canva_access_token", value).apply()
         canvaState.value = value
+    }
+
+    fun updateElevenLabsKey(value: String) {
+        prefs.edit().putString("elevenlabs_api_key", value).apply()
+        elevenLabsState.value = value
     }
 
     fun update(value: ProviderConfig) {
