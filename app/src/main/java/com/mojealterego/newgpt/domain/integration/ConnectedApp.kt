@@ -71,8 +71,27 @@ object ConnectedAppRegistry {
         app("seatgeek", "SeatGeek", "Entertainment", ConnectedAppAction("search", "Find tickets", ActionRisk.READ_ONLY), ConnectedAppAction("buy", "Buy ticket", ActionRisk.SENSITIVE))
     )
 
+    /** Existing operational contracts plus the scalable discovery catalog. */
+    val fabricCatalog: List<FabricAppDescriptor>
+        get() = ConnectedAppFabricSeed.apps
+
     fun find(id: String): ConnectedApp? = catalog.firstOrNull { it.id == id }
+
     fun search(query: String): List<ConnectedApp> = catalog.filter {
-        it.name.contains(query, true) || it.category.contains(query, true) || it.actions.any { action -> action.description.contains(query, true) }
+        it.name.contains(query, true) ||
+            it.category.contains(query, true) ||
+            it.actions.any { action -> action.description.contains(query, true) }
     }
+
+    fun searchFabric(query: String): List<FabricAppDescriptor> =
+        ConnectedAppFabricPolicy.search(query)
+
+    fun byFabricCategory(category: FabricCategory): List<FabricAppDescriptor> =
+        ConnectedAppFabricPolicy.byCategory(category)
+
+    /**
+     * Returns true only for providers represented by the operational contract
+     * above. Discovery metadata never silently becomes an executable connector.
+     */
+    fun hasOperationalAdapter(id: String): Boolean = catalog.any { it.id == id }
 }
