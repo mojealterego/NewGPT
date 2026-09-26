@@ -40,8 +40,7 @@ fun NewGptApp() {
                     onEvolution = { nav.navigate("evolution") },
                     onBuilder = { nav.navigate("builder") },
                     onSystem = { nav.navigate("system") },
-                    onVoice = { nav.navigate("voice") },
-                    onPaula = { nav.navigate("paula") }
+                    onVoice = { nav.navigate("paula") }
                 )
             }
             composable("voice") { VoiceChatScreen(onBack = { nav.popBackStack() }) }
