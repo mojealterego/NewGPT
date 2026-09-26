@@ -26,6 +26,7 @@ data class AppPreferences(
     val gpuLayers: Int = 0,
     val repeatPenalty: Float = 1.05f,
     val elevenLabsKey: String = "",
+    val paulaElevenLabsVoiceId: String = "",
     val xaiKey: String = ""
 )
 
@@ -51,6 +52,7 @@ class AppPreferencesStore @Inject constructor(@ApplicationContext context: Conte
         gpuLayers = prefs.getInt("gpu_layers", 0),
         repeatPenalty = prefs.getFloat("repeat_penalty", 1.05f),
         elevenLabsKey = prefs.getString("eleven_key", "") ?: "",
+        paulaElevenLabsVoiceId = prefs.getString("paula_eleven_voice_id", "") ?: "",
         xaiKey = prefs.getString("xai_key", "") ?: ""
     )
 
@@ -71,6 +73,7 @@ class AppPreferencesStore @Inject constructor(@ApplicationContext context: Conte
             .putInt("gpu_layers", value.gpuLayers.coerceIn(0, 128))
             .putFloat("repeat_penalty", value.repeatPenalty.coerceIn(0.8f, 2f))
             .putString("eleven_key", value.elevenLabsKey)
+            .putString("paula_eleven_voice_id", value.paulaElevenLabsVoiceId.trim())
             .putString("xai_key", value.xaiKey)
             .apply()
         state.value = value
