@@ -13,8 +13,8 @@ android {
         applicationId = "com.mojealterego.newgpt.mobile"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.4.2"
+        versionCode = 2
+        versionName = "1.4.4"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
@@ -57,6 +57,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.room:room-runtime:2.8.5"); implementation("androidx.room:room-ktx:2.8.5"); ksp("androidx.room:room-compiler:2.8.5")
     implementation("androidx.security:security-crypto:1.1.0")
+    implementation("androidx.appfunctions:appfunctions:1.0.0-alpha12")
+    ksp("androidx.appfunctions:appfunctions-compiler:1.0.0-alpha12")
     implementation("com.google.dagger:hilt-android:2.57.1"); ksp("com.google.dagger:hilt-compiler:2.57.1"); implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
     implementation("io.ktor:ktor-client-core:3.3.0"); implementation("io.ktor:ktor-client-okhttp:3.3.0"); implementation("io.ktor:ktor-client-content-negotiation:3.3.0"); implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"); implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0"); implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
