@@ -23,6 +23,8 @@ import com.mojealterego.newgpt.data.local.AppPreferencesStore
 import com.mojealterego.newgpt.presentation.theme.*
 import com.mojealterego.newgpt.data.local.SecureSettings
 import com.mojealterego.newgpt.data.remote.CreativeStudioService
+import com.mojealterego.newgpt.data.remote.PaulaVoiceDirectorService
+import com.mojealterego.newgpt.data.remote.PaulaVoiceProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -32,25 +34,58 @@ import javax.inject.Inject
 class StudioViewModel @Inject constructor(
     private val prefs: AppPreferencesStore,
     private val secureSettings: SecureSettings,
-    private val service: CreativeStudioService
+    private val service: CreativeStudioService,
+    private val paulaVoice: PaulaVoiceDirectorService
 ) : ViewModel() {
     var status by mutableStateOf("")
         private set
 
     fun speech(voice: String, text: String) = run("TTS") {
-        val bytes = service.textToSpeech(prefs.preferences.value.elevenLabsKey, voice, text)
+        val bytes = service.textToSpeech(secureSettings.elevenLabsKey.value, voice, text)
         File.createTempFile("newgpt-voice-", ".mp3").apply { writeBytes(bytes) }.absolutePath
             .let { "Wygenerowano audio: " + it }
     }
 
     fun music(prompt: String) = run("Music") {
-        val bytes = service.music(prefs.preferences.value.elevenLabsKey, prompt)
+        val bytes = service.music(secureSettings.elevenLabsKey.value, prompt)
         File.createTempFile("newgpt-music-", ".mp3").apply { writeBytes(bytes) }.absolutePath
             .let { "Wygenerowano muzykę: " + it }
     }
 
     fun video(prompt: String) = run("Video") {
         "Wideo: " + service.generateVideo(prefs.preferences.value.xaiKey, prompt)
+    }
+
+    fun createPaulaVoice() = run("Paula Voice") {
+        val apiKey = secureSettings.elevenLabsKey.value.trim()
+        require(apiKey.isNotBlank()) { "Najpierw ustaw ElevenLabs API key w Ustawieniach." }
+
+        val previewText =
+            "Cześć. Jestem Paula. Mogę rozmawiać z Tobą spokojnie, naturalnie i inteligentnie. " +
+            "Lubię dobre pytania, precyzyjne odpowiedzi i rozmowy, w których jest miejsce na emocje."
+
+        val design = paulaVoice.designVoice(
+            apiKey = apiKey,
+            description = PaulaVoiceProfile.DESCRIPTION,
+            text = previewText
+        )
+        val preview = design.previews.firstOrNull()
+            ?: error("ElevenLabs nie zwrócił preview głosu.")
+
+        val created = paulaVoice.createVoiceFromPreview(
+            apiKey = apiKey,
+            generatedVoiceId = preview.generatedVoiceId,
+            name = "Paula",
+            description = PaulaVoiceProfile.DESCRIPTION
+        )
+
+        prefs.update(
+            prefs.preferences.value.copy(
+                paulaElevenLabsVoiceId = created.voiceId
+            )
+        )
+
+        "Głos Pauli utworzony. voice_id: ${created.voiceId}"
     }
 
     fun canva(title: String) = run("Canva") {
