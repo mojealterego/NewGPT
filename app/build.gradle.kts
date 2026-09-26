@@ -10,11 +10,11 @@ android {
     namespace = "com.mojealterego.newgpt"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.mojealterego.newgpt"
+        applicationId = "com.mojealterego.newgpt.mobile"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.4.1"
+        versionCode = 1
+        versionName = "1.4.2"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
