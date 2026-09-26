@@ -121,7 +121,7 @@ fun PaulaVideoChatScreen(
             AndroidView(
                 factory = { PlayerView(it).apply {
                     useController = false
-                    player = player
+                    this.player = player
                     layoutParams = ViewGroup.LayoutParams(-1, -1)
                 }},
                 modifier = Modifier.fillMaxSize()
