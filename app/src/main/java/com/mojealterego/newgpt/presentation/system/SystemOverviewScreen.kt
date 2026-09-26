@@ -71,7 +71,13 @@ SystemDomain("40","Control Center","IMPLEMENTED","Cognitive Control Center and s
 SystemDomain("41","Mobile Experience","IMPLEMENTED","Native Android Compose experience and premium NewGPT design system."),
 SystemDomain("42","Web Experience","PLANNED","No separate web client is shipped in this Android artifact."),
 SystemDomain("43","Release Engine","PARTIAL","CI builds release APK/AAB and debug APK; production Play signing remains external."),
-SystemDomain("44","Research Lab","EXPERIMENTAL","Experimental verification, JEPA/HDC/SNN and advanced evolution concepts remain isolated.")
+SystemDomain("44","Research Lab","EXPERIMENTAL","Experimental verification, JEPA/HDC/SNN and advanced evolution concepts remain isolated."),
+SystemDomain("45","Connected App Fabric","IMPLEMENTED","Unified connector registry for Google, productivity, creative, lifestyle, travel, communication and media apps."),
+SystemDomain("46","Android AppFunctions","EXPERIMENTAL","Android 16+ AppFunctions discovery/execution bridge; availability remains platform/permission dependent."),
+SystemDomain("47","Cross-App Agent Runtime","PARTIAL","Agent can select connector kind, risk level and action boundary before cross-app execution."),
+SystemDomain("48","Transaction Firewall","PARTIAL","Write and sensitive actions carry explicit confirmation requirements before execution."),
+SystemDomain("49","Personal Context Router","PLANNED","Per-user connector permissions, account state and contextual authorization remain to be persisted."),
+SystemDomain("50","Connector SDK","PARTIAL","Provider adapters can be added behind a common contract without changing the cognitive core.")
 )
 
 @Composable
@@ -79,7 +85,7 @@ fun SystemOverviewScreen(onBack: () -> Unit) {
     PremiumScaffold(
         selected = "Narzędzia",
         title = "NEWGPT SYSTEM",
-        subtitle = "COGNITIVE OS · 44 DOMAINS",
+        subtitle = "COGNITIVE OS · 50 DOMAINS",
         onBack = onBack,
         onPanel = {},
         onAgents = {},
@@ -96,7 +102,7 @@ fun SystemOverviewScreen(onBack: () -> Unit) {
                 GoldCard(title = "FINAL INTEGRATION CONTROL DECK", icon = Icons.Default.SettingsSuggest) {
                     Text("Jedna mapa systemu: warstwy działające, częściowe, planowane i eksperymentalne.", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        AssistChip(onClick = {}, label = { Text("44 DOMAINS") }, leadingIcon = { Icon(Icons.Default.AccountTree, null) })
+                        AssistChip(onClick = {}, label = { Text("50 DOMAINS") }, leadingIcon = { Icon(Icons.Default.AccountTree, null) })
                         AssistChip(onClick = {}, label = { Text("EDGE + CLOUD") }, leadingIcon = { Icon(Icons.Default.AutoAwesome, null) })
                     }
                 }
