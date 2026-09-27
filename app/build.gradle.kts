@@ -25,8 +25,8 @@ android {
         applicationId = "com.mojealterego.newgpt.mobile"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.4.4"
+        versionCode = 3
+        versionName = "1.4.5"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
 
